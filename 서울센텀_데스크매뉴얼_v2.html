@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서울센텀턱구강내과치과 고객지원실 매뉴얼</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif; background: #f5f5f3; color: #1a1a1a; min-height: 100vh; }
+.container { max-width: 780px; margin: 0 auto; padding: 2rem 1.25rem; }
+
+/* 헤더 */
+.header { margin-bottom: 1.75rem; }
+.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.header-left { display: flex; align-items: center; gap: 12px; }
+.logo { width: 40px; height: 40px; border-radius: 10px; background: #e8f0fe; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.title { font-size: 20px; font-weight: 600; color: #111; }
+.subtitle { font-size: 13px; color: #888; margin-left: 52px; }
+.updated { font-size: 11px; color: #bbb; margin-left: 52px; margin-top: 2px; }
+.admin-btn { font-size: 12px; padding: 6px 12px; border-radius: 8px; border: 1px solid #e0e0e0; background: #fff; cursor: pointer; color: #666; font-family: inherit; transition: all 0.15s; }
+.admin-btn:hover { border-color: #4a90d9; color: #4a90d9; }
+
+/* 검색 */
+.search-wrap { position: relative; margin-bottom: 1rem; }
+.search-wrap svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #aaa; pointer-events: none; }
+input[type="text"] { width: 100%; padding: 11px 40px 11px 40px; font-size: 15px; border: 1px solid #e0e0e0; border-radius: 12px; background: #fff; outline: none; font-family: inherit; color: #111; transition: border-color 0.15s; }
+input[type="text"]:focus { border-color: #4a90d9; }
+.clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #bbb; font-size: 18px; display: none; line-height: 1; padding: 2px; }
+.clear-btn.visible { display: block; }
+
+/* 카테고리 태그 */
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.25rem; }
+.tag { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1px solid #e0e0e0; cursor: pointer; color: #666; background: #fff; transition: all 0.15s; font-family: inherit; }
+.tag:hover { border-color: #4a90d9; color: #4a90d9; }
+.tag.active { background: #4a90d9; color: #fff; border-color: #4a90d9; }
+.result-count { font-size: 12px; color: #bbb; margin-bottom: 0.75rem; }
+
+/* 아이템 카드 */
+.section-group { margin-bottom: 1.25rem; }
+.section-label { font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; padding: 0 2px; }
+.item { background: #fff; border: 1px solid #ebebeb; border-radius: 12px; padding: 13px 16px; margin-bottom: 6px; cursor: pointer; transition: border-color 0.15s; }
+.item:hover { border-color: #ccc; }
+.item.open { border-color: #4a90d9; }
+.item-header { display: flex; align-items: center; gap: 10px; }
+.item-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
+.item-q { font-size: 14px; font-weight: 500; color: #111; flex: 1; line-height: 1.45; }
+.item-arrow { font-size: 14px; color: #bbb; transition: transform 0.2s; flex-shrink: 0; }
+.item.open .item-arrow { transform: rotate(180deg); }
+.item-body { display: none; margin-top: 11px; padding-top: 11px; border-top: 1px solid #f0f0f0; font-size: 13px; color: #555; line-height: 1.75; }
+.item.open .item-body { display: block; }
+.item-body table { width: 100%; border-collapse: collapse; margin: 6px 0; }
+.item-body td { padding: 6px 10px; border: 1px solid #ebebeb; font-size: 13px; vertical-align: top; }
+.item-body td:first-child { color: #888; background: #fafafa; width: 40%; }
+.item-body .ok { color: #2e7d32; font-weight: 500; }
+.item-body .no { color: #c62828; font-weight: 500; }
+.item-body .warn { background: #fff8e1; color: #e65100; padding: 8px 12px; border-radius: 8px; margin: 6px 0; font-size: 13px; border-left: 3px solid #ffa000; }
+.item-body .note { background: #f0f4ff; padding: 8px 12px; border-radius: 8px; margin: 6px 0; font-size: 13px; border-left: 3px solid #4a90d9; color: #3a5a9a; }
+.item-body .script { background: #f8f9fa; padding: 10px 12px; border-radius: 8px; margin: 6px 0; font-size: 13px; border-left: 3px solid #888; font-style: italic; color: #444; }
+.item-body ul { padding-left: 1.1rem; margin: 4px 0; }
+.item-body li { margin-bottom: 4px; }
+.item-body strong { font-weight: 600; color: #111; }
+mark { background: #fff176; color: #555; border-radius: 2px; padding: 0 1px; }
+.empty { text-align: center; padding: 3rem 1rem; color: #bbb; font-size: 14px; }
+
+/* ===== 관리자 패널 ===== */
+#admin-panel { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto; }
+.admin-inner { background: #fff; max-width: 720px; margin: 2rem auto; border-radius: 16px; overflow: hidden; }
+.admin-header { background: #1a1a2e; color: #fff; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+.admin-header h2 { font-size: 16px; font-weight: 600; }
+.admin-close { background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; line-height: 1; }
+.admin-body { padding: 1.5rem; }
+.admin-section { margin-bottom: 1.5rem; }
+.admin-section h3 { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 0.75rem; padding-bottom: 6px; border-bottom: 1px solid #eee; }
+.admin-item-list { }
+.admin-item-row { background: #f9f9f9; border: 1px solid #eee; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; }
+.admin-item-row .row-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.admin-item-row .row-top select { font-size: 12px; padding: 3px 6px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; background: #fff; color: #333; }
+.admin-item-row .row-q { width: 100%; padding: 7px 10px; font-size: 13px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; margin-bottom: 5px; }
+.admin-item-row .row-a { width: 100%; padding: 7px 10px; font-size: 13px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; min-height: 70px; resize: vertical; }
+.admin-item-row .row-tags { width: 100%; padding: 5px 10px; font-size: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; color: #666; margin-top: 4px; }
+.admin-item-row .delete-row-btn { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 18px; line-height: 1; flex-shrink: 0; }
+.add-item-btn { width: 100%; padding: 9px; border: 1px dashed #ccc; border-radius: 8px; background: none; cursor: pointer; font-size: 13px; color: #888; font-family: inherit; transition: all 0.15s; }
+.add-item-btn:hover { border-color: #4a90d9; color: #4a90d9; background: #f0f4ff; }
+.admin-save-btn { width: 100%; padding: 13px; background: #4a90d9; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 1rem; }
+.admin-save-btn:hover { background: #3a7bc8; }
+.admin-pw-wrap { padding: 2rem; text-align: center; }
+.admin-pw-wrap p { font-size: 14px; color: #555; margin-bottom: 12px; }
+.admin-pw-wrap input { padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; width: 200px; outline: none; text-align: center; }
+.admin-pw-wrap input:focus { border-color: #4a90d9; }
+.admin-pw-btn { margin-top: 10px; padding: 10px 24px; background: #4a90d9; color: #fff; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-family: inherit; }
+.pw-error { color: #e74c3c; font-size: 12px; margin-top: 6px; display: none; }
+.label-sm { font-size: 11px; color: #999; margin-bottom: 2px; display: block; }
+</style>
+</head>
+<body>
+
+<!-- 관리자 패널 -->
+<div id="admin-panel">
+  <div class="admin-inner">
+    <div class="admin-header">
+      <h2>⚙️ 관리자 편집</h2>
+      <button class="admin-close" onclick="closeAdmin()">✕</button>
+    </div>
+    <div id="admin-pw-section" class="admin-pw-wrap">
+      <p>관리자 비밀번호를 입력하세요</p>
+      <input type="password" id="pw-input" placeholder="비밀번호" onkeydown="if(event.key==='Enter')checkPw()" />
+      <br>
+      <button class="admin-pw-btn" onclick="checkPw()">확인</button>
+      <div class="pw-error" id="pw-error">비밀번호가 틀렸습니다.</div>
+    </div>
+    <div id="admin-edit-section" style="display:none;" class="admin-body">
+      <div class="admin-section">
+        <h3>📋 항목 관리</h3>
+        <p style="font-size:12px;color:#999;margin-bottom:12px;">항목을 추가·수정·삭제한 뒤 아래 저장 버튼을 누르세요.</p>
+        <div id="admin-item-list"></div>
+        <button class="add-item-btn" onclick="addAdminRow()">+ 새 항목 추가</button>
+      </div>
+      <button class="admin-save-btn" onclick="saveData()">💾 저장하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 메인 -->
+<div class="container">
+  <div class="header">
+    <div class="header-top">
+      <div class="header-left">
+        <div class="logo">🦷</div>
+        <span class="title">서울센텀턱구강내과치과 고객지원실 매뉴얼</span>
+      </div>
+      <button class="admin-btn" onclick="resetData()" style="margin-right:6px;color:#e74c3c;border-color:#f5c6c6;">🔄 초기화</button><button class="admin-btn" onclick="openAdmin()">⚙️ 관리자</button>
+    </div>
+    <div class="subtitle" style="color:#555;">키워드를 검색하거나 카테고리를 눌러보세요</div>
+    <div style="font-size:12px;color:#aaa;margin-left:52px;margin-top:3px;">질문 추가 혹은 답변의 수정이나 변경이 필요한 경우 관리자(고객지원실 실장 유수진)에게 요청해주세요.</div>
+    <div class="updated" id="updated-date"></div>
+  </div>
+
+  <div class="search-wrap">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="q" placeholder="예: 주차, 내원콜, 수납, 충격파, 접수..." autocomplete="off" />
+    <button class="clear-btn" id="clear-btn">✕</button>
+  </div>
+
+  <div class="tags" id="tags"></div>
+  <div class="result-count" id="result-count"></div>
+  <div id="results"></div>
+</div>
+
+<script>
+const ADMIN_PW = "9111";
+const STORAGE_KEY = "centum_manual_data";
+const UPDATED_KEY = "centum_manual_updated";
+
+const CAT_META = {
+  "예약": { icon: "📅", bg: "#e8f0fe" },
+  "접수": { icon: "📋", bg: "#e8f5e9" },
+  "수납": { icon: "💳", bg: "#fff8e1" },
+  "내원콜": { icon: "📞", bg: "#fce4ec" },
+  "충격파": { icon: "⚡", bg: "#fff3e0" },
+  "영상자료": { icon: "💾", bg: "#f3e5f5" },
+  "주차": { icon: "🅿️", bg: "#e3f2fd" },
+  "보험·서류": { icon: "📄", bg: "#e8eaf6" },
+  "장치": { icon: "🔧", bg: "#f1f8e9" },
+  "종결·리뷰": { icon: "⭐", bg: "#fffde7" },
+  "CS·응대": { icon: "🙋", bg: "#e0f2f1" },
+  "진료준비": { icon: "🌅", bg: "#fce4ec" },
+  "자동차보험": { icon:"🚗", bg:"#e3f2fd" },
+  "기타": { icon: "📌", bg: "#fce4ec" }
+};
+
+const DEFAULT_DATA = [
+  { cat:"예약", q:"네이버 예약 슬롯은 얼마나 열어야 하나요?", tags:["예약","네이버","슬롯"], a:`<ul><li><strong>남윤·박유진 원장님</strong>: 항상 <strong>2주 뒤 슬롯</strong>만 열기</li><li>그 뒤로는 열려있다면 <strong>한 달 뒤까지 닫아주기</strong></li></ul><div class='note'>📢 매일 오전 슬랙 <strong>#데스크</strong> 채널에 자동 발송되는 메시지 확인 → 슬롯 열었으면 <strong>해당 메시지에 ☑️ 체크박스 표시</strong></div>` },
+  { cat:"예약", q:"환자와 예약 일정으로 대화 중에 임의·임시로 잡거나 확정 전 확인 중인 예약의 경우 예약 메모를 어떻게 하나요?", tags:["예약","메모","카톡","톡톡","확인중","임시","임의"], a:`<table><tr><td>카카오톡으로 확인 중</td><td><strong>카톡확인중/본인이름차팅</strong></td></tr><tr><td>네이버 톡톡으로 확인 중</td><td><strong>톡톡확인중/본인이름차팅</strong></td></tr><tr><td>전화로 재연락 예정</td><td><strong>전화확인중/본인이름차팅</strong></td></tr></table><ul><li>① 확인 안 된 예약은 예약표 생성 시 <strong>SMS 발송 제외 꼭 체크</strong></li><li>② 퇴근 전 <strong>'확인중'</strong> 키워드로 예약 검색 → 미완료 건은 <strong>삭제 처리</strong></li></ul><div class='note'>삭제 후 환자에게 꼭 연락<br>멘트: "000님 답변이 없으셔서 연락 드립니다. 가능하신 일정 확인 후 다시 연락 주시면 예약 도와드리겠습니다"</div>` },
+  { cat:"예약", q:"예약표에 W) 는 어떤 의미인가요?", tags:["예약","대기","W","w","waiting","웨이팅"], a:`<ul><li>예약기준에 맞춰 예약이 꽉 차 있으나, <strong>예약기준을 벗어나는 추가 예약</strong>을 해야 하는 경우 예약 내용 앞에 <strong>W)</strong> 표시 — <strong>Waiting(대기)</strong>의 의미</li><li>같은 시간대 취소가 생겨 W) 예약이 예약기준에 맞춰질 시 → 취소 예약 받은 담당자는 <strong>동시간대 W) 예약의 'W)' 메모 부분 삭제</strong></li><li>W) 안내 환자분들께는 내원 시 <strong>물리치료가 어려울 수 있는 점 설명</strong>. 내원하셨을 때 진료 상황에 따라 물리치료 진행 여부 안내 드릴 수 있는 점 설명</li></ul><div class='note'>📢 예약 시 환자분께 안내 멘트<br>"안내 드린 일정·시간에 예약이 차 있으나 일정에 맞춰 진료 보시는 게 치료에 도움이 되셔서 예약을 추가로 잡아드렸습니다. 그렇다 보니 내원 시 대기시간이 발생될 수 있어 양해 부탁드립니다! 혹시 같은 시간대 취소하시거나 변경하시는 분이 생기면 대기시간 없이 진료 진행됩니다."</div>` },
+  { cat:"예약", q:"예약 취소 시 메모 처리는 어떻게 하나요?", tags:["예약","취소","숨김","메모","hidden"], a:`<ul><li>덴트웹 예약표에서 해당 예약 <strong>취소 처리</strong></li><li>메모 칸에 <strong>'취소 사유 / 담당자 이름'</strong> 작성</li><li>작성 후 전자차트에 취소 사유 자동 연동 기입 → <strong>해당 메모를 숨김(Hidden) 처리</strong>로 반드시 변경</li></ul><table><tr><td><strong>당일 취소</strong></td><td>당일 예약표에 예약 <strong>그대로 유지</strong></td></tr><tr><td><strong>사전 취소·변경</strong> (당일 제외)</td><td>예약 취소 후 예약표의 <strong>'취소' 칸으로 이동</strong></td></tr></table><div class='warn'>⚠️ 숨김 처리 안 되어 있는 경우 진료기록사본 발급 시 취소 메모가 내용에 같이 출력됨<br>→ <strong>진료기록사본 발급 전 취소 메모 숨김 여부 반드시 체크</strong></div>` },
+  { cat:"예약", q:"예약 시간보다 일찍 온 환자는 어떻게 안내하나요?", tags:["예약","일찍","대기","안내"], a:`<div class='script'>"예약 시간보다 일찍 오셔서, 앞에 먼저 예약하신 분들 진료 후 순차적으로 진료가 가능하여 대기시간이 있으십니다. 앞 진료가 빨리 끝나면 예약시간보다 먼저 진료 가능하나, 진료가 밀릴 경우 예약시간에 진료 가능하십니다. 양해 부탁드립니다!"</div>` },
+  { cat:"예약", q:"통합치과 다음 예약 안 잡고 가는 분은 어떻게 처리하나요?", tags:["예약","통합치과","통합과","해피콜","리콜"], a:`<ul><li>다음 예약 안 잡고 가시는 분들 → <strong>해피콜(리콜) 1주일 뒤</strong>로 설정</li><li>부재 시 추가 1주일 뒤 → 총 2회</li><li>정기검진 예약 안 잡는 분들 → 개월 수에 맞춰 해피콜 설정</li></ul>` },
+  { cat:"예약", q:"구환이 네이버 예약을 했을 때 어떻게 처리하나요?", tags:["예약","구환","네이버"], a:`<ul><li>전화로 네이버 예약 취소 처리 후 → 예약기준에 맞춰 <strong>구환 칸에 진료 예약</strong> 잡아드리기</li><li>부재일 경우 → 문자 남기고 <strong>네이버 예약 취소 처리</strong></li></ul><div class='warn'>⚠️ 중요 — 취소 안내 시 응대 멘트 통일<br>"네이버 예약은 처음 오시는 환자분들 <strong>'상담'</strong> 가능 시간이 표시되어 있어, <strong>'진료'</strong> 예약은 가능한 시간으로 제가 예약 도와드리겠습니다."</div><div class='note'>📱 부재 시 SMS 발송 방법<br>덴트웹 → 문자보내기 → <strong>'네이버예약오류부재시취소문자'</strong> 양식 선택 후 발송</div>` },
+  { cat:"예약", q:"구강내과 예약 기준이 어떻게 되나요?", tags:["예약","기준","구강내과","남윤","박유진","남현","전소영","신환","구환"], a:`
+<table>
+<tr><td colspan='3'><strong>🦷 Dr. 남윤</strong> — 휴진: 수 오전, 목 오후</td></tr>
+<tr><td>신환</td><td colspan='2'>30분 단위 1명 (월·화·수오후·목오전·금·토)</td></tr>
+<tr><td>구환 기본</td><td>요일</td><td>:00/:30 (짝수줄) / :15/:45 (홀수줄)</td></tr>
+<tr><td></td><td>월</td><td>2줄 / 2줄</td></tr>
+<tr><td></td><td>화</td><td>2줄 / 3줄</td></tr>
+<tr><td></td><td>수 오후 (18:00 이전)</td><td>2줄 / 2줄</td></tr>
+<tr><td></td><td>수 야간 (18:00~)</td><td>2줄 / 3줄</td></tr>
+<tr><td></td><td>목 오전</td><td>2줄 / 3줄</td></tr>
+<tr><td></td><td>금</td><td>2줄 / 3줄</td></tr>
+<tr><td></td><td>토</td><td>2줄 / 3줄</td></tr>
+<tr><td>⚠️ 기준 예외 시간</td><td>화·목·금 13:00</td><td>3줄 / 13:15 → 2줄</td></tr>
+<tr><td></td><td>화·금 18:00</td><td>3줄 / 18:15 → 2줄</td></tr>
+<tr><td></td><td>수 20:00</td><td>3줄 / 20:15 → 2줄</td></tr>
+<tr><td></td><td>토 13:30</td><td>3줄 / 13:45 → 2줄</td></tr>
+</table>
+<table>
+<tr><td colspan='2'><strong>🦷 Dr. 남현</strong> — 남윤 원장님 협진 인력</td></tr>
+<tr><td>휴진</td><td>월·수</td></tr>
+<tr><td>협진</td><td>화·목오전·금·토 (남윤 원장님과 함께)</td></tr>
+<tr><td>단독진료</td><td><strong>목요일 오후만</strong> 단독 진료 가능<br>신환: <strong>1시간 단위</strong> 예약 (예: 14:00, 15:00, 16:00)<br><span style='color:#c62828;font-weight:600;'>⛔ 30분 뒤 겹쳐 잡기 절대 금지</span></td></tr>
+<tr><td colspan='2'><div class='note'>📢 목요일 오후 남현 원장님 단독진료일<br>• Dr.H 환자 진료 가능<br>• Dr.N · Dr.P <strong>주사치료·세정술 진료 가능</strong><br>• Dr.N · Dr.P <strong>DEL은 다른 일정으로 안내</strong></div></td></tr>
+</table>
+<table>
+<tr><td colspan='3'><strong>🦷 Dr. 박유진</strong> — 휴진: 화·목 / 수요일 야간 없음</td></tr>
+<tr><td>신환 (턱관절)</td><td colspan='2'>월·수 오후: <strong>1시간 단위 1명</strong> / 수 오전·금·토: <strong>30분 단위 1명</strong></td></tr>
+<tr><td>신환 (연조직)</td><td>수·금 오전</td><td>매시 <strong>:15분에만</strong> 1명</td></tr>
+<tr><td></td><td>금 오후</td><td>매시 <strong>:45분에만</strong> 1명</td></tr>
+<tr><td></td><td colspan='2'>❌ 연조직 신환 불가: 월·수오후·토</td></tr>
+<tr><td>구환</td><td>수 오전·금·토</td><td>:00/:30 → 2명 / :15/:45 → 3명</td></tr>
+<tr><td></td><td>수 오후</td><td>:00/:15/:30/:45 → 1명</td></tr>
+</table>
+<table>
+<tr><td colspan='2'><strong>🦷 Dr. 전소영</strong> — 근무: 월·수·금·토 / 휴진: 화·목</td></tr>
+<tr><td colspan='2'><div class='note'>단독 진료 없음 — 협진으로만 진행</div></td></tr>
+</table>
+<div class='note'>📌 공통: 아프거나 불편한 분들은 최대한 빨리 예약 잡아드리기. 응대 시 <strong>불편감 여부 및 부위</strong> (예: 오른쪽·왼쪽·위·아래·몇 번째 치아) 항상 확인</div>
+`},
+  { cat:"예약", q:"통합치과 예약 기준이 어떻게 되나요?", tags:["예약","기준","통합치과","김기홍","한우리","신환","구환"], a:`
+<table>
+<tr><td colspan='2'><strong>🦷 Dr. 김기홍</strong> — 신환: 30분 단위 / 구환: 진료 소요시간 고려하여 예약</td></tr>
+<tr><td colspan='2'>
+• St-o·dr·sc·정기검진·수술체크·교합조정·미백 → 15~20분<br>
+• inlay prep·Cr Prep → 30~40분<br>
+• 수술(implant op·GBR·난발치) → 60분 이상
+</td></tr>
+</table>
+<table>
+<tr><td colspan='2'><strong>🦷 Dr. 한우리</strong> <span style='font-size:11px;color:#888;'>(보존과 전문의)</span> — 근무: <strong>매주 화요일만</strong></td></tr>
+<tr><td colspan='2'>
+• ENDO·Ci·Cs·CF+core (신경치료) → 30~40분
+</td></tr>
+</table>
+<div class='note'>📌 공통: 아프거나 불편한 분들은 최대한 빨리 예약 잡아드리기. 응대 시 <strong>불편감 여부 및 부위</strong> (예: 오른쪽·왼쪽·위·아래·몇 번째 치아) 항상 확인</div>
+`},
+  { cat:"예약", q:"구강내과 Del 예약 기준이 어떻게 되나요?", tags:["예약","del","구강내과","딜리버리","스플린트","장치","장착","주황"], a:`<ul><li><strong>Del</strong> = 스플린트 장치 장착 (Delivery) 의미</li><li>예약표에 미리 <strong style='background:#ff9800;color:#fff;padding:1px 5px;border-radius:3px;'>주황색 Del 슬롯</strong>이 잡혀 있음 → 해당 칸에 Del 환자 예약 후 <strong>기존 Del 슬롯은 취소칸으로 이동</strong></li><li>예약표에 Del 슬롯이 없으면 <strong>직접 생성</strong> 필요</li></ul>
+<table>
+<tr><td colspan='3'><strong>Del 슬롯 생성 기준</strong></td></tr>
+<tr><td rowspan='2'><strong>Dr. 남윤</strong></td><td>월·화·목·금</td><td>오전 4개 / 오후 3개 (최소 30분 간격)</td></tr>
+<tr><td>수요일</td><td>오후 4~5개 (최소 30분 간격)</td></tr>
+<tr><td></td><td>토요일</td><td>5개 (최소 30분 간격)</td></tr>
+<tr><td rowspan='2'><strong>Dr. 박유진</strong></td><td>월·금</td><td>오전 2개 / 오후 2개 (최소 30분 간격, 더 벌어져도 무관)</td></tr>
+<tr><td>수요일</td><td>오전 3개 / 오후 3개 (최소 30분 간격)</td></tr>
+<tr><td></td><td>토요일</td><td>3~4개</td></tr>
+</table>
+<div class='warn'>⚠️ 주의 — Dr. 남윤 환자 Delivery 시 <strong>1차 조정은 협진 원장님</strong>이 담당<br>수요일 야간은 Dr. 전소영 원장님만 계심<br>→ Dr. 박유진 환자 중 <strong>Dr. 전소영 협진 동의한 환자</strong>의 Del은 <strong>가급적 다른 일정으로 안내</strong><br>→ 불가피한 경우 Dr. 남윤 Del 환자와 <strong>최소 30분 간격</strong> 필요</div>` },
+  { cat:"예약", q:"예약이 왜 늦게 잡히냐고 물어보면 어떻게 답하나요?", tags:["예약","늦게","멘트"], a:`<div class='script'>불편을 드려 죄송합니다. 저희 원장님들께서 세세하게 진료를 봐 드리려고 하다 보니 하루에 볼 수 있는 환자 수가 정해져 있습니다. 원하시는 일정 말씀 주시면 변경·취소 시에 연락드려도 괜찮을까요?</div><div class='note'>📢 슬랙 채널 <strong>#데스크_취소자리_안내</strong> 에 메모 남기기</div>` },
+
+  { cat:"접수", q:"접수 시 안내하는 모바일 문진(QR 문진)은 뭔가요?", tags:["접수","문진","QR","모바일문진","재진","구환"], a:`<ul><li><strong>재진환자 인터뷰 링크</strong> — 구강내과 구환 분들 진료 전 그동안 증상이 어떠셨는지 체크하는 모바일 문진표</li></ul><div class='note'>접수 시 멘트: "핸드폰 카메라로 QR 코드 인식하여 문진 작성 부탁드립니다."</div><div class='warn'>⚠️ 문진 안내 안 하는 경우<br>• QR 사용이 익숙하지 않은 어르신<br>• 신환<br>• 통합치과 환자<br>• 구강내과 연조직 환자<br>• 주사치료 환자<br>• 장치 Imp' 환자<br>• 물리치료만 있는 환자</div>` },
+  { cat:"접수", q:"접수 기본 순서는 어떻게 되나요?", tags:["접수","순서","신환","구환"], a:`<ul><li>① 예약/미예약 환자 구분</li><li>② 구환/신환 구분 → 구강내과 OR 통합치과 구분</li><li>③ 예약시간 확인 → <strong>신분증 확인</strong> 후 접수 (신환 모두, 구환 6개월 단위)</li><li>④ 미예약 환자 → 당일 예약 가능한지 확인 후 진료 및 대기 안내 or 예약 불가 시 <strong>직급자에게 확인 후 접수</strong></li></ul>` },
+  { cat:"접수", q:"신환 접수 시 뭘 확인해야 하나요?", tags:["접수","신환","문진표","본인확인","소개","medical history"], a:`<ul><li>초진 문진표 작성 안내 (하단 <strong>개인정보동의 서명까지</strong> 작성 요청)</li><li>덴트웹 신환 등록 시 <strong>내원경로, 담당 원장님, 정보제공동의 체크 필수</strong></li></ul><ul><li>본원 등록 환자의 소개 신환인 경우 <strong>소개자 등록 필수</strong><ul><li>소개해주신 분 + 소개받아 내원한 신환 분 차트 <strong>양쪽 모두 차팅 필수</strong></li><li>차팅 시 <strong style='background:#ffb6c1; padding:1px 4px; border-radius:3px;'>핑크색 배경</strong> + <strong style='color:#1a6fd4;'>파란색 글씨</strong> + 전자차트 하단 고정</li><li>구강내과 소개 환자 → 소개해주신 분께 <strong>소개감사 SMS 발송</strong></li><li>통합치과 환자가 통합치과 환자 소개한 경우 → 소개해주신 분께 <strong>소개감사 기프티콘 SMS 발송</strong></li></ul></li></ul><div class='warn'>⚠️ 소개받아 내원한 신환의 경우 소개해주신 분이 동명이인일 수 있으니 <strong>생년월일 또는 연락처 확인 필수</strong></div><ul><li>Medical history: <strong>전신질환, 복용 약물, 약물 알러지</strong> 철저히 체크</li><li>고혈압·당뇨·고지혈증·심장질환 체크 시 → <strong>혈전용해제 복용 여부</strong> 추가 확인</li><li>골다공증 환자 → 복용 중인 약 또는 주사 여부 확인<ul><li>주사인 경우: <strong>몇 개월 단위로 맞는지 + 마지막 주사 일정</strong> 체크 후 기록</li></ul></li></ul>` },
+  { cat:"접수", q:"미예약 환자가 왔을 때 어떻게 안내하나요?", tags:["접수","미예약","대기","안내"], a:`<div class='script'>[진료 가능할 때] 저희 병원은 예약제로 운영되고 있어, 예약 하셔야 진료 가능하십니다. 다행히 오늘 00:00(빈 예약시간)에 변경하신 분이 계셔서 진료 가능합니다. 다만 예약 환자분부터 순차적으로 진료를 보다 보니 대기시간이 발생되실 수 있어 양해 부탁드립니다.</div><div class='script'>[진료 어려울 때] 오늘은 예약이 차 있어, 진료가 어려우십니다. 가장 빠른 일정으로 예약 도와드려도 괜찮을까요?</div>` },
+
+
+  { cat:"접수", q:"del 후 첫 체크 환자가 미예약 or 취소한 경우 어떻게 하나요?", tags:["접수","del","첫체크","내원콜","해피콜","미예약","취소"], a:`<table>
+<tr><td><strong>미예약인 경우</strong></td><td>해피콜 남기기 (메모: 미예약, del 후 첫 체크 기록)</td></tr>
+<tr><td><strong>예약을 잡은 경우</strong></td><td>예약 메모에 <strong>del 후 첫 ck</strong> 남겨주기</td></tr>
+<tr><td><strong>예약 취소한 경우</strong></td><td>해피콜 남기기<br>예약 없이 <strong>2개월 경과되지 않게</strong> 내원콜 계속<br>부재 시 해피콜 계속 남기기</td></tr>
+</table>` },
+
+  { cat:"수납", q:"현금영수증 발급은 어떻게 하나요?", tags:["수납","현영","현금영수증","현금","자진","사업자","계좌이체"], a:`<ul><li>현금 or 온라인(계좌이체) 결제 시 환자분이 원하면 발급 가능</li><li>원치 않으시면 발급 안 해도 되나 — <strong>10만원 이상인 경우 자진발급 필수!</strong></li></ul><div class='warn'>⚠️ 10만원 이상 현금 결제인데 환자분이 현금영수증 원치 않는 경우 → <strong>반드시 자진발급</strong></div><ul><li>덴트웹 → 전자차트 → 상세수납창 → <strong>현금수납 ▶</strong> or <strong>기타(온라인) ▶</strong> 클릭 → 수납저장 → <strong>현금영수증 버튼(or 현영발행 ▶)</strong> 클릭</li></ul><table><tr><td>환자분이 원하는 경우</td><td>휴대폰 번호 or 사업자 번호로 발급</td></tr><tr><td>원치 않으나 10만원 이상</td><td>현금영수증 발행 → <strong>자진발급</strong> 클릭</td></tr></table>` },
+  { cat:"수납", q:"어떤 결제 수단이 가능한가요?", tags:["수납","결제","페이","카카오페이","삼성페이","네이버페이","제로페이","토스"], a:`<table><tr><td>삼성페이</td><td class="ok">✓ 가능</td></tr><tr><td>제로페이</td><td class="ok">✓ 가능</td></tr><tr><td>네이버페이</td><td class="ok">✓ 가능 (QR 모드로 변경)</td></tr><tr><td>토스 페이스 페이</td><td class="ok">✓ 가능 (QR 모드로 변경)</td></tr><tr><td>카카오페이</td><td class="no">✗ 불가</td></tr></table>` },
+  { cat:"수납", q:"수납 전 비보험 진료 비용 체크해야 할 것은?", tags:["수납","비보험","초음파","장치조정","수납체크"], a:`<ul><li>초진 시 초음파 <strong>2만원</strong></li><li>구환 X-ray 촬영 날 장치조정 <strong>무료</strong></li><li>고주파(물리치료 심화) <strong>무료</strong></li></ul><div class='note'>구환 X-ray 날 장치조정 무료 멘트: "오늘 뼈 상태 보기 위해 엑스레이 촬영하셔서 장치조정 비용은 원장님께서 빼주셨어요"</div>` },
+  { cat:"수납", q:"계좌이체 수납 확인 순서는?", tags:["수납","계좌이체","이체","온라인","현금영수증","히든메모"], a:`<ul><li>① 환자분께 <strong>계좌번호와 진료금액</strong> 안내 (포스트잇에 적어서 붙여드리기)</li><li>② 이체 후 <strong>화면 확인</strong></li><li>③ <strong>현금영수증 발행 여부</strong> 확인<ul><li>10만원 이상인 경우, 발행 원치 않으시면 <strong>자진발급</strong></li></ul></li><li>④ 덴트웹 전자차트 <strong>히든 메모</strong> 남기기</li></ul><div class='note'>메모 예시<br>• 12,600원 계좌이체, 현영 발급 / 수납자이름<br>• 233,000원 계좌이체, 현영 원치 않아 자진발급 / 수납자이름</div>` },
+  { cat:"수납", q:"제로페이는 어떻게 결제하나요?", tags:["수납","제로페이","결제","바코드"], a:`<ul><li>토스 단말기 결제 패드 <strong>길게 터치</strong></li><li>하단 <strong>제로페이 바코드</strong> 터치</li><li>환자분께 직접 스캔하여 결제하도록 안내</li></ul>` },
+  { cat:"수납", q:"제로페이 결제 후 덴트웹 수납 입력 처리는 어떻게 하나요?", tags:["수납","제로페이","덴트웹","기타","온라인","현금영수증"], a:`<ul><li>덴트웹 → <strong>기타/온라인</strong>에 금액 입력 → 옆 구분을 <strong>제로페이</strong>로 변경</li></ul><div class='note'>현금영수증 발행 안 함. 환자분께 현금영수증 처리는 <strong>제로페이 앱 내에서</strong> 하시면 된다고 안내</div>` },
+  { cat:"수납", q:"제로페이 결제 확인은 어떻게 하나요?", tags:["수납","제로페이","확인","어플","사이트"], a:`<ul><li>병원 핸드폰에 <strong>제로페이 앱</strong> 설치되어 있어 앱 내에서 확인 가능</li><li>컴퓨터로는 사이트 접속하여 확인 가능<br><strong>https://www.zeropay.or.kr/UI_HP_001.act</strong></li></ul>` },
+  { cat:"수납", q:"10원 단위가 발생되는 환자분들 중 현금 결제인 경우는 어떻게 처리하나요?", tags:["수납","현금","10원","할인","잔돈","거스름돈"], a:`<ul><li>덴트웹 수납창에서 <strong>환자부담금 옆 할인금액 ▶ 버튼</strong> 클릭</li><li>할인금액 직접 입력 → 발생된 <strong>10원 단위 금액</strong> 입력</li><li>확인 클릭 후 결제</li></ul>` },
+
+
+  { cat:"내원콜", q:"신분증 지참 안내 SMS는 언제 보내나요?", tags:["내원콜","신분증","SMS","문자","공휴일","토요일"], a:`<ul><li><strong>대상</strong>: 다음 날 (토요일·공휴일의 경우 이후 진료일) 환자분들 중 덴트웹 예약표에 <strong>신분증 확인 (🪪🚫) 표시</strong>가 있는 분들</li><li><strong>발송 시간</strong><ul><li>평일: <strong>17시 이후</strong></li><li>토요일: <strong>13시 이후</strong></li></ul></li></ul>` },
+  { cat:"내원콜", q:"예약 안내 문자는 언제 보내나요?", tags:["내원콜","예약문자","안내문자","알림톡","발송시간","하루전","하루전sms","내원톡"], a:`<ul><li>발송 시간: <strong>11:00</strong> (10:00 진료 시작 후 발송 시 인바운드 콜과 겹칠 수 있음)</li></ul><ul><li>① 덴트웹 → 예약 → <strong>다음 날 예약일</strong> 클릭</li><li>② 예약표에서 <strong>마우스 오른쪽 클릭</strong> → 0월 0일 예약 환자 모두에게 예약문자 발송 클릭</li><li>③ 오른쪽 환자 목록 중 <strong>체크박스 빠진 분들까지 선택</strong></li><li>④ 알림톡 템플릿에서 선택 클릭 → 일정에 맞는 양식 선택<ul><li>일반: <strong>예약안내(하루전)</strong></li><li>공휴일 전: <strong>예약안내(공휴일전)</strong></li></ul></li><li>⑤ 금액 창 확인 후 <strong>문자메시지 발송</strong> 클릭</li></ul>` },
+  { cat:"내원콜", q:"내원콜(하루 전 콜) 대상이 어떻게 되나요?", tags:["내원콜","신환","DEL","주사","장치","스플린트","세정술","하루전콜"], a:`<table><tr><td>구강내과 Dr.남윤 / 박유진 / 남현</td><td>신환, DEL, 주사치료(MMTT·PDRN·콜라겐), 장치 인상(Imp')</td></tr><tr><td>Dr.김기홍 / 한우리</td><td>신환, 진료 칸</td></tr><tr><td>세정술</td><td>무조건 내원콜</td></tr></table>` },
+  { cat:"내원콜", q:"하루 전 내원콜은 어떻게 진행하나요?", tags:["내원콜","하루전","콜","알림톡","차팅"], a:`<ul><li>오전 <strong>11시 이후</strong> 통화</li><li>통화 후 덴트웹 예약 메모에 차팅<br><span style='color:#888;font-size:12px;'>ex. 5/12 내원확인, 소요시간, 신분증안내 / 통화자이름</span></li></ul><div class='note'>부재 시 — <strong>구강내과 신환</strong><br>덴트웹 → 문자메시지 보내기 → 알림톡 템플릿 선택 → <strong>턱관절 신환 내원콜 부재 알림톡</strong> 양식 발송<br>발송 후 예약 메모 차팅<br><span style='color:#888;font-size:12px;'>ex. 5/12 내원콜부재, 알림톡발송 / 통화자이름</span></div><div class='note'>부재 시 — <strong>구강내과 구환 / 통합치과 신환·구환</strong><br>덴트웹 → 문자메시지 보내기 → 알림톡 템플릿 선택 → <strong>재진(일반, 내과) 사전콜 부재 알림톡</strong> 양식 발송<br>발송 후 예약 메모 차팅<br><span style='color:#888;font-size:12px;'>ex. 5/12 내원콜부재, 알림톡발송 / 통화자이름</span></div>` },
+  { cat:"내원콜", q:"하루 전 문자 발송은 언제 보내나요?", tags:["내원콜","문자","발송","시간","11시"], a:`<ul><li>10시 진료 시작 후 인바운드 콜과 겹칠 수 있음</li><li><strong>하루 전 문자 발송은 꼭 11시에</strong></li></ul>` },
+  { cat:"내원콜", q:"당일 미내원 환자 확인은 어떻게 하나요?", tags:["내원콜","미내원","당일","콜"], a:`<ul><li>예약 시간 <strong>10~15분 경과</strong> 시 내원 중인지 확인 전화</li><li>전화 후 예약 메모 차팅 (예: 17:59 미내원콜-부재/유, 17:59 가고 있어요 10분 늦어요/유)</li></ul>` },
+
+  { cat:"충격파", q:"충격파 후 주의해야 할 사항이 있나요?", tags:["충격파","충격파 후","주의사항","보톡스","간격"], a:`<ul><li>충격파 후 <strong>보톡스 시술</strong>은 <strong>한 달 뒤</strong> 가능</li><li>충격파 후 <strong>다음 충격파 예약</strong>은 <strong>최소 10일 뒤</strong> 가능</li></ul>` },
+  { cat:"충격파", q:"충격파 예약 기준?", tags:["충격파","물리치료","충격파예약잡는법","예약","단위","30분","15분"], a:`<ul><li>기본: <strong>30분 단위</strong>로 먼저 채우기</li><li>자리 없을 때 추가는 <strong>15분 단위</strong>로 끼우기</li><li>박·남원장님 동시 진료일 → 물리치료실 빠듯, <strong>남원장님만 나오는 화·목으로 권유</strong></li></ul>` },
+  { cat:"충격파", q:"충격파 예약 제한이 있는 시간대가 있나요?", tags:["충격파","제한","토요일","금요일","시간"], a:`<table><tr><td>토요일 13:00~13:45</td><td><strong>1명만</strong> 가능. 이미 잡혔다면 다른 날 or 13시 이전 권유</td></tr><tr><td>금요일 18:00 이후</td><td><strong>1명만</strong> 가능</td></tr><tr><td>토요일 첫 타임 9:30·9:45</td><td>청하선생님 식사시간 → <strong>피해주기</strong></td></tr></table>` },
+  { cat:"충격파", q:"충격파 가격이 어떻게 되나요?", tags:["충격파","가격","비용","충격파비용","충격파가격","물리치료"], a:`<table><tr><td>편측 (Rt or Lt)</td><td><strong>5만원</strong></td></tr><tr><td>양측 (Rt + Lt)</td><td><strong>10만원</strong></td></tr><tr><td>2부위 편측</td><td>기본 <strong>10만원</strong><br>타수 줄여서 진행 시 <strong>7만 5천원</strong></td></tr></table><div class='warn'>⚠️ 고정된 치료계획 비용 <strong>반드시 확인!</strong></div>` },
+
+  { cat:"영상자료", q:"타 원 촬영 영상자료 가져온 신환은 어떻게 처리하나요?", tags:["영상","USB","CD","신환","무전","CT","pano"], a:`<div style='background:#e8f0fe;border-radius:8px;padding:10px 12px;margin-bottom:8px;'><strong>💾 USB 지참한 경우</strong><br><br><span style='color:#e65100;font-weight:500;'>⚠️ 접수 즉시 무전: "몇 시 신환 000님 USB 지참하셔서 확인 후 안내 드리겠다"</span><br><br><ul style='margin:6px 0 0 0;padding-left:1.1rem;'><li><strong>pano·TMJ만 있을 경우</strong>: 덴트웹 → 사진찍기 → 이미지 파일 추가</li><li><strong>CT 있을 경우</strong>: 덴트웹 → X-ray → Will-Master → 환자이름 → 이미지관리 → 이미지 가져오기 → 3D image → <strong>숫자로 시작하는 dcm 파일 1개</strong> 선택 업로드</li><li>빠진 영상 있으면 <strong>무전 바로</strong> (빠진 영상만 촬영하고 바로 진단 들어가야 함)</li></ul></div><div style='background:#e8f5e9;border-radius:8px;padding:10px 12px;'><strong>📀 CD 지참한 경우</strong><br><br><span style='color:#e65100;font-weight:500;'>⚠️ 접수 즉시 무전: "몇 시 신환 000님 CD 지참하셔서 확인 부탁드립니다"</span></div>` },
+  { cat:"영상자료", q:"CD 가져오신 환자는 어떻게 응대하나요?", tags:["영상","CD","신환","구환"], a:`<table><tr><td><strong>신환</strong></td><td>CD에 어떤 영상 있는지 여쭤보기 → "안쪽에서 확인 후 추가 촬영 가능" 설명 → 무전</td></tr><tr><td><strong>구환</strong></td><td>차팅 남기고 어레인지에 전달 또는 무전. 환자분께: "당일 판독 어려울 수 있어 안쪽에서 안내 드리겠다"</td></tr></table>` },
+
+  { cat:"주차", q:"무료 주차는 몇 시간인가요? 이후 요금은?", tags:["주차","무료","요금","시간","주차비","2시간"], a:`<ul><li>건물 주차 <strong>최대 2시간 지원</strong></li><li>2시간 초과 이후: <strong>10분당 1,000원</strong></li></ul><div class='warn'>⚠️ 1회만 등록 가능 — 출차 후 재입차 시 추가 등록 안 됨. 건물 내 다른 상가에서 이미 등록한 경우도 추가 등록 불가. 꼭 설명 필요.</div>` },
+  { cat:"주차", q:"주차 등록은 어떻게 하나요?", tags:["주차","등록","방법","사이트","차량번호"], a:`<ul><li>주차등록 사이트: <strong>http://58.120.98.220/discount/registration?SWversion=ATS3000_20250512</strong></li><li>차량번호 검색 후 상황에 맞는 버튼 클릭</li></ul><table><tr><td><strong>일반 (2시간 이내)</strong></td><td>→ <strong>2시간 할인</strong> 클릭<br>멘트: "최대 2시간 지원 가능하여 2시간 등록 해드렸습니다"</td></tr><tr><td><strong>신환, 접수 후 2시간 초과</strong></td><td>→ <strong>2시간 할인(후불)</strong> 클릭<br>멘트: "주차등록 해드렸습니다, 바로 출차 하시면 됩니다"<br><br>환자가 "몇 시간 됐나요?" 질문 시:<br>"최대 2시간 지원 가능하나, 처음 내원 하셔서 지금 출차하시면 비용 따로 발생되지 않으십니다"</td></tr></table><div class='note'>출차 5분 전 반드시 등록. 이 외 추가 설명이나 다른 멘트 금지.</div>` },
+
+  { cat:"보험·서류", q:"환자분이 보험서류 요청 시 확인할 것은?", tags:["보험","서류","진단서","소견서","확인서","용도","팩스"], a:`<ul><li>영수증·세부내역서 → <strong>당일 바로 발급</strong><br><span style='font-size:12px;color:#888;'>(구강내과 진료만 본 경우 진료과목 <strong>구강내과</strong>로 출력되었는지 확인)</span></li></ul><div style='background:#e8f0fe;border-radius:8px;padding:10px 12px;margin:6px 0;'><strong>🦷 구강내과 환자</strong><br><ul style='margin:6px 0 0 0;padding-left:1.1rem;'><li>환자분께 <strong>제출 용도 확인</strong> (보험사 제출용·회사 제출용·기관 제출용 등)</li><li>기존 양식 소견서 (보톡스·PDRN·콜라겐·TPI·충격파) 제외한 소견서 또는 진단서 요청 시 → <strong>발급 사유 확인</strong> (어떤 내용이 들어가야 하는지 체크)</li></ul></div><div style='background:#e8f5e9;border-radius:8px;padding:10px 12px;margin:6px 0;'><strong>🦷 통합치과 환자</strong><br><ul style='margin:6px 0 0 0;padding-left:1.1rem;'><li>가입하신 <strong>치아보험사를 통해</strong> 보험사 당사 치과치료확인서 양식 + 필요서류 안내 받으시고 본원에 요청하시는 것 안내</li></ul></div>` },
+  { cat:"보험·서류", q:"서류 발급 비용은 어떻게 되나요?", tags:["서류","비용","소견서","진단서","차트","확인서","사본","발급기간"], a:`<table><tr><td>영수증·세부내역서</td><td class="ok">무료 (당일 발급 가능)</td></tr><tr><td>통원진료확인서</td><td class="ok">무료 (당일 발급 가능)</td></tr><tr><td>소견서 (보톡스·PDRN·TPI·콜라겐·충격파)</td><td class="ok">무료 (당일 발급 가능)</td></tr><tr><td>소견서 (장치·회사 제출·기타)</td><td>1만원 (2~3일 소요 안내 필요)</td></tr><tr><td>진단서 (일반)</td><td>1만원 (2~3일 소요 안내 필요)</td></tr><tr><td>진단서 (영문)</td><td>2만원 (2~3일 소요 안내 필요)</td></tr><tr><td>진단서 (군부대 제출용)</td><td>1만원 (2~3일 소요 안내 필요)</td></tr><tr><td>병무용 진단서</td><td>2만원 (2~3일 소요 안내 필요)</td></tr><tr><td>상해 진단서 (3주 미만)</td><td>10만원 (2~3일 소요 안내 필요)</td></tr><tr><td>상해 진단서 (3주 이상)</td><td>15만원 (2~3일 소요 안내 필요)</td></tr><tr><td>진료 확인서</td><td>1만원 (본원 양식 당일 발급 가능 / 치아보험사 양식 2~3일 소요)</td></tr><tr><td>차트 사본</td><td>1~5장 1천원 / 5장 초과 장당 100원 (2~3일 소요 안내 필요)</td></tr><tr><td>진료 의뢰서·교정 의뢰서·회신서</td><td class="ok">무료 (2~3일 소요 안내 필요)</td></tr></table><div class='note'>본인 직접 수령 or 신분증 확인 후 카카오톡 전송 가능. 가족 수령 시 환자 신분증 사본 + 대리인 신분증 사본 + 가족관계 증명서 필요.</div>` },
+  { cat:"자동차보험", q:"자동차보험 환자는 뭔가요?", tags:["자동차보험","자보","지급보증서","접수번호","사고"], a:`<ul><li>자동차(택시·버스 포함) 사고 이후 턱관절 문제가 발생한 경우</li><li>자동차보험 회사에서 <strong>의료급여 되는 범위의 진료비를 환자 대신 부담</strong></li><li>환자는 <strong>비급여 진료비용만 부담</strong> (장치조정·초음파·서류비용 등)</li></ul><div class='warn'>⚠️ 내원 시 <strong>접수번호 + 지급보증번호</strong> 2가지가 기록된 <strong>지급보증서 지참</strong> 필수</div>` },
+  { cat:"자동차보험", q:"자동차보험 환자 장치조정도 보험 처리 되나요?", tags:["자동차보험","자보","장치조정"], a:`<ul><li><strong>26년 1월부터</strong> 자동차보험 환자 장치조정도 자동차보험 처리 가능</li><li>자동차보험 환자 비급여 비용은 수납 받기 (장치조정, 초음파, 서류비용 등)</li></ul>` },
+  { cat:"자동차보험", q:"자동차보험 환자 진료기록 입력은 어떻게 하나요?", tags:["자동차보험","자보","차팅","상병코드","S코드","덴트웹"], a:`<ul><li>덴트웹 → 전자차트 → 문서발급 옆 <strong>자동차보험 클릭</strong> 후 차팅</li></ul><div class='warn'>⚠️ 진료 입력 시 상병명(상병코드) <strong>무조건 S코드</strong> 입력<br><strong>S03.4</strong> — 턱, 측두하악(관절·인대)의 염좌 및 긴장</div>` },
+  { cat:"자동차보험", q:"자동차보험 지급보증중지서 팩스로 오면?", tags:["자동차보험","자보","지급중지","팩스","지급보증"], a:`<ul><li>① 중지서 <strong>스캔 후 전자차트 업로드</strong></li><li>② 중지 일자 확인<ul><li>중지 일자가 <strong>예약일보다 이전</strong>인 경우 → 환자에게 <strong>SMS 발송</strong></li><li>중지 일자가 <strong>예약일 이후</strong>인 경우 → 내원 시 <strong>지급보증중지 직접 안내</strong></li></ul></li></ul><div class='note'>📱 지급보증중지 안내 SMS 발송<br>덴트웹 → 문자보내기 → <strong>'다음지급보증서필요시'</strong> 양식 발송</div>` },
+
+  { cat:"장치", q:"환자가 장치를 본뜨고 간 뒤 보류 or 취소하고 싶다고 하면 어떻게 하나요?", tags:["장치","스플린트","취소","보류","환불","인상","imp"], a:`<div class='script'>담당 상담사분께 내용 전달 후 연락드리도록 하겠습니다.</div><ul><li>덴트웹 → 전자차트에 <strong>해당 기록 남기기</strong></li><li>슬랙 → <strong>#환불_요청</strong> 채널에 아래 내용 보내기<ul><li>장치 인상일 / 환자이름(차트번호) / 장치 환불 요청 / <strong>@상담자 태그</strong></li></ul></li><li>가능하면 시간 될 때 <strong>상담자에게 구두로도 내용 전달</strong></li></ul>` },
+  { cat:"장치", q:"장치 조정 비용은?", tags:["장치","스플린트","조정","비용","무료","free","조정비용"], a:`<ul><li>26년 3월부터 기본 제공되던 장치조정 <strong>2회 FREE 없어짐</strong></li><li>고정된 치료 계획에 <strong>X회 FREE</strong> 되어 있는 경우 → 회차 맞춰 FREE 처리</li><li>고정된 치료 계획에 FREE 내용 없는 경우 → <strong>1회차부터 조정비용 2만원</strong> 발생</li></ul><div class='warn'>⚠️ 반드시 전자차트 하단 고정 치료 계획 확인 후 처리</div>` },
+  { cat:"장치", q:"장치 재제작 비용이 어떻게 되나요?", tags:["장치","스플린트","재제작","재제작비용","보증기간","무상","판테라","코골이","APS","SS","이갈이"], a:`<table>
+<tr><td><strong>판테라</strong></td><td>보증기간 관계없이 기존 장치 비용의 <strong>50%</strong> 환자 부담금 발생</td></tr>
+<tr><td><strong>코골이 장치</strong></td><td>보증기간 관계없이 기존 장치 비용의 <strong>25%</strong> 환자 부담금 발생</td></tr>
+</table>
+<table>
+<tr><td colspan='2'><strong>APS · SS · 이갈이 장치</strong> — 전자차트 내 고정된 계획 메모 확인 필요</td></tr>
+<tr><td><strong>2년 보증기간</strong> 메모된 경우</td><td>• 2년 이내 재제작 → <span class='ok'>2회 FREE</span><br>• 2년 경과 시 → 환자 부담금 <strong>20만원</strong> 발생</td></tr>
+<tr><td><strong>평생보증제도</strong> 메모된 경우</td><td>• 2년 경과 시 → 기존 장치 비용의 <strong>50%</strong> 환자 부담금 발생</td></tr>
+</table>
+<div class='note'>📌 2년 경과 후 재제작 시 <strong>보증기간 추가로 2년 갱신</strong></div>
+<div class='warn'>⚠️ 반드시 전자차트 하단 고정 계획 메모 확인 후 안내</div>` },
+  { cat:"장치", q:"판테라 버튼 탈락했을 땐 어떻게 응대하나요?", tags:["장치","스플린트","판테라","버튼","버튼탈락","버튼 떨어짐"], a:`<ul><li>당일 수리 가능 (<strong>원장님 진료 안 보셔도 됨</strong>)</li></ul><table><tr><td><strong>가까운 경우 (내원 가능)</strong></td><td>장치 지참하여 내원 권유<br>내원 시 <strong>20~30분 소요</strong> 안내</td></tr><tr><td><strong>거리가 먼 경우 (퀵 가능 거리)</strong></td><td>환자분께 장치를 본원으로 퀵 보내달라고 요청<br>수리 후 본원에서 다시 퀵 발송<br><span style='color:#e65100;font-size:12px;'>※ 환자분께 재발송 시 본원에서 퀵비 부담 — 착불로 받지 않게끔 주의</span></td></tr><tr><td><strong>지방 등 퀵 불가 거리</strong></td><td>택배로 보내주시면 수리 후 다시 택배 발송 안내</td></tr></table><div class='note'>📦 퀵·택배 수령 시 환자분께 본원 주소를 <strong>카카오톡 메시지로 보내달라고</strong> 요청</div>` },
+  { cat:"장치", q:"환자가 Del(Delivery) 예약 일정 변경하면 어떻게 하나요?", tags:["장치","스플린트","del","딜리버리","날짜","기공","일정변경","기공소"], a:`<ul><li>① 예약 일정보다 <strong>당겨서 원하는 경우</strong> → Del 자리 있는지 확인</li><li>② 자리 있는 경우 → 우선 <strong>환자분께 확인 후 연락드린다고 안내</strong></li></ul><div class='note'>📞 <strong>OPC 기공소</strong> — 032-423-1221<br>기공소 연락 후 <strong>환자 성함 + 기존 수령일</strong> 말씀드린 뒤 당길 수 있는지 확인<br>당겨서 보내주신다고 하면 → 환자분께 가능 안내 후 <strong>예약 변경</strong></div>` },
+
+  { cat:"종결·리뷰", q:"치료 종결 환자 수납 시에는 어떻게 안내하나요?", tags:["종결리뷰","리뷰안내","치료종결","종결","멘트","네이버","기프티콘"], a:`<div class='note'>수납 후 영수증 건네드리면서 멘트</div><div class='script'>그동안 치료 받으시느라 정말 고생 많으셨어요 :-) 오늘 치료가 잘 마무리되어 작은 종결 선물 준비해 드렸어요. 혹시 괜찮으시다면 한 줄이라도 좋으니 네이버 영수증 리뷰로 치료 경험을 살짝 남겨주실 수 있을까요? 000님의 짧은 한마디가 지금도 턱관절로 힘들어하시는 다른 환자분들께 큰 도움이 되고, 저희에게도 정말 큰 응원이 됩니다 :-)</div><ul><li>덴트웹 → 문자메시지 보내기 → <strong>'종결이벤트'</strong> 양식 발송</li><li>발송 후 슬랙 <strong>#리뷰_안내</strong> 채널에 기록<br><span style='color:#888;font-size:12px;'>ex. 환자이름(차트번호) 종결리뷰안내 SMS 발송 / 응대자이름</span></li><li>크롬 <strong>'고객지원실 종합'</strong> → 리뷰요청 스프레드시트에 작성</li></ul>` },
+  { cat:"종결·리뷰", q:"초진 환자분들 리뷰 안내는 뭔가요?", tags:["종결리뷰","리뷰안내","초진","네이버","구글","카카오맵","초음파","리뷰"], a:`<ul><li>구강내과 초진 환자분들 상담 시 <strong>상담자 재량</strong>으로 리뷰 작성 시 당일 발생되는 <strong>초음파 비용 2만원 제외</strong> 설명 드림</li><li>아웃 시 전자차트 or 포스트잇에 <strong>'리뷰안내'</strong> 차팅 있는 경우 → 수납 전 환자분께 리뷰 작성 여부 확인 → 확인 후 <strong>초음파 2만원 제외 후 수납</strong></li></ul><table><tr><td><strong>네이버로 예약한 분</strong></td><td>네이버 리뷰 작성 확인</td></tr><tr><td><strong>네이버로 예약 안 한 분</strong></td><td>다음(카카오맵) 또는 구글 리뷰 작성 확인</td></tr></table><div class='warn'>⚠️ 수납 없이 영수증 임의로 뽑아드리지 말 것!</div>` },
+  { cat:"종결·리뷰", q:"수납 후 환자 만족도는 어떻게 체크하나요?", tags:["종결","만족도","CS","응대"], a:`<div class='script'>[수납 전 먼저 여쭤보기] "오늘 진료는 어떠셨어요?" / "오늘 진료는 괜찮으셨나요?"</div><div class='script'>[긍정적일 때] "그러셨어요? 편안하게 진료 잘 받으셨다고 하시니 저희도 좋아요. 다음 예약일에 뵙겠습니다. 네이버 후기도 부탁드릴게요."</div><div class='script'>[부정적일 때] "아.. 불편하셨겠어요.. 죄송합니다. 앞으로 같은 부분으로 불편감 느끼지 않게 내부적으로 전달하여 개선하겠습니다."</div>` },
+
+  { cat:"환자가 자주 묻는 질문 응대", q:"뼈·연골에 좋은 영양제는 뭐가 있나요?", tags:["자주묻는질문","영양제","MSM","보스웰리아","콘드로이친","뼈","연골"], a:`<ul><li>MSM</li><li>보스웰리아</li><li>콘드로이친</li></ul>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"물리치료 관련해서 궁금해요", tags:["자주묻는질문","물리치료","열치료","전기치료","레이저","소요시간","비용"], a:`<ul><li>근육의 이완을 위해 <strong>자주 받으시는 게 좋음</strong></li><li>내원 시마다 <strong>진료 + 물리치료 같이</strong> 진행하는 것으로 안내 드림</li><li>물리치료만 받으러 내원도 가능 → 기간은 특정되어 있지 않아 원하시는 만큼 가능<br>보통 거리가 멀지 않으면 <strong>1주일에 1번</strong>은 받으러 내원하는 것도 도움이 된다고 설명 드림</li></ul><table><tr><td>비용</td><td>의료보험 적용 <strong>8~9천원대</strong></td></tr><tr><td>종류</td><td>열·전기·레이저 기계 <strong>동시 진행</strong></td></tr><tr><td>소요시간 (물리치료만)</td><td><strong>20분</strong></td></tr><tr><td>소요시간 (진료 + 물리치료)</td><td><strong>15분</strong></td></tr></table>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"리보트릴(항불안제)은 왜 처방해주는 건가요?", tags:["자주묻는질문","리보트릴","항불안제","근이완제","처방"], a:`<div class='script'>구강내과에서는 근이완제 목적으로 사용합니다. 신경 안정 작용을 통해 간접적으로 근육의 긴장을 풀어줍니다. 이로 인해 턱 근육 통증, 근육 긴장, 턱관절 장애(TMD) 치료에서 보조적으로 쓰이기도 합니다. 스플린트, 약물치료(근이완제, 진통제), 물리치료 등으로도 증상 완화가 어렵거나 통증이 만성화되거나 수면의 질이 크게 저하되어 삶의 질이 떨어지는 경우 보조적으로 저용량, 단기적으로 사용하기도 합니다. (수면 얘기는 되도록 안 하는 방향으로)</div><div class='warn'>⚠️ 졸림, 어지러움, 근력 약화 등의 부작용이 있을 수 있음 → 취침 직전 복용 안내</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"내가 쓰는 스플린트가 어떤 역할을 하는 건가요?", tags:["자주묻는질문","장치","스플린트","SS","APS","역할"], a:`<div class='note'><strong>SS 장치</strong> — 뼈의 변화가 있을 때 주로 사용</div><table><tr><td>턱관절 위치 안정화</td><td>관절 디스크 및 관절염 등 완화 보조</td></tr><tr><td>근육 긴장 완화</td><td>교근·측두근 등의 과긴장 완화</td></tr><tr><td>이갈이 억제</td><td>수면 중 치아 마모 및 통증 방지</td></tr><tr><td>교합 불균형 조정</td><td>비정상 교합 패턴을 안정된 위치로 유도</td></tr><tr><td>수면 질 개선</td><td>턱 긴장 완화로 인해 깊은 수면 유도 가능</td></tr></table><div class='note'><strong>APS 장치</strong> — 관절원판(디스크)이 어긋나거나 앞으로 밀린 상태일 때 사용. 아랫턱을 앞으로 유도하여 관절의 압박을 줄이는 구조이기 때문에 밤새 관절을 보호하고, 디스크를 잡아주는 인대조직의 회복 및 통증을 줄이는 역할을 합니다.</div><table><tr><td>디스크 위치 회복</td><td>아랫턱을 앞쪽으로 유도해 관절 내 공간 확보 → 전방전위된 디스크를 제자리로 유도</td></tr><tr><td>턱관절 통증 완화</td><td>관절 내 압박 감소 → 염증 및 자극 완화 → 통증 경감</td></tr><tr><td>턱관절 소리 감소</td><td>디스크 위치 정상화로 입 벌릴 때 딱딱 소리 감소 (제거X)</td></tr><tr><td>근육 긴장 완화 및 이갈이 억제</td><td>턱의 안정된 위치 유지 → 교근·측두근 등의 긴장 완화 → 무의식적 악무는 습관 감소</td></tr><tr><td>턱관절 운동 정상화</td><td>하악의 개폐 운동을 안정된 패턴으로 유도 → 턱의 기능 회복</td></tr><tr><td>관절 구조 보호 및 악화 방지</td><td>턱관절 내구조(디스크, 연골 등)의 손상 예방 → 퇴행성 변화 지연</td></tr></table>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"장치를 왜 밤에 착용하나요?", tags:["자주묻는질문","장치","스플린트","야간","착용이유","SS","APS"], a:`<table><tr><td colspan='2'><strong>SS 수면 시 착용 이유</strong></td></tr><tr><td>수면 중 이갈이 차단</td><td>치아 마모, 턱관절 손상 예방</td></tr><tr><td>턱관절 안정화</td><td>관절 스트레스 감소</td></tr><tr><td>교근·측두근 이완</td><td>통증, 뻐근함 감소</td></tr><tr><td>치아 및 보철물 보호</td><td>치과적 손상 예방</td></tr><tr><td>수면 질 향상</td><td>자는 동안의 통증 완화</td></tr></table><table><tr><td colspan='2'><strong>APS 착용 목적</strong></td></tr><tr><td>관절 디스크 위치 회복</td><td>턱관절 소리/통증 완화</td></tr><tr><td>관절 압박 감소</td><td>아침 통증 및 뻐근함 개선</td></tr><tr><td>이갈이 억제</td><td>치아 마모 및 근육 통증 감소</td></tr><tr><td>근육 이완 유도</td><td>교근·측두근 통증 감소</td></tr><tr><td>턱관절 손상 예방</td><td>퇴행성 변화 지연 가능</td></tr></table>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"장치 착용 후 치아 통증과 교합 변화가 느껴지는 이유는?", tags:["자주묻는질문","장치","스플린트","통증","교합","적응"], a:`<div class='script'>처음 장치를 적응하는 과정에서 치아가 눌려 통증이 발생할 수 있습니다. 자는 동안 이를 물고 있는 습관이 있다면 통증이 있으실 수 있어 장치 착용 후 물고 계시지 않도록 해주세요. 적응 과정에서 초기엔 통증이 있을 수 있어 다음 내원 일까지는 착용 하시는 것이 좋으나, 적응이 안 될 정도로 불편하시면 장치 중단 후 지참해서 내원 안내 필요.</div><div class='script'>교합 변화 느낌: 장치를 끼고 주무시는 경우 장치를 뺀 기상 직후 어금니가 뜨는 느낌이 발생할 수 있습니다. 장치를 제거하고 일정 기간이 지나면 교합 감각은 되돌아 옵니다. 장치 착용으로 치아가 이동한 것은 아니니 걱정 하지 않으셔도 됩니다. → 해결책으로는 장치 빼고 오전 첫 식사 시 꼭꼭 씹어서 식사하시면 감각이 금방 돌아옴.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"보톡스 후 뻐근함과 사탕볼 현상이 왜 나타나는지? 어떻게 해야 하는지?", tags:["자주묻는질문","보톡스","뻐근함","사탕볼","부작용","자가관리"], a:`<div class='script'>보톡스는 저작 근육에 주사하는데 근육이 결로 되어있어, 두꺼운 근육 부위와 얇은 근육 부위 중 얇은 근육이 상대적으로 먼저 줄어들면서 다른 부위가 튀어나온 것 처럼 느껴지실 수 있으나 약이 퍼지는 기간 3~4주 정도 지켜보면서 증상이 좋아질 수 있음 안내. 4주 이후에도 여전히 사탕볼 현상이 심하면 리터치 필요 할 수 있어 내원 안내.</div><div class='note'><strong>✅ 자가 관리 방법</strong><table><tr><td>뻐근함</td><td>냉찜질(1~2일), 온수 찜질 가능</td></tr><tr><td>사탕볼 현상</td><td>대부분 <strong>2~4주 내 자연 해소</strong>, 대칭이 회복됨</td></tr><tr><td>통증/부기</td><td>하루 1~2회 냉찜질, 강한 자극(마사지, 꼭 씹기)은 피하세요</td></tr></table></div><div class='note'><strong>이런 경우 병원 상담이 필요합니다</strong><ul><li>사탕볼 증상이 4주 이상 지속되거나 점점 심해질 때</li><li>통증이 심하고 열감이나 발적이 동반될 때</li><li>입을 벌릴 때 심한 통증, 턱관절 증상 악화가 동반되는 경우</li></ul></div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"보톡스 후 온찜질은 언제부터 해야 하나요? 온수찜질은 몇 분 정도 해야 하나요?", tags:["자주묻는질문","보톡스","온찜질","온수찜질","냉찜질"], a:`<table><tr><td>온찜질 시작 시점</td><td><strong>시술 후 1달 이후부터</strong></td></tr><tr><td>온수찜질 시간</td><td><strong>시술 당일 저녁 샤워 시부터 가능. 한쪽 당 10~15분</strong></td></tr></table>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"턱관절 온찜질 & 냉찜질 각각 어느 부위에 얼마나 해야 하나요?", tags:["자주묻는질문","온찜질","냉찜질","턱관절","찜질부위"], a:`<table><tr><td>항목</td><td>냉찜질</td><td>온찜질</td></tr><tr><td>사용 시기</td><td>급성 통증, 붓기</td><td>근육 긴장, 만성 통증</td></tr><tr><td>부위</td><td>귀 앞쪽 턱관절 부위</td><td>저작 근육 (교근·측두근 부위)</td></tr><tr><td>시간</td><td>10~15분</td><td>15~20분</td></tr><tr><td>횟수</td><td>2~3회/일 (아플 때마다 찜질)</td><td>1~2회/일 (자주 해도 좋음)</td></tr><tr><td>효과</td><td>염증/부기 완화</td><td>혈류 증가, 근육 이완</td></tr></table>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"보톡스 한쪽만 맞는 경우도 있는지? (오른쪽만, 왼쪽만)", tags:["자주묻는질문","보톡스","한쪽","편측","MM","TT","비용"], a:`<ul><li>편측 주사는 거의 없고 <strong>양측 동시 주사가 기본</strong></li><li>MM(양쪽 교근) 따로 / TT(양쪽 측두근) 따로는 가능</li></ul><table><tr><td><strong>MM</strong> (교근 보톡스)</td><td><strong>13만원</strong></td></tr><tr><td><strong>TT</strong> (측두근 보톡스)</td><td><strong>7만원</strong></td></tr><tr><td><strong>MM + TT</strong> (교근 + 측두근)</td><td><strong>20만원</strong></td></tr></table>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"장치 사용하는 분들 중 중간에 치아 일반치료 진행하면 장치 착용 중단해야 하나요?", tags:["자주묻는질문","장치","스플린트","일반치료","착용중단"], a:`<div class='script'>맞으면 끼고, 안 맞으면 중단. 치료 끝나고 수정..</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"교정 추천하는 곳 있는지?", tags:["자주묻는질문","교정","추천","병원"], a:`<div class='note'><strong>교정 추천 병원</strong><br>영등포 — 연세반디치과교정과치과의원<br>강서 — 아너스치과교정과치과의원<br>연신내 — 서울클리어치과교정과치과의원<br>서현·분당 — 서울 하상운 교정치과 추천</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"처음 가면 무슨 검사를 하나요?", tags:["자주묻는질문","검사","초진","엑스레이","초음파","CT","파노라마","TMJ"], a:`<div class='script'>정밀 진단을 위한 엑스레이 촬영과 초음파 검사를 진행합니다.</div><div class='note'>세부 답변 요구 시: 턱관절이 보이는 부분이 아니다 보니, 정확한 진단을 위해 일반 엑스레이(Panorama)·턱관절 엑스레이(TMJ) 2장 촬영 후 원장님 진단 하에 추가 CT(Cone Beam CT) 촬영을 진행합니다. 진단 과정 중 관절의 움직임과 근육 두께 등을 확인하기 위해 초음파 검사도 같이 진행합니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"처음 가면 얼마나 걸리나요?", tags:["자주묻는질문","초진","소요시간","시간"], a:`<div class='script'>정밀 진단과 상담 시간을 포함해 1시간~1시간 반 정도 소요됩니다. 첫날은 정밀 진단과 치료계획 상담 시간이 필요하기 때문입니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"처음 가면 비용이 얼마나 발생하나요?", tags:["자주묻는질문","비용","초진","초진비용","첫방문비용","처음비용","첫진료비용","초음파","건강보험","무자격자","얼마","가격"], a:`<div class='script'>건강보험 적용 되시면 첫 진단 시에는 비급여 진료(초음파 검사) 포함하여 <strong>7~8만원대</strong> 발생됩니다.</div><div class='script'>건강보험 무자격자(외국인 등)의 경우 첫 진단 시 <strong>15~20만원대</strong> 발생됩니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"장치 비용은 어떻게 되나요?", tags:["자주묻는질문","장치","스플린트","비용","스플린트비용","장치비용","장치가격","스플린트가격"], a:`<div class='script'>스플린트 종류가 한 가지가 아니라 종류별로 금액이 다릅니다. 원장님께서 정밀 진단 후 환자분 턱관절 상태에 따라 필요한 스플린트를 안내해 주십니다. 대략 <strong>100만원~200만원</strong> 사이로 발생됩니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"보톡스 비용은 어떻게 되나요?", tags:["자주묻는질문","보톡스","비용","MMTT","교근","측두근","보톡스비용","보톡스가격"], a:`<div class='script'>턱관절 보톡스는 교근·측두근 같이 주사하며, 비용 <strong>20만원(비급여)</strong>입니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"보톡스 국산인가요? 어떤 제품인가요? 용량은?", tags:["자주묻는질문","보톡스","국산","용량","회사","나보타","대웅제약"], a:`<div class='script'>대웅제약 사의 나보타 제품 100unit 사용합니다. 주사 용량은 부위와 환자분의 근육 두께에 따라 원장님께서 조절하여 진행합니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"다른 병원과 무엇이 다른가요?", tags:["자주묻는질문","차별점","타병원","구강내과전문의","협진"], a:`<div class='script'>[일반 타치과와 다른 점] 구강내과 전문의와 전문 의료장비를 구비하고 있어 보다 전문적이고 포괄적인 진료가 가능합니다.</div><div class='script'>[타 구강내과 치과와 다른 점] 구강내과 전문의 5분과 통합치의학과 전문의·치아보존과 전문의 협진으로 치아가 턱관절의 문제를 일으키고 있는 경우 확인이 가능하고, T-SCAN 사용으로 교합 변화를 자세히 체크하고 예방 가능하며, 초음파를 활용한 정확한 진단과 주사치료가 가능합니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"장치치료 or 보톡스 하면 턱에서 나는 소리가 없어지나요?", tags:["자주묻는질문","장치","스플린트","보톡스","소리","턱"], a:`<div class='script'>치료를 통해 턱에서 나는 소리가 줄어들 수는 있으나, 100% 사라지지는 않습니다. 소리의 여부보다는 불편함 없이 개구(입을 열고 닫음)를 할 수 있게끔 하는 것이 치료의 목표입니다.</div><div class='note'><strong>장치를 사용하면:</strong> 디스크를 잡아주는 인대조직의 회복을 도와 밖에서 들릴 정도의 큰 소리는 환자분께만 들리는 정도로 최대한 작게 변화시킬 수 있습니다.<br><strong>보톡스를 맞은 경우:</strong> 관절을 압박하는 근육의 힘이 줄어들어 밖에서 들릴 정도의 큰 소리는 환자분께만 들리는 정도로 감소할 수 있습니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"교정 중인데 턱관절 장치 할 수 있나요?", tags:["자주묻는질문","교정","턱관절","장치","스플린트"], a:`<div class='script'>정확한 것은 원장님 진단 후에 답변드릴 수 있으나, 턱 상태에 맞춰 교정 방향이 바뀌실 수 있어, 턱관절 진단 후 턱관절 상태에 맞춰 원장님과 교정 방향을 상의해 보시는 것을 추천드립니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"교정 후 유지장치 하고 있는데 턱관절 장치 할 수 있나요?", tags:["자주묻는질문","교정","유지장치","턱관절","장치","스플린트","Fixed retainer","탈착식"], a:`<div class='script'>치아에 붙어있는 철사로 고정된 유지장치(Fixed retainer)라면 큰 문제는 되지 않고 사용 가능합니다.</div><div class='script'>탈착식 유지장치라면 턱관절 장치는 주로 주무실 때만 착용을 안내드리기 때문에, 낮 시간 동안에는 교정 유지장치 착용, 저녁에는 턱관절 장치 착용 방향으로 사용 가능합니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"예약없이 가서 기다려도 진료 되나요?", tags:["자주묻는질문","예약없이","당일","대기","구강내과","구환","신환"], a:`<div class='script'>[구강내과 신환] 처음 오시면 진료시간 1시간~1시간 30분 정도 소요되어 예약 없이 오시면 기다리셔도 진료 어려우실 수 있습니다. 예약 도와드릴까요?</div><div class='script'>[구강내과 구환] 진료 가능하시나, 대기 시간이 많이 발생되실 수 있고 예약 상황에 따라 물리치료는 진행 어려우실 수 있으신 점 참고 부탁드립니다. 변경 혹은 취소하신 분 계시면 대기시간은 적게 발생되실 수 있으세요!</div><div class='script'>[통합치과] 기존 예약 분들이 계셔서 대기시간이 오래 발생되실 수 있습니다. 원장님 검진은 가능하나, 당일 치료는 기존 예약 상황에 따라 어려울 수 있는 점 양해 부탁드립니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"보톡스 실비 되나요?", tags:["자주묻는질문","보톡스","실비","보험"], a:`<div class='script'>2010년 이후 표준약관이 변경된 실비의 경우 가능한 것으로 알고 있으나, 워낙 보험이 다양하기 때문에 가입하신 보험 약관을 확인해 보셔야 합니다. 치료목적으로 주사 하였다는 소견서와 영수증 세부내역서 준비해 드릴테니 우선 제출해 보시면 좋을 것 같습니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"보톡스 맞고 피부과 시술 받아도 되나요?", tags:["자주묻는질문","보톡스","피부과","시술"], a:`<div class='script'>보톡스는 열에 약하기 때문에 열이 발생되는 피부과 시술은 3~4일 정도 조심하시는 것이 좋습니다. 다른 시술의 경우 피부과 원장님과 상의 후 진행하시는 게 좋습니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"보톡스 주사 치료 후 주의사항은 어떤 게 있나요?", tags:["자주묻는질문","보톡스","주사","주의사항","MMTT","PDRN"], a:`<div class='note'><strong>보톡스 주의사항</strong><ul style='margin:6px 0 0 0;padding-left:1.1rem;'><li>주사 당일 <strong>음주·사우나 X</strong></li><li>질긴 음식 X</li><li>시술 후 <strong>4시간은 눕지 않기</strong></li><li>주사 후 뻐근한 느낌 들 수 있음</li><li><strong>냉찜질</strong> 3일간 댔다가 뗐다가 반복 10분 진행</li><li>온수 찜질 가능 / <strong>온찜질 팩은 한 달간 사용 중지</strong></li></ul></div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"장치를 올 때마다 조절해야 하나요?", tags:["자주묻는질문","장치","스플린트","조절","APS","SS"], a:`<div class='note'><strong>APS 장치</strong>: 오실 때마다 턱의 운동 경로와 목표로 하는 턱의 위치가 달라지기 때문에 그에 맞춰 장치를 조정해서 턱이 편한 위치로 가도록 합니다.<br><strong>SS/이갈이 장치</strong>: 오실 때마다 양쪽 어금니가 균형 있게 잘 닿고 있는지, 치아를 앞뒤·좌우로 틀 때 불필요하게 닿는 부분은 없는지 체크하고 조정합니다. 이러한 교합이 유지되어야 근육과 턱관절이 잘 보호됩니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"임플란트 수술 후 지혈이 잘 안 돼요", tags:["자주묻는질문","임플란트","지혈","수술"], a:`<div class='script'>[피가 조금씩 나는 경우] 물려드린 거즈를 2~3시간 정도 꽉 물고 계셨나요? 빼신 후에도 피가 조금씩 날 수 있는데 멸균 거즈로 다시 꽉 물고 계시는 것이 좋습니다. 침이나 피는 역하시더라도 뱉지 말고 삼켜 주시고, 아이스팩으로 수술 부위 냉찜질 부탁드립니다. 내일까지도 지혈이 안 되면 본원으로 연락 부탁드립니다.</div><div class='script'>[피가 덩어리로 나온 경우] 바로 내원 권장. 오시기 전까지는 멸균 거즈를 이용해 꽉 물고 계시는 것이 좋습니다. 영업시간 이후라면 응급실 가셔서 지혈 체크 받으시는 게 좋습니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"임플란트/사랑니 발치 후 목이 아파요", tags:["자주묻는질문","임플란트","사랑니","목통증","발치"], a:`<div class='script'>치아가 위치하고 있는 부위가 인대와 신경이 함께 지나가는 부위로 일시적으로 주변 임파선 및 조직이 염증반응을 일으켜 목통증이 생길 수 있습니다. 일시적인 증상인 만큼 시간이 지나면서 서서히 사라지게 되므로 크게 걱정하지 않으셔도 됩니다. 불편감이 1주일 이상 오래가면 내원하셔서 원장님 체크 받아 보시는 게 좋으니 연락 주시면 예약 잡아 드리겠습니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"신경치료 중인데 치아가 더 아파요", tags:["자주묻는질문","신경치료","통증","ENDO"], a:`<div class='script'>신경치료는 치아의 신경을 치료하는 것으로 치료 기간에는 뿌리 끝이 자극되어 통증이 있을 수 있고, 염증이 많을 경우에도 마취 풀린 뒤 며칠간 통증이 있을 수 있습니다. 처방해 드린 약이 있으면 드셔 주시고, 없으면 진통제 복용하시면 됩니다. 대개는 서서히 좋아지지만, 약을 드셔도 극심한 통증이 있거나 많이 붓는 증상이 생기면 바로 병원으로 연락 부탁드립니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"레진 치료 후 뜨겁고 차가운 게 먹을 때 아파요", tags:["자주묻는질문","레진","통증","온도","시림"], a:`<div class='script'>레진은 치료 후 일정한 수축을 겪게 됩니다. 이때 치아 주변 조직에 약간의 압박이 가해지고 신경이 자극되어 온도에 민감할 수 있습니다. 안정화될 때까지 미지근한 음식 드시고, 딱딱하고 자극적인 음식은 피해주시는 것이 좋습니다. 안정화 기간은 보통 한 달 이내지만 상태에 따라 2~3달까지 지속되는 분들도 있습니다. 계속 불편하시면 연락 주시면 예약 잡아 드리겠습니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"구강내과에서 보철을 하면 좋은 점이 있나요?", tags:["자주묻는질문","보철","구강내과","차별점","교합"], a:`<div class='script'>보철치료 시 위·아래 치아의 맞물림 상태를 교합이라고 합니다. 교합이 맞지 않으면 턱관절에 문제가 생겨 발음 이상, 저작 시 불편감 등 문제 상황이 발생할 수 있습니다. 저희 병원은 구강내과 전문의와 통합과 원장님의 협진으로 보다 세밀하고 편안한 진료가 가능합니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"지르코니아 크라운과 오버레이 크라운 차이점이 뭔가요?", tags:["자주묻는질문","지르코니아","오버레이","크라운","보철"], a:`<div class='script'>지르코니아의 경우 치아의 머리 부분을 전체적으로 씌우는 방법이라면, 오버레이 크라운은 머리 윗부분을 반 정도 씌우는 방식으로 치아 삭제량을 최소화하는 크라운입니다. 보다 자세한 내용은 검진 후 치아 상태에 적합한 크라운을 추천해 드리겠습니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"골드 크라운과 지르코니아 크라운 차이가 뭔가요?", tags:["자주묻는질문","골드","지르코니아","크라운","차이"], a:`<div class='script'>첫 번째는 심미적인 차이인데요, 지르코니아는 치아색과 유사하게 만들어서 자연스럽습니다. 두 번째는 강도의 차이인데요, 골드보다는 지르코니아 강도가 높습니다. 세 번째는 치아삭제량의 차이입니다. 지르코니아는 최소한의 두께가 나와야 하기 때문에 골드보다 치아 삭제량이 조금 더 많습니다. 어느 것이 더 좋다고 말하기는 어렵고 치아와 주변 치아 상태에 따라 원장님께서 추천해 드리고 있습니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"비니어 보철이 어떤 치료인가요?", tags:["자주묻는질문","비니어","라미네이트","앞니","보철"], a:`<div class='script'>비니어 보철은 치아를 보존하는 앞니 치료로, 쉽게 생각하면 손톱에 붙이는 인조 손톱과 비슷합니다. 전통적인 라미네이트보다 무삭제 또는 0.1mm~0.3mm 정도의 최소한으로만 삭제하는 장점이 있는 최신 앞니 보철 방법입니다.</div>` },
+  { cat:"환자가 자주 묻는 질문 응대", q:"잇몸에 염증이 생긴 것 같은데 구강내과인가요 치주과인가요?", tags:["자주묻는질문","잇몸","염증","구강내과","치주과"], a:`<div class='script'>전화로 말씀만 듣고 정확한 안내는 어렵지만, 증상을 좀 더 구체적으로 말씀해 주시면 안내 도와드리겠습니다.</div><div class='note'>구강점막질환·침샘질환·구강건조·작열감·편평태선 → <strong>구강내과 추천</strong><br>잇몸이 붓고 피가 나는 정도 → 스케일링만 해도 좋아지는 경우가 있어 어느 과도 가능<br>고름이 나거나 이가 흔들리는 경우 → <strong>치주과 추천</strong></div>` },
+  { cat:"CS·응대", q:"대기 시간이 길어질 때 어떻게 안내하나요?", tags:["CS","대기","안내","멘트"], a:`<div class='script'>[10분 이상] "OOO님 (00분) 정도만 준비 시간 기다려 주실 수 있으실까요?"</div><div class='script'>[20분 이상] "OOO님 예약 시간에 맞춰 진료 봐 드리지 못해 죄송합니다. 원장님께서 꼼꼼하게 진료를 보시다 보니 예상 못한 대기 시간이 발생했습니다. OO분만 더 기다려 주시면 진료실로 안내해드리겠습니다."</div>` },
+  { cat:"CS·응대", q:"불만 환자 응대 기본 단계는?", tags:["CS","불만","컴플레인","응대"], a:`<ul><li><strong>1단계 사과</strong>: 즉각 사과로 마음 달래기</li><li><strong>2단계 경청</strong>: 불만 사유 공감하며 파악</li><li><strong>3단계 원인 파악</strong>: 문제의 원인 확인</li><li><strong>4단계 해결책 찾기</strong></li><li><strong>5단계 대안 제시</strong></li><li><strong>6단계 실행</strong>: 합의안 즉시 실행</li><li><strong>7단계 감사 표현</strong></li></ul><div class='note'>보고 체계: 첫 응대자 → 담당 실장님 → 원장님 순서로 보고</div>` },
+  { cat:"CS·응대", q:"충격파 후 이명 관련 문의가 오면 어떻게 답하나요?", tags:["CS","충격파","이명","멘트"], a:`<div class='script'>"충격파가 이명에 영향을 주지는 않고, 통증 정도만 발생할 수 있습니다."</div>` },
+
+  { cat:"진료준비", q:"출근 시 가장 먼저 해야 할 것은?", tags:["진료준비","출근","컴퓨터","로그인"], a:`<ul><li>컴퓨터 ON, TV ON, 태블릿 ON, 구강용품 정리</li><li>대기실 TV 2대, 데스크 컴퓨터 3대 ON</li><li>공기청정기 ON</li><li>메이크업, 대기실 비품 채우기 (종이컵, 핸드타올, 칫솔, 치약, 숨그린 가글 등)</li></ul><ul><li>PC3 (통합치과 측): 유튜브 시청목록 → 피아노 연주곡 재생</li><li>PC1 (물리치료실 측): 바탕화면 → 병원 ppt 슬라이드쇼 시작 → 대기실 TV2 연결</li></ul>` },
+
+  { cat:"진료준비", q:"카드사 무이자 확인은 언제 하나요?", tags:["진료준비","무이자","카드사","스프레드시트"], a:`<ul><li>매달 <strong>1일</strong> 출근 후 카드사별 무이자 기간 확인 후 출력하여 데스크 재비치</li><li>크롬 <strong>'고객지원실 종합'</strong> → 카드무이자 스프레드시트 수정 후 출력</li></ul>` },
+
+  { cat:"기타", q:"치과 팩스 번호는 어떻게 되나요?", tags:["기타","팩스","팩스번호","fax"], a:`<ul><li><strong>02-6277-2879</strong></li></ul>` },
+  { cat:"기타", q:"세정술 예약 기준이 어떻게 되나요?", tags:["세정술","예약","단위","15분","남현"], a:`<ul><li><strong>15분에 1개씩</strong>, 1시간당 <strong>최대 3개</strong>까지</li><li>목요일 오후 (Dr. 남현만 있는 날)<br><span style='color:#888;font-size:12px;'>ex. 16:00·16:15·16:30·16:45 중 3개만 예약 가능</span></li></ul>` },
+  { cat:"기타", q:"수납 후 종이 차트는 어떻게 하나요?", tags:["기타","차트","종이차트","수납","꽂기","남윤","박유진","남현","통합과"], a:`<table><tr><td colspan='2'><strong>🦷 구강내과</strong></td></tr><tr><td>Dr. 남윤</td><td>Dr. 남윤 구분하여 꽂기</td></tr><tr><td>Dr. 박유진</td><td>Dr. 박유진 구분하여 꽂기</td></tr><tr><td>목 오후 Dr. 남현</td><td>Dr. 남현 별도 구분하여 꽂기</td></tr><tr><td colspan='2'><strong>🦷 통합치과</strong></td></tr><tr><td>보존과 + 통합과</td><td>같이 구분하여 꽂기</td></tr></table>` },
+
+  { cat:"기타", q:"구강내과 구환 모바일 문진(QR문진) 안내 시 카메라 인식이 안된다고 할 때는 어떻게 하나요?", tags:["기타","보톡스","문진","링크","카톡","QR","모바일문진","카메라"], a:`<ul><li>카카오톡 혹은 문자로 <strong>문진 링크 보내드리고 작성 요청</strong>하기</li><li>링크 (<strong>Ctrl+Shift+4</strong> 누른 후 붙여넣기): <strong>https://bespoke-horse-b17844.netlify.app</strong></li></ul>` },
+  { cat:"기타", q:"구강용품 판매 후 처리는?", tags:["기타","구강용품","판매","슬랙","숨그린","수분지킴밴드","징크비타","APS","영양제"], a:`<table><tr><td>숨그린 가글 (1통 20개)</td><td>5천원</td></tr><tr><td>수분지킴밴드 (1통 30매)</td><td>5천원</td></tr><tr><td>징크비타 (하루 1개, 1통 3개월분)</td><td>5만 5천원</td></tr></table><div class='note'>APS 장치 진행하시는 분들 → 다음 기간에 맞춰 <strong>무료 증정 가능</strong><br>(밴드는 반으로 잘라서 사용하기 때문에 1통으로 2달 사용 가능)<br>추가 요청 시 구매 안내 드리기</div><ul><li>덴트웹 → 전자차트 → 진료입력 → <strong>구강내과 탭</strong> → <strong>구강관리용품구매</strong> 클릭 후 판매 용품 선택 <span style='color:#888;font-size:12px;'>(금액은 0으로 설정이 맞음)</span></li><li>슬랙 <strong>#데스크</strong> 채널에 환자 성함·결제수단·판매상품 기재</li></ul>` }
+];
+
+// 데이터 로드 (localStorage 우선)
+function resetData() {
+  try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(UPDATED_KEY); } catch(e) {}
+  DATA = DEFAULT_DATA;
+  renderTags();
+  render();
+  showUpdatedDate();
+  alert("✅ 초기화 완료! 기본 데이터로 복원되었습니다.");
+}
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : DEFAULT_DATA;
+  } catch(e) { return DEFAULT_DATA; }
+}
+
+function saveDataToStorage(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(UPDATED_KEY, new Date().toLocaleDateString("ko-KR", { year:"numeric", month:"long", day:"numeric" }));
+  } catch(e) {}
+}
+
+let DATA = loadData();
+
+// 날짜 표시
+function showUpdatedDate() {
+  try {
+    const d = localStorage.getItem(UPDATED_KEY);
+    document.getElementById("updated-date").textContent = "최종 업데이트: " + (d || new Date().toLocaleDateString("ko-KR", { year:"numeric", month:"long", day:"numeric" }));
+  } catch(e) {
+    document.getElementById("updated-date").textContent = "최종 업데이트: " + new Date().toLocaleDateString("ko-KR", { year:"numeric", month:"long", day:"numeric" });
+  }
+}
+
+// 카테고리 목록
+function getAllCats() {
+  const cats = [...new Set(DATA.map(d => d.cat))];
+  return cats;
+}
+
+// 태그 렌더
+function renderTags() {
+  const tagsEl = document.getElementById("tags");
+  tagsEl.innerHTML = "";
+  getAllCats().forEach(cat => {
+    const t = document.createElement("button");
+    t.className = "tag" + (activeCat === cat ? " active" : "");
+    t.textContent = cat;
+    t.onclick = () => {
+      activeCat = activeCat === cat ? null : cat;
+      renderTags();
+      render();
+    };
+    tagsEl.appendChild(t);
+  });
+}
+
+let activeCat = null;
+let query = "";
+
+function hl(text, q) {
+  if (!q) return text;
+  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`, "gi");
+  return text.replace(re, "<mark>$1</mark>");
+}
+
+function render() {
+  const q = query.trim().toLowerCase();
+  const resultsEl = document.getElementById("results");
+  const countEl = document.getElementById("result-count");
+  let total = 0;
+  let globalIdx = 0;
+  let html = "";
+
+  const grouped = {};
+  DATA.forEach(item => {
+    if (activeCat && item.cat !== activeCat) return;
+    const matchQ = !q || item.q.toLowerCase().includes(q) || (item.tags||[]).some(t => t.toLowerCase().includes(q));
+    if (!matchQ) return;
+    if (!grouped[item.cat]) grouped[item.cat] = [];
+    grouped[item.cat].push(item);
+    total++;
+  });
+
+  Object.entries(grouped).forEach(([cat, items]) => {
+    const meta = CAT_META[cat] || { icon:"📌", bg:"#f0f0f0" };
+    html += `<div class="section-group"><div class="section-label">${cat}</div>`;
+    items.forEach((item, idx) => {
+      const id = `item_${globalIdx++}`;
+      html += `<div class="item" id="${id}" onclick="toggle('${id}')">
+        <div class="item-header">
+          <div class="item-icon" style="background:${meta.bg}">${meta.icon}</div>
+          <span class="item-q">${hl(item.q, q)}</span>
+          <span class="item-arrow">▾</span>
+        </div>
+        <div class="item-body">${item.a}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  if (!total) {
+    html = `<div class="empty">🔍 검색 결과가 없어요</div>`;
+    countEl.textContent = "";
+  } else {
+    countEl.textContent = `${total}개 항목`;
+  }
+
+  resultsEl.innerHTML = html;
+  if (q && total === 1) {
+    const first = resultsEl.querySelector(".item");
+    if (first) first.classList.add("open");
+  }
+}
+
+function toggle(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle("open");
+}
+
+const qEl = document.getElementById("q");
+const clearBtn = document.getElementById("clear-btn");
+qEl.addEventListener("input", e => {
+  query = e.target.value;
+  clearBtn.classList.toggle("visible", !!query);
+  render();
+});
+clearBtn.addEventListener("click", () => {
+  qEl.value = ""; query = "";
+  clearBtn.classList.remove("visible");
+  qEl.focus(); render();
+});
+
+// ===== 관리자 패널 =====
+let adminUnlocked = false;
+
+function openAdmin() {
+  document.getElementById("admin-panel").style.display = "block";
+  document.getElementById("pw-input").value = "";
+  document.getElementById("pw-error").style.display = "none";
+  if (adminUnlocked) {
+    showAdminEdit();
+  }
+}
+
+function closeAdmin() {
+  document.getElementById("admin-panel").style.display = "none";
+}
+
+function checkPw() {
+  const pw = document.getElementById("pw-input").value;
+  if (pw === ADMIN_PW) {
+    adminUnlocked = true;
+    showAdminEdit();
+  } else {
+    document.getElementById("pw-error").style.display = "block";
+  }
+}
+
+function showAdminEdit() {
+  document.getElementById("admin-pw-section").style.display = "none";
+  document.getElementById("admin-edit-section").style.display = "block";
+  renderAdminList();
+}
+
+function renderAdminList() {
+  const list = document.getElementById("admin-item-list");
+  list.innerHTML = "";
+  DATA.forEach((item, i) => {
+    list.appendChild(createAdminRow(item, i));
+  });
+}
+
+function createAdminRow(item, idx) {
+  const div = document.createElement("div");
+  div.className = "admin-item-row";
+  div.dataset.idx = idx;
+
+  const allCats = Object.keys(CAT_META);
+  const catOptions = allCats.map(c => `<option value="${c}"${c===item.cat?" selected":""}>${c}</option>`).join("");
+
+  div.innerHTML = `
+    <div class="row-top">
+      <select class="row-cat">${catOptions}</select>
+      <button class="delete-row-btn" onclick="deleteRow(${idx})">🗑</button>
+    </div>
+    <span class="label-sm">질문</span>
+    <input type="text" class="row-q" value="${escHtml(item.q)}" placeholder="질문 내용" />
+    <span class="label-sm">답변 (HTML 가능)</span>
+    <textarea class="row-a" placeholder="답변 내용 (HTML 태그 사용 가능)">${escHtml(item.a)}</textarea>
+    <span class="label-sm">검색 태그 (쉼표로 구분)</span>
+    <input type="text" class="row-tags" value="${(item.tags||[]).join(",")}" placeholder="예: 주차,요금,등록" />
+  `;
+  return div;
+}
+
+function addAdminRow() {
+  const allCats = Object.keys(CAT_META);
+  const newItem = { cat: allCats[0], q: "", a: "", tags: [] };
+  DATA.push(newItem);
+  const list = document.getElementById("admin-item-list");
+  list.appendChild(createAdminRow(newItem, DATA.length - 1));
+  list.lastChild.scrollIntoView({ behavior: "smooth" });
+}
+
+function deleteRow(idx) {
+  if (!confirm("이 항목을 삭제할까요?")) return;
+  DATA.splice(idx, 1);
+  renderAdminList();
+}
+
+function saveData() {
+  const rows = document.querySelectorAll(".admin-item-row");
+  const newData = [];
+  rows.forEach(row => {
+    const cat = row.querySelector(".row-cat").value;
+    const q = row.querySelector(".row-q").value.trim();
+    const a = row.querySelector(".row-a").value.trim();
+    const tags = row.querySelector(".row-tags").value.split(",").map(t => t.trim()).filter(Boolean);
+    if (q) newData.push({ cat, q, a, tags });
+  });
+  DATA = newData;
+  saveDataToStorage(DATA);
+  renderTags();
+  render();
+  showUpdatedDate();
+  alert("✅ 저장되었습니다!");
+  closeAdmin();
+}
+
+function escHtml(str) {
+  return (str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+// 초기 실행
+showUpdatedDate();
+renderTags();
+render();
+</script>
+</body>
+</html>
