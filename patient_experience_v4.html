@@ -317,6 +317,14 @@ const EXP = {
 };
 
 const KEYWORDS = {
+  '1월': {
+    pos: [{label:'친절한 응대',count:58},{label:'친절한 설명',count:35},{label:'꼼꼼한 진료',count:12},{label:'치료 종결·완치',count:12},{label:'신뢰감',count:9},{label:'적극 추천',count:9},{label:'지인 소개',count:8},{label:'치료 효과',count:7},{label:'깔끔한 시설',count:6}],
+    neg: [{label:'비용 부담',count:2}]
+  },
+  '2월': {
+    pos: [{label:'친절한 응대',count:31},{label:'친절한 설명',count:16},{label:'치료 종결·완치',count:10},{label:'치료 효과',count:10},{label:'꼼꼼한 진료',count:10},{label:'적극 추천',count:7},{label:'생활습관 안내',count:5},{label:'신뢰감',count:5}],
+    neg: []
+  },
   '3월': {
     pos: [{label:'친절한 응대',count:59},{label:'친절한 설명',count:39},{label:'꼼꼼한 진료',count:17},{label:'적극 추천',count:10},{label:'치료 효과',count:9},{label:'전문성',count:9},{label:'깔끔한 시설',count:7},{label:'신뢰감',count:7}],
     neg: [{label:'비용 부담',count:1},{label:'치료 권유 불편감',count:1}]
@@ -552,12 +560,17 @@ function renderKeywords(m) {
   Object.values(kwChartInstances).forEach(c=>c.destroy()); kwChartInstances={};
   const posTotal=kw.pos.reduce((s,i)=>s+i.count,0); const negTotal=kw.neg.reduce((s,i)=>s+i.count,0);
   const posH=Math.max(140,kw.pos.length*24+40); const negH=Math.max(80,kw.neg.length*24+40);
-  el.innerHTML=`<div class="kw-chart-card"><div class="kw-chart-label">긍정 키워드 (총 ${posTotal}건)</div><div class="kw-two-col"><div style="position:relative;height:160px;"><canvas id="kw-d-pos" role="img" aria-label="긍정 도넛"></canvas></div><div style="position:relative;height:${posH}px;"><canvas id="kw-b-pos" role="img" aria-label="긍정 막대"></canvas></div></div></div><div class="kw-chart-card"><div class="kw-chart-label">주의 키워드 (총 ${negTotal}건)</div><div class="kw-two-col"><div style="position:relative;height:100px;"><canvas id="kw-d-neg" role="img" aria-label="주의 도넛"></canvas></div><div style="position:relative;height:${negH}px;"><canvas id="kw-b-neg" role="img" aria-label="주의 막대"></canvas></div></div></div>`;
+  const negHtml = kw.neg.length > 0
+    ? `<div class="kw-chart-card"><div class="kw-chart-label">주의 키워드 (총 ${negTotal}건)</div><div class="kw-two-col"><div style="position:relative;height:100px;"><canvas id="kw-d-neg" role="img" aria-label="주의 도넛"></canvas></div><div style="position:relative;height:${negH}px;"><canvas id="kw-b-neg" role="img" aria-label="주의 막대"></canvas></div></div></div>`
+    : `<div class="kw-chart-card"><div class="kw-chart-label">주의 키워드</div><div style="font-size:13px;color:var(--muted);padding:12px 4px;">⚠️ 주의 키워드가 없습니다 — 좋은 한 달이에요!</div></div>`;
+  el.innerHTML=`<div class="kw-chart-card"><div class="kw-chart-label">긍정 키워드 (총 ${posTotal}건)</div><div class="kw-two-col"><div style="position:relative;height:160px;"><canvas id="kw-d-pos" role="img" aria-label="긍정 도넛"></canvas></div><div style="position:relative;height:${posH}px;"><canvas id="kw-b-pos" role="img" aria-label="긍정 막대"></canvas></div></div></div>${negHtml}`;
   setTimeout(()=>{
     kwChartInstances['d-pos']=new Chart(document.getElementById('kw-d-pos'),{type:'doughnut',data:{labels:kw.pos.map(i=>i.label),datasets:[{data:kw.pos.map(i=>i.count),backgroundColor:KW_POS_COLORS.slice(0,kw.pos.length),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+ctx.raw+'건 ('+Math.round(ctx.raw/posTotal*100)+'%)'}},datalabels:{display:false}}}});
     kwChartInstances['b-pos']=new Chart(document.getElementById('kw-b-pos'),{type:'bar',data:{labels:kw.pos.map(i=>i.label),datasets:[{data:kw.pos.map(i=>i.count),backgroundColor:KW_POS_COLORS.slice(0,kw.pos.length),borderRadius:4,barThickness:16}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.raw+'건 ('+Math.round(ctx.raw/posTotal*100)+'%)'}},datalabels:{display:false}},scales:{x:{ticks:{font:{size:11},color:'#7a8499'},grid:{color:'rgba(0,0,0,.05)'},border:{display:false}},y:{ticks:{font:{size:11},color:'#1a2744'},grid:{display:false},border:{display:false}}}}});
+    if (kw.neg.length > 0) {
     kwChartInstances['d-neg']=new Chart(document.getElementById('kw-d-neg'),{type:'doughnut',data:{labels:kw.neg.map(i=>i.label),datasets:[{data:kw.neg.map(i=>i.count),backgroundColor:KW_NEG_COLORS.slice(0,kw.neg.length),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+ctx.raw+'건'}},datalabels:{display:false}}}});
     kwChartInstances['b-neg']=new Chart(document.getElementById('kw-b-neg'),{type:'bar',data:{labels:kw.neg.map(i=>i.label),datasets:[{data:kw.neg.map(i=>i.count),backgroundColor:KW_NEG_COLORS.slice(0,kw.neg.length),borderRadius:4,barThickness:16}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false}},scales:{x:{ticks:{font:{size:11},color:'#7a8499'},grid:{color:'rgba(0,0,0,.05)'},border:{display:false}},y:{ticks:{font:{size:11},color:'#1a2744'},grid:{display:false},border:{display:false}}}}});
+    }
   },50);
 }
 
