@@ -256,11 +256,11 @@
           </div>
           <div class="metric-card warm">
             <div class="mc-icon">⭐</div>
-            <div class="mc-label">자발 온라인 리뷰</div>
+            <div class="mc-label">치료 후기</div>
             <div class="mc-value warm" id="mv-exp-review">—<span class="mc-unit">건</span></div>
             <div class="mc-target" id="mt-exp-review">데이터를 입력해주세요</div>
             <div class="mc-bar-bg"><div class="mc-bar" id="mb-exp-review" style="width:0%;background:var(--warm)"></div></div>
-            <div class="mc-desc">신환 초음파 무료 리뷰를 제외한 네이버·다음(카카오)·구글 리뷰 수.</div>
+            <div class="mc-desc">치료 종결, 경과 개선, 진료 중 만족 리뷰. 초음파 이벤트 리뷰는 제외.</div>
           </div>
         </div>
 
@@ -271,8 +271,8 @@
             <div style="position:relative;height:100px;"><canvas id="chart-intro" role="img" aria-label="소개 신환"></canvas></div>
           </div>
           <div style="background:#f7f8fb;border-radius:12px;padding:14px;">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:500;">자발 온라인 리뷰 (건)</div>
-            <div style="position:relative;height:100px;"><canvas id="chart-exp-review" role="img" aria-label="자발 리뷰"></canvas></div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:500;">치료 후기 (건)</div>
+            <div style="position:relative;height:100px;"><canvas id="chart-exp-review" role="img" aria-label="종결 경과개선 진료중 만족 리뷰"></canvas></div>
           </div>
         </div>
 
@@ -285,7 +285,7 @@
           <div class="sec-title">이번 달 수치 입력</div>
           <div class="form-grid">
             <div class="fg"><label>소개 신환 수 (명)</label><input type="number" id="in-intro" placeholder="예: 45" min="0"><div class="hint">덴트웹 환자구분 기준</div></div>
-            <div class="fg"><label>자발 온라인 리뷰 수 (건)</label><input type="number" id="in-exp-review" placeholder="예: 18" min="0"><div class="hint">초음파 무료 리뷰 제외, 네이버·카카오·구글 합산</div></div>
+            <div class="fg"><label>치료 후기 수 (건)</label><input type="number" id="in-exp-review" placeholder="예: 18" min="0"><div class="hint">초음파 이벤트 리뷰 제외</div></div>
           </div>
           <button class="btn" onclick="expCalc()">업데이트</button>
           <div id="exp-interp" class="interp"></div>
