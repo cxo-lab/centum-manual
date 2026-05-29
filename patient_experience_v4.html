@@ -89,7 +89,7 @@
 
   .graph-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
   .graph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
-  .graph-card{background:#f7f8fb;border-radius:12px;padding:14px;}
+  .graph-card{background:#f7f8fb;border-radius:12px;padding:14px 18px;overflow:visible;}
   .graph-card-label{font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:500;}
 
   .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
@@ -216,15 +216,15 @@
           <div class="sec-title">월별 추이</div>
           <div style="background:#f7f8fb;border-radius:12px;padding:14px;margin-bottom:10px;">
             <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:500;">종합점수</div>
-            <div style="position:relative;height:100px;"><canvas id="chart-score" role="img" aria-label="종합점수"></canvas></div>
+            <div style="position:relative;height:130px;"><canvas id="chart-score" role="img" aria-label="종합점수"></canvas></div>
           </div>
           <div class="graph-grid">
-            <div class="graph-card"><div class="graph-card-label">수납 소요시간 (분)</div><div style="position:relative;height:70px;"><canvas id="chart-wait" role="img" aria-label="수납 소요시간"></canvas></div></div>
-            <div class="graph-card"><div class="graph-card-label">예약 이행률 (%)</div><div style="position:relative;height:70px;"><canvas id="chart-keep" role="img" aria-label="예약 이행률"></canvas></div></div>
-            <div class="graph-card"><div class="graph-card-label">리뷰 수 (건)</div><div style="position:relative;height:70px;"><canvas id="chart-review" role="img" aria-label="리뷰 수"></canvas></div></div>
-            <div class="graph-card"><div class="graph-card-label">대기 컴플레인 (명)</div><div style="position:relative;height:70px;"><canvas id="chart-comp" role="img" aria-label="대기 컴플레인"></canvas></div></div>
-            <div class="graph-card"><div class="graph-card-label">수납/접수 불만 (명)</div><div style="position:relative;height:70px;"><canvas id="chart-cs" role="img" aria-label="수납접수 불만"></canvas></div></div>
-            <div class="graph-card"><div class="graph-card-label">전화 포기율 (%)</div><div style="position:relative;height:70px;"><canvas id="chart-drop" role="img" aria-label="전화 포기율"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">수납 소요시간 (분)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-wait" role="img" aria-label="수납 소요시간"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">예약 이행률 (%)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-keep" role="img" aria-label="예약 이행률"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">리뷰 수 (건)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-review" role="img" aria-label="리뷰 수"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">대기 컴플레인 (명)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-comp" role="img" aria-label="대기 컴플레인"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">수납/접수 불만 (명)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-cs" role="img" aria-label="수납접수 불만"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">전화 포기율 (%)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-drop" role="img" aria-label="전화 포기율"></canvas></div></div>
           </div>
         </div>
 
@@ -233,7 +233,7 @@
           <div class="form-grid form-grid-3">
             <div class="fg"><label>수납 평균 소요시간 (분)</label><input type="number" id="in-wait" placeholder="예: 8" min="0" step="0.1"><div class="hint">진료완료 → 수납 완료까지</div></div>
             <div class="fg"><label>예약 이행률 (%)</label><input type="number" id="in-keep" placeholder="예: 88" min="0" max="100" step="0.1"><div class="hint">당일취소 미이행, 사전변경 제외</div></div>
-            <div class="fg"><label>이달 리뷰 수 (건)</label><input type="number" id="in-review" placeholder="예: 23" min="0"><div class="hint">네이버·카카오 온라인 합산</div></div>
+            <div class="fg"><label>이달 리뷰 수 (건)</label><input type="number" id="in-review" placeholder="예: 23" min="0"><div class="hint">네이버·카카오·구글 합산</div></div>
             <div class="fg"><label>대기 컴플레인 (명)</label><input type="number" id="in-comp" placeholder="예: 2" min="0"><div class="hint">대기 중 불만 표현 환자 수</div></div>
             <div class="fg"><label>수납/접수 불만 (명)</label><input type="number" id="in-cs" placeholder="예: 1" min="0"><div class="hint">덴트웹 고객관리 기록 기준</div></div>
             <div class="fg"><label>전화 포기율 (%)</label><input type="number" id="in-drop" placeholder="예: 18" min="0" max="100" step="0.1"><div class="hint">콜센터 인바운드 포기율</div></div>
@@ -268,11 +268,11 @@
           <div class="sec-title">월별 추이</div>
           <div style="background:#f7f8fb;border-radius:12px;padding:14px;margin-bottom:10px;">
             <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:500;">소개 신환 (명)</div>
-            <div style="position:relative;height:100px;"><canvas id="chart-intro" role="img" aria-label="소개 신환"></canvas></div>
+            <div style="position:relative;height:130px;"><canvas id="chart-intro" role="img" aria-label="소개 신환"></canvas></div>
           </div>
           <div style="background:#f7f8fb;border-radius:12px;padding:14px;">
             <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:500;">치료 후기 (건)</div>
-            <div style="position:relative;height:100px;"><canvas id="chart-exp-review" role="img" aria-label="종결 경과개선 진료중 만족 리뷰"></canvas></div>
+            <div style="position:relative;height:130px;"><canvas id="chart-exp-review" role="img" aria-label="종결 경과개선 진료중 만족 리뷰"></canvas></div>
           </div>
         </div>
 
@@ -304,7 +304,7 @@ let curSection = 'ops';
 const OPS = {
   wait:   {'1월':2.6,'2월':2.3,'3월':2.5,'4월':2.4,'5월':2.2},
   keep:   {'1월':80.5,'2월':79.9,'3월':81.1,'4월':82.4,'5월':81.0},
-  review: {'1월':72,'2월':42,'3월':98,'4월':80,'5월':50},
+  review: {'1월':74,'2월':51,'3월':126,'4월':95,'5월':63},
   comp:   {'1월':1,'2월':2,'3월':15,'4월':11,'5월':16},
   cs:     {'1월':7,'2월':2,'3월':4,'4월':10,'5월':12},
   drop:   {'1월':14.38,'2월':21.83,'3월':26.02,'4월':17.66,'5월':19.07},
@@ -318,23 +318,23 @@ const EXP = {
 
 const KEYWORDS = {
   '1월': {
-    pos: [{label:'친절한 응대',count:58},{label:'친절한 설명',count:35},{label:'꼼꼼한 진료',count:12},{label:'치료 종결·완치',count:12},{label:'신뢰감',count:9},{label:'적극 추천',count:9},{label:'지인 소개',count:8},{label:'치료 효과',count:7},{label:'깔끔한 시설',count:6}],
+    pos: [{label:'친절한 응대',count:59},{label:'친절한 설명',count:36},{label:'꼼꼼한 진료',count:13},{label:'치료 종결·완치',count:12},{label:'신뢰감',count:10},{label:'적극 추천',count:9},{label:'지인 소개',count:8},{label:'치료 효과',count:7},{label:'깔끔한 시설',count:7}],
     neg: [{label:'비용 부담',count:2}]
   },
   '2월': {
-    pos: [{label:'친절한 응대',count:31},{label:'친절한 설명',count:16},{label:'치료 종결·완치',count:10},{label:'치료 효과',count:10},{label:'꼼꼼한 진료',count:10},{label:'적극 추천',count:7},{label:'생활습관 안내',count:5},{label:'신뢰감',count:5}],
+    pos: [{label:'친절한 응대',count:36},{label:'친절한 설명',count:22},{label:'꼼꼼한 진료',count:13},{label:'치료 효과',count:11},{label:'치료 종결·완치',count:10},{label:'적극 추천',count:8},{label:'신뢰감',count:8},{label:'생활습관 안내',count:6}],
     neg: []
   },
   '3월': {
-    pos: [{label:'친절한 응대',count:59},{label:'친절한 설명',count:39},{label:'꼼꼼한 진료',count:17},{label:'적극 추천',count:10},{label:'치료 효과',count:9},{label:'전문성',count:9},{label:'깔끔한 시설',count:7},{label:'신뢰감',count:7}],
+    pos: [{label:'친절한 응대',count:76},{label:'친절한 설명',count:53},{label:'꼼꼼한 진료',count:18},{label:'적극 추천',count:14},{label:'치료 효과',count:12},{label:'신뢰감',count:11},{label:'전문성',count:10},{label:'깔끔한 시설',count:8}],
     neg: [{label:'비용 부담',count:1},{label:'치료 권유 불편감',count:1}]
   },
   '4월': {
-    pos: [{label:'친절한 응대',count:54},{label:'친절한 설명',count:45},{label:'꼼꼼한 진료',count:16},{label:'치료 종결·완치',count:11},{label:'깔끔한 시설',count:11},{label:'적극 추천',count:10},{label:'치료 효과',count:9},{label:'전문성',count:7},{label:'신뢰감',count:7}],
+    pos: [{label:'친절한 응대',count:65},{label:'친절한 설명',count:50},{label:'꼼꼼한 진료',count:16},{label:'적극 추천',count:12},{label:'치료 종결·완치',count:11},{label:'깔끔한 시설',count:11},{label:'치료 효과',count:9},{label:'전문성',count:8},{label:'신뢰감',count:8}],
     neg: [{label:'비용 부담',count:2},{label:'대기 시간 있음',count:1}]
   },
   '5월': {
-    pos: [{label:'친절한 응대',count:82},{label:'친절한 설명',count:55},{label:'꼼꼼한 진료',count:23},{label:'치료 종결·완치',count:18},{label:'치료 효과',count:14},{label:'깔끔한 시설',count:14},{label:'전문성',count:12},{label:'첨단 장비',count:12},{label:'적극 추천',count:11},{label:'신뢰감',count:9}],
+    pos: [{label:'친절한 응대',count:91},{label:'친절한 설명',count:65},{label:'꼼꼼한 진료',count:26},{label:'치료 종결·완치',count:18},{label:'깔끔한 시설',count:16},{label:'치료 효과',count:14},{label:'적극 추천',count:14},{label:'전문성',count:13},{label:'첨단 장비',count:13},{label:'신뢰감',count:11}],
     neg: [{label:'비용 부담',count:3},{label:'대기 시간 있음',count:2}]
   },
 };
@@ -561,7 +561,7 @@ function renderKeywords(m) {
   const posTotal=kw.pos.reduce((s,i)=>s+i.count,0); const negTotal=kw.neg.reduce((s,i)=>s+i.count,0);
   const posH=Math.max(140,kw.pos.length*24+40); const negH=Math.max(80,kw.neg.length*24+40);
   const negHtml = kw.neg.length > 0
-    ? `<div class="kw-chart-card"><div class="kw-chart-label">주의 키워드 (총 ${negTotal}건)</div><div class="kw-two-col"><div style="position:relative;height:100px;"><canvas id="kw-d-neg" role="img" aria-label="주의 도넛"></canvas></div><div style="position:relative;height:${negH}px;"><canvas id="kw-b-neg" role="img" aria-label="주의 막대"></canvas></div></div></div>`
+    ? `<div class="kw-chart-card"><div class="kw-chart-label">주의 키워드 (총 ${negTotal}건)</div><div class="kw-two-col"><div style="position:relative;height:130px;"><canvas id="kw-d-neg" role="img" aria-label="주의 도넛"></canvas></div><div style="position:relative;height:${negH}px;"><canvas id="kw-b-neg" role="img" aria-label="주의 막대"></canvas></div></div></div>`
     : `<div class="kw-chart-card"><div class="kw-chart-label">주의 키워드</div><div style="font-size:13px;color:var(--muted);padding:12px 4px;">⚠️ 주의 키워드가 없습니다 — 좋은 한 달이에요!</div></div>`;
   el.innerHTML=`<div class="kw-chart-card"><div class="kw-chart-label">긍정 키워드 (총 ${posTotal}건)</div><div class="kw-two-col"><div style="position:relative;height:160px;"><canvas id="kw-d-pos" role="img" aria-label="긍정 도넛"></canvas></div><div style="position:relative;height:${posH}px;"><canvas id="kw-b-pos" role="img" aria-label="긍정 막대"></canvas></div></div></div>${negHtml}`;
   setTimeout(()=>{
@@ -599,20 +599,20 @@ window.addEventListener('load', () => {
 <script>Chart.register(ChartDataLabels);</script>
 <script>
 const GRAPH_MONTHS=['1월','2월','3월','4월','5월'];
-const GRAPH_DATA={score:[76,82,66,68,63],wait:[2.6,2.3,2.5,2.4,2.2],keep:[80.5,79.9,81.1,82.4,81.0],review:[72,42,98,80,50],comp:[1,2,15,11,16],cs:[7,2,4,10,12],drop:[14.38,21.83,26.02,17.66,19.07]};
+const GRAPH_DATA={score:[76,82,66,68,63],wait:[2.6,2.3,2.5,2.4,2.2],keep:[80.5,79.9,81.1,82.4,81.0],review:[74,51,126,95,63],comp:[1,2,15,11,16],cs:[7,2,4,10,12],drop:[14.38,21.83,26.02,17.66,19.07]};
 function makeLineChart(id,data,color,min,max) {
   const ctx=document.getElementById(id); if(!ctx)return;
-  new Chart(ctx,{type:'line',data:{labels:GRAPH_MONTHS,datasets:[{data:data,borderColor:color,backgroundColor:color+'22',borderWidth:2,pointRadius:4,pointBackgroundColor:color,fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,color:color,font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif",weight:'600'},anchor:'end',align:'top',offset:2,formatter:v=>v}},scales:{x:{ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499'},grid:{display:false},border:{display:false}},y:{min:min,max:max,ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499',maxTicksLimit:3},grid:{color:'rgba(0,0,0,.06)'},border:{display:false}}}}});
+  new Chart(ctx,{type:'line',data:{labels:GRAPH_MONTHS,datasets:[{data:data,borderColor:color,backgroundColor:color+'22',borderWidth:2,pointRadius:4,pointBackgroundColor:color,fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:18,right:32,left:14,bottom:4}},plugins:{legend:{display:false},datalabels:{display:true,color:color,font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif",weight:'600'},anchor:'end',align:(ctx)=>{const i=ctx.dataIndex,n=ctx.dataset.data.length;return i===n-1?'left':(i===0?'right':'top');},offset:4,clip:false,formatter:v=>v}},scales:{x:{ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499'},grid:{display:false},border:{display:false}},y:{min:min,max:max,ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499',maxTicksLimit:3},grid:{color:'rgba(0,0,0,.06)'},border:{display:false}}}}});
 }
 function makeExpChart(id,labels,data,color) {
   const ctx=document.getElementById(id); if(!ctx)return;
-  new Chart(ctx,{type:'line',data:{labels:labels,datasets:[{data:data,borderColor:color,backgroundColor:color+'22',borderWidth:2,pointRadius:4,pointBackgroundColor:color,fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,color:color,font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif",weight:'600'},anchor:'end',align:'top',offset:2,formatter:v=>v}},scales:{x:{ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499'},grid:{display:false},border:{display:false}},y:{ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499',maxTicksLimit:3},grid:{color:'rgba(0,0,0,.06)'},border:{display:false}}}}});
+  new Chart(ctx,{type:'line',data:{labels:labels,datasets:[{data:data,borderColor:color,backgroundColor:color+'22',borderWidth:2,pointRadius:4,pointBackgroundColor:color,fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:18,right:32,left:14,bottom:4}},plugins:{legend:{display:false},datalabels:{display:true,color:color,font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif",weight:'600'},anchor:'end',align:(ctx)=>{const i=ctx.dataIndex,n=ctx.dataset.data.length;return i===n-1?'left':(i===0?'right':'top');},offset:4,clip:false,formatter:v=>v}},scales:{x:{ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499'},grid:{display:false},border:{display:false}},y:{ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499',maxTicksLimit:3},grid:{color:'rgba(0,0,0,.06)'},border:{display:false}}}}});
 }
 window.addEventListener('load',function() {
   makeLineChart('chart-score',GRAPH_DATA.score,'#1a2744',50,100);
   makeLineChart('chart-wait',GRAPH_DATA.wait,'#2a9d6a',0,10);
   makeLineChart('chart-keep',GRAPH_DATA.keep,'#2a9d6a',70,90);
-  makeLineChart('chart-review',GRAPH_DATA.review,'#4a7fd4',0,110);
+  makeLineChart('chart-review',GRAPH_DATA.review,'#4a7fd4',0,140);
   makeLineChart('chart-comp',GRAPH_DATA.comp,'#d94060',0,20);
   makeLineChart('chart-cs',GRAPH_DATA.cs,'#d94060',0,15);
   makeLineChart('chart-drop',GRAPH_DATA.drop,'#e09000',0,35);
