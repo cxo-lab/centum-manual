@@ -304,7 +304,7 @@ let curSection = 'ops';
 const OPS = {
   wait:   {'1월':2.6,'2월':2.3,'3월':2.5,'4월':2.4,'5월':2.2},
   keep:   {'1월':80.5,'2월':79.9,'3월':81.1,'4월':82.4,'5월':81.0},
-  review: {'1월':74,'2월':51,'3월':126,'4월':95,'5월':66},
+  review: {'1월':74,'2월':51,'3월':126,'4월':95,'5월':69},
   comp:   {'1월':1,'2월':2,'3월':15,'4월':11,'5월':16},
   cs:     {'1월':7,'2월':2,'3월':4,'4월':10,'5월':12},
   drop:   {'1월':14.38,'2월':21.83,'3월':26.02,'4월':17.66,'5월':19.07},
@@ -313,7 +313,7 @@ const OPS = {
 
 const EXP = {
   intro:  {'1월':53,'2월':42,'3월':58,'4월':57,'5월':43},
-  review: {'1월':21,'2월':13,'3월':12,'4월':17,'5월':14},
+  review: {'1월':21,'2월':13,'3월':12,'4월':17,'5월':15},
 };
 
 const KEYWORDS = {
@@ -334,8 +334,8 @@ const KEYWORDS = {
     neg: [{label:'비용 부담',count:2},{label:'대기 시간 있음',count:1}]
   },
   '5월': {
-    pos: [{label:'친절한 응대',count:94},{label:'친절한 설명',count:67},{label:'꼼꼼한 진료',count:26},{label:'치료 종결·완치',count:19},{label:'깔끔한 시설',count:16},{label:'치료 효과',count:15},{label:'적극 추천',count:14},{label:'전문성',count:13},{label:'첨단 장비',count:13},{label:'신뢰감',count:12}],
-    neg: [{label:'비용 부담',count:3},{label:'대기 시간 있음',count:2}]
+    pos: [{label:'친절한 응대',count:97},{label:'친절한 설명',count:69},{label:'꼼꼼한 진료',count:26},{label:'치료 종결·완치',count:20},{label:'깔끔한 시설',count:16},{label:'치료 효과',count:16},{label:'적극 추천',count:15},{label:'첨단 장비',count:14},{label:'전문성',count:14},{label:'신뢰감',count:13}],
+    neg: [{label:'비용 부담',count:4},{label:'대기 시간 있음',count:2}]
   },
 };
 
@@ -599,7 +599,7 @@ window.addEventListener('load', () => {
 <script>Chart.register(ChartDataLabels);</script>
 <script>
 const GRAPH_MONTHS=['1월','2월','3월','4월','5월'];
-const GRAPH_DATA={score:[76,82,66,68,63],wait:[2.6,2.3,2.5,2.4,2.2],keep:[80.5,79.9,81.1,82.4,81.0],review:[74,51,126,95,66],comp:[1,2,15,11,16],cs:[7,2,4,10,12],drop:[14.38,21.83,26.02,17.66,19.07]};
+const GRAPH_DATA={score:[76,82,66,68,63],wait:[2.6,2.3,2.5,2.4,2.2],keep:[80.5,79.9,81.1,82.4,81.0],review:[74,51,126,95,69],comp:[1,2,15,11,16],cs:[7,2,4,10,12],drop:[14.38,21.83,26.02,17.66,19.07]};
 function makeLineChart(id,data,color,min,max) {
   const ctx=document.getElementById(id); if(!ctx)return;
   new Chart(ctx,{type:'line',data:{labels:GRAPH_MONTHS,datasets:[{data:data,borderColor:color,backgroundColor:color+'22',borderWidth:2,pointRadius:4,pointBackgroundColor:color,fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:18,right:32,left:14,bottom:4}},plugins:{legend:{display:false},datalabels:{display:true,color:color,font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif",weight:'600'},anchor:'end',align:(ctx)=>{const i=ctx.dataIndex,n=ctx.dataset.data.length;return i===n-1?'left':(i===0?'right':'top');},offset:4,clip:false,formatter:v=>v}},scales:{x:{ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499'},grid:{display:false},border:{display:false}},y:{min:min,max:max,ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499',maxTicksLimit:3},grid:{color:'rgba(0,0,0,.06)'},border:{display:false}}}}});
