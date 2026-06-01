@@ -194,9 +194,9 @@
         <div class="cards">
           <div class="card"><div class="card-icon">⏱️</div><div class="card-label">수납 평균<br>소요시간</div><div class="card-val navy" id="cv-wait">—</div><div class="card-prev">목표: 5분 이내</div><div class="bar-bg"><div class="bar" id="cb-wait" style="width:0%"></div></div></div>
           <div class="card"><div class="card-icon">📅</div><div class="card-label">예약<br>이행률</div><div class="card-val g" id="cv-keep">—</div><div class="card-prev">목표: 80% 이상</div><div class="bar-bg"><div class="bar" id="cb-keep" style="width:0%"></div></div></div>
-          <div class="card"><div class="card-icon">⭐</div><div class="card-label">이달<br>리뷰 수</div><div class="card-val b" id="cv-review">—</div><div class="card-prev" id="cp-review">목표: 종결 10건 이상</div><div class="bar-bg"><div class="bar" id="cb-review" style="width:0%"></div></div></div>
-          <div class="card"><div class="card-icon">😤</div><div class="card-label">대기<br>컴플레인</div><div class="card-val y" id="cv-comp">—</div><div class="card-prev">목표: 10명 이하</div><div class="bar-bg"><div class="bar" id="cb-comp" style="width:0%"></div></div></div>
-          <div class="card"><div class="card-icon">💬</div><div class="card-label">수납/접수<br>불만 환자</div><div class="card-val r" id="cv-cs">—</div><div class="card-prev">목표: 3명 이하</div><div class="bar-bg"><div class="bar" id="cb-cs" style="width:0%"></div></div></div>
+          <div class="card"><div class="card-icon">⭐</div><div class="card-label">이달<br>리뷰 수</div><div class="card-val b" id="cv-review">—</div><div class="card-prev" id="cp-review">목표: 종결 10건 이상</div><div class="card-daily" id="cd-review" style="font-size:11px;color:var(--blue);margin-top:3px;"></div><div class="bar-bg"><div class="bar" id="cb-review" style="width:0%"></div></div></div>
+          <div class="card"><div class="card-icon">😤</div><div class="card-label">대기<br>컴플레인</div><div class="card-val y" id="cv-comp">—</div><div class="card-prev">목표: 10명 이하</div><div class="card-daily" id="cd-comp" style="font-size:11px;color:var(--yellow);margin-top:3px;"></div><div class="bar-bg"><div class="bar" id="cb-comp" style="width:0%"></div></div></div>
+          <div class="card"><div class="card-icon">💬</div><div class="card-label">수납/접수<br>불만 환자</div><div class="card-val r" id="cv-cs">—</div><div class="card-prev">목표: 3명 이하</div><div class="card-daily" id="cd-cs" style="font-size:11px;color:var(--red);margin-top:3px;"></div><div class="bar-bg"><div class="bar" id="cb-cs" style="width:0%"></div></div></div>
           <div class="card"><div class="card-icon">📵</div><div class="card-label">전화<br>포기율</div><div class="card-val y" id="cv-drop">—</div><div class="card-prev">목표: 20% 이하</div><div class="bar-bg"><div class="bar" id="cb-drop" style="width:0%"></div></div></div>
         </div>
 
@@ -231,6 +231,7 @@
         <div class="form-section">
           <div class="sec-title">이번 달 수치 입력</div>
           <div class="form-grid form-grid-3">
+            <div class="fg"><label>영업일 수 (일)</label><input type="number" id="in-workdays" placeholder="예: 22" min="0"><div class="hint">월~토 진료, 공휴일 제외</div></div>
             <div class="fg"><label>수납 평균 소요시간 (분)</label><input type="number" id="in-wait" placeholder="예: 8" min="0" step="0.1"><div class="hint">진료완료 → 수납 완료까지</div></div>
             <div class="fg"><label>예약 이행률 (%)</label><input type="number" id="in-keep" placeholder="예: 88" min="0" max="100" step="0.1"><div class="hint">당일취소 미이행, 사전변경 제외</div></div>
             <div class="fg"><label>이달 리뷰 수 (건)</label><input type="number" id="in-review" placeholder="예: 23" min="0"><div class="hint">네이버·카카오·구글 합산</div></div>
@@ -251,6 +252,7 @@
             <div class="mc-label">소개 신환</div>
             <div class="mc-value teal" id="mv-intro">—<span class="mc-unit">명</span></div>
             <div class="mc-target" id="mt-intro">데이터를 입력해주세요</div>
+            <div id="md-intro" style="font-size:11px;color:var(--teal);margin-top:4px;font-weight:500;"></div>
             <div class="mc-bar-bg"><div class="mc-bar" id="mb-intro" style="width:0%;background:var(--teal)"></div></div>
             <div class="mc-desc">소개, 추천, 입소문을 통해 내원한 환자 수. 덴트웹 환자구분 기준.</div>
           </div>
@@ -259,6 +261,7 @@
             <div class="mc-label">치료 후기</div>
             <div class="mc-value warm" id="mv-exp-review">—<span class="mc-unit">건</span></div>
             <div class="mc-target" id="mt-exp-review">데이터를 입력해주세요</div>
+            <div id="md-exp-review" style="font-size:11px;color:var(--warm);margin-top:4px;font-weight:500;"></div>
             <div class="mc-bar-bg"><div class="mc-bar" id="mb-exp-review" style="width:0%;background:var(--warm)"></div></div>
             <div class="mc-desc">치료 종결, 경과 개선, 진료 중 만족 리뷰. 초음파 이벤트 리뷰는 제외.</div>
           </div>
@@ -302,9 +305,10 @@ let curMonth = '5월';
 let curSection = 'ops';
 
 const OPS = {
+  workdays:{'1월':26,'2월':21,'3월':25,'4월':26,'5월':22},
   wait:   {'1월':2.6,'2월':2.3,'3월':2.5,'4월':2.4,'5월':2.2},
   keep:   {'1월':80.5,'2월':79.9,'3월':81.1,'4월':82.4,'5월':81.0},
-  review: {'1월':74,'2월':51,'3월':126,'4월':95,'5월':71},
+  review: {'1월':74,'2월':51,'3월':126,'4월':95,'5월':72},
   comp:   {'1월':1,'2월':2,'3월':15,'4월':11,'5월':16},
   cs:     {'1월':7,'2월':2,'3월':4,'4월':10,'5월':12},
   drop:   {'1월':14.38,'2월':21.83,'3월':26.02,'4월':17.66,'5월':19.07},
@@ -334,7 +338,7 @@ const KEYWORDS = {
     neg: [{label:'비용 부담',count:2},{label:'대기 시간 있음',count:1}]
   },
   '5월': {
-    pos: [{label:'친절한 응대',count:98},{label:'친절한 설명',count:70},{label:'꼼꼼한 진료',count:27},{label:'치료 종결·완치',count:21},{label:'치료 효과',count:17},{label:'깔끔한 시설',count:16},{label:'첨단 장비',count:15},{label:'전문성',count:15},{label:'적극 추천',count:15},{label:'신뢰감',count:13}],
+    pos: [{label:'친절한 응대',count:99},{label:'친절한 설명',count:71},{label:'꼼꼼한 진료',count:27},{label:'치료 종결·완치',count:21},{label:'치료 효과',count:17},{label:'깔끔한 시설',count:16},{label:'첨단 장비',count:15},{label:'전문성',count:15},{label:'적극 추천',count:15},{label:'신뢰감',count:13}],
     neg: [{label:'비용 부담',count:4},{label:'대기 시간 있음',count:2}]
   },
 };
@@ -410,6 +414,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+function dailyAvg(val, month, decimals=1) {
+  const wd = OPS.workdays[month];
+  if (!wd || val === undefined || val === null) return null;
+  return (val / wd).toFixed(decimals);
+}
+
 function selSection(el, s) {
   document.querySelectorAll('.sec-tab').forEach(b => b.classList.remove('on'));
   document.querySelectorAll('.section').forEach(b => b.classList.remove('on'));
@@ -431,6 +441,7 @@ function selMonth(el, m) {
 function loadOps(m) {
   document.getElementById('ops-hero-month').textContent = m + ' 운영 품질 점수';
   const v = k => OPS[k][m] !== undefined ? OPS[k][m] : '';
+  document.getElementById('in-workdays').value = v('workdays');
   document.getElementById('in-wait').value   = v('wait');
   document.getElementById('in-keep').value   = v('keep');
   document.getElementById('in-review').value = v('review');
@@ -500,12 +511,15 @@ function opsCalc() {
   document.getElementById('cv-keep').className='card-val '+kc; document.getElementById('cv-keep').textContent=keep+'%';
   setBar('cb-keep',keep,kColor);
   document.getElementById('cv-review').textContent=review+'건';
+  const rAvg=dailyAvg(review,curMonth,2);if(rAvg)document.getElementById('cd-review').textContent='일평균 '+rAvg+'건';
   setBar('cb-review',review/10*100,'var(--blue)');
   const cc=comp<=10?'g':comp<=15?'y':'r'; const cColor=comp<=10?'var(--green)':comp<=15?'var(--yellow)':'var(--red)';
   document.getElementById('cv-comp').className='card-val '+cc; document.getElementById('cv-comp').textContent=comp+'명';
+  const cAvg=dailyAvg(comp,curMonth,2);if(cAvg)document.getElementById('cd-comp').textContent='일평균 '+cAvg+'명';
   setBar('cb-comp',(20-comp)/20*100,cColor);
   const sc=cs<=3?'g':cs<=5?'y':'r'; const sColor=cs<=3?'var(--green)':cs<=5?'var(--yellow)':'var(--red)';
   document.getElementById('cv-cs').className='card-val '+sc; document.getElementById('cv-cs').textContent=cs+'명';
+  const sAvg=dailyAvg(cs,curMonth,2);if(sAvg)document.getElementById('cd-cs').textContent='일평균 '+sAvg+'명';
   setBar('cb-cs',(6-cs)/6*100,sColor);
   const dc=drop<=20?'g':drop<=30?'y':'r'; const dColor=drop<=20?'var(--green)':drop<=30?'var(--yellow)':'var(--red)';
   document.getElementById('cv-drop').className='card-val '+dc; document.getElementById('cv-drop').textContent=drop+'%';
@@ -537,9 +551,11 @@ function updateExpCards(intro,review,m) {
     if(prev!==null){const d=intro-prev; mt_i.textContent=(d>=0?'▲ 전월 대비 +':'▼ 전월 대비 ')+d+'명'; mt_i.style.color=d>=0?'var(--green)':'var(--red)';}
     else {mt_i.textContent=m+' 기준'; mt_i.style.color='var(--muted)';}
     document.getElementById('mb-intro').style.width=Math.min(intro/80*100,100)+'%';
+    const iAvg=dailyAvg(intro,m,2);document.getElementById('md-intro').textContent=iAvg?'일평균 '+iAvg+'명':'';
   } else {
     mv_i.innerHTML='—<span class="mc-unit">명</span>'; mt_i.textContent='데이터를 입력해주세요'; mt_i.style.color='var(--muted)';
     document.getElementById('mb-intro').style.width='0%';
+    document.getElementById('md-intro').textContent='';
   }
   const mv_r=document.getElementById('mv-exp-review'); const mt_r=document.getElementById('mt-exp-review');
   if(review!==undefined&&review!==null) {
@@ -548,9 +564,11 @@ function updateExpCards(intro,review,m) {
     if(prev!==null){const d=review-prev; mt_r.textContent=(d>=0?'▲ 전월 대비 +':'▼ 전월 대비 ')+d+'건'; mt_r.style.color=d>=0?'var(--green)':'var(--red)';}
     else {mt_r.textContent=m+' 기준'; mt_r.style.color='var(--muted)';}
     document.getElementById('mb-exp-review').style.width=Math.min(review/30*100,100)+'%';
+    const rAvg=dailyAvg(review,m,2);document.getElementById('md-exp-review').textContent=rAvg?'일평균 '+rAvg+'건':'';
   } else {
     mv_r.innerHTML='—<span class="mc-unit">건</span>'; mt_r.textContent='데이터를 입력해주세요'; mt_r.style.color='var(--muted)';
     document.getElementById('mb-exp-review').style.width='0%';
+    document.getElementById('md-exp-review').textContent='';
   }
 }
 
@@ -599,7 +617,7 @@ window.addEventListener('load', () => {
 <script>Chart.register(ChartDataLabels);</script>
 <script>
 const GRAPH_MONTHS=['1월','2월','3월','4월','5월'];
-const GRAPH_DATA={score:[76,82,66,68,63],wait:[2.6,2.3,2.5,2.4,2.2],keep:[80.5,79.9,81.1,82.4,81.0],review:[74,51,126,95,71],comp:[1,2,15,11,16],cs:[7,2,4,10,12],drop:[14.38,21.83,26.02,17.66,19.07]};
+const GRAPH_DATA={score:[76,82,66,68,63],wait:[2.6,2.3,2.5,2.4,2.2],keep:[80.5,79.9,81.1,82.4,81.0],review:[74,51,126,95,72],comp:[1,2,15,11,16],cs:[7,2,4,10,12],drop:[14.38,21.83,26.02,17.66,19.07]};
 function makeLineChart(id,data,color,min,max) {
   const ctx=document.getElementById(id); if(!ctx)return;
   new Chart(ctx,{type:'line',data:{labels:GRAPH_MONTHS,datasets:[{data:data,borderColor:color,backgroundColor:color+'22',borderWidth:2,pointRadius:4,pointBackgroundColor:color,fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:18,right:32,left:14,bottom:4}},plugins:{legend:{display:false},datalabels:{display:true,color:color,font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif",weight:'600'},anchor:'end',align:(ctx)=>{const i=ctx.dataIndex,n=ctx.dataset.data.length;return i===n-1?'left':(i===0?'right':'top');},offset:4,clip:false,formatter:v=>v}},scales:{x:{ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499'},grid:{display:false},border:{display:false}},y:{min:min,max:max,ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499',maxTicksLimit:3},grid:{color:'rgba(0,0,0,.06)'},border:{display:false}}}}});
