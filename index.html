@@ -297,7 +297,7 @@ const DEFAULT_DATA = [
   { cat:"수납", q:"계좌이체 수납 확인 순서는?", tags:["수납","계좌이체","이체","온라인","현금영수증","히든메모"], a:`<ul><li>① 환자분께 <strong>계좌번호와 진료금액</strong> 안내 (포스트잇에 적어서 붙여드리기)</li><li>② 이체 후 <strong>화면 확인</strong></li><li>③ <strong>현금영수증 발행 여부</strong> 확인<ul><li>10만원 이상인 경우, 발행 원치 않으시면 <strong>자진발급</strong></li></ul></li><li>④ 덴트웹 전자차트 <strong>히든 메모</strong> 남기기</li></ul><div class='note'>메모 예시<br>• 12,600원 계좌이체, 현영 발급 / 수납자이름<br>• 233,000원 계좌이체, 현영 원치 않아 자진발급 / 수납자이름</div>` },
   { cat:"수납", q:"제로페이는 어떻게 결제하나요?", tags:["수납","제로페이","결제","바코드"], a:`<ul><li>토스 단말기 결제 패드 <strong>길게 터치</strong></li><li>하단 <strong>제로페이 바코드</strong> 터치</li><li>환자분께 직접 스캔하여 결제하도록 안내</li></ul>` },
   { cat:"수납", q:"제로페이 결제 후 덴트웹 수납 입력 처리는 어떻게 하나요?", tags:["수납","제로페이","덴트웹","기타","온라인","현금영수증"], a:`<ul><li>덴트웹 → <strong>기타/온라인</strong>에 금액 입력 → 옆 구분을 <strong>제로페이</strong>로 변경</li></ul><div class='note'>현금영수증 발행 안 함. 환자분께 현금영수증 처리는 <strong>제로페이 앱 내에서</strong> 하시면 된다고 안내</div>` },
-  { cat:"수납", q:"제로페이 결제 확인은 어떻게 하나요?", tags:["수납","제로페이","확인","어플","사이트"], a:`<ul><li>병원 핸드폰에 <strong>제로페이 앱</strong> 설치되어 있어 앱 내에서 확인 가능</li><li>컴퓨터로는 사이트 접속하여 확인 가능<br><strong>https://www.zeropay.or.kr/UI_HP_001.act</strong></li></ul>` },
+  { cat:"수납", q:"제로페이 결제 확인은 어떻게 하나요?", tags:["수납","제로페이","확인","어플","사이트"], a:`<ul><li>병원 핸드폰에 <strong>제로페이 앱</strong> 설치되어 있어 앱 내에서 확인 가능</li><li>컴퓨터로는 사이트 접속하여 확인 가능<br><strong><a href="https://www.zeropay.or.kr/UI_HP_001.act" target="_blank">https://www.zeropay.or.kr/UI_HP_001.act</a></strong></li></ul>` },
   { cat:"수납", q:"10원 단위가 발생되는 환자분들 중 현금 결제인 경우는 어떻게 처리하나요?", tags:["수납","현금","10원","할인","잔돈","거스름돈"], a:`<ul><li>덴트웹 수납창에서 <strong>환자부담금 옆 할인금액 ▶ 버튼</strong> 클릭</li><li>할인금액 직접 입력 → 발생된 <strong>10원 단위 금액</strong> 입력</li><li>확인 클릭 후 결제</li></ul>` },
 
 
@@ -318,7 +318,7 @@ const DEFAULT_DATA = [
   { cat:"영상자료", q:"CD 가져오신 환자는 어떻게 응대하나요?", tags:["영상","CD","신환","구환"], a:`<table><tr><td><strong>신환</strong></td><td>CD에 어떤 영상 있는지 여쭤보기 → "안쪽에서 확인 후 추가 촬영 가능" 설명 → 무전</td></tr><tr><td><strong>구환</strong></td><td>차팅 남기고 어레인지에 전달 또는 무전. 환자분께: "당일 판독 어려울 수 있어 안쪽에서 안내 드리겠다"</td></tr></table>` },
 
   { cat:"주차", q:"무료 주차는 몇 시간인가요? 이후 요금은?", tags:["주차","무료","요금","시간","주차비","2시간"], a:`<ul><li>건물 주차 <strong>최대 2시간 지원</strong></li><li>2시간 초과 이후: <strong>10분당 1,000원</strong></li></ul><div class='warn'>⚠️ 1회만 등록 가능 — 출차 후 재입차 시 추가 등록 안 됨. 건물 내 다른 상가에서 이미 등록한 경우도 추가 등록 불가. 꼭 설명 필요.</div>` },
-  { cat:"주차", q:"주차 등록은 어떻게 하나요?", tags:["주차","등록","방법","사이트","차량번호"], a:`<ul><li>주차등록 사이트: <strong>http://58.120.98.220/discount/registration?SWversion=ATS3000_20250512</strong></li><li>차량번호 검색 후 상황에 맞는 버튼 클릭</li></ul><table><tr><td><strong>일반 (2시간 이내)</strong></td><td>→ <strong>2시간 할인</strong> 클릭<br>멘트: "최대 2시간 지원 가능하여 2시간 등록 해드렸습니다"</td></tr><tr><td><strong>신환, 접수 후 2시간 초과</strong></td><td>→ <strong>2시간 할인(후불)</strong> 클릭<br>멘트: "주차등록 해드렸습니다, 바로 출차 하시면 됩니다"<br><br>환자가 "몇 시간 됐나요?" 질문 시:<br>"최대 2시간 지원 가능하나, 처음 내원 하셔서 지금 출차하시면 비용 따로 발생되지 않으십니다"</td></tr></table><div class='note'>출차 5분 전 반드시 등록. 이 외 추가 설명이나 다른 멘트 금지.</div>` },
+  { cat:"주차", q:"주차 등록은 어떻게 하나요?", tags:["주차","등록","방법","사이트","차량번호"], a:`<ul><li>주차등록 사이트: <strong><a href="http://58.120.98.220/discount/registration?SWversion=ATS3000_20250512" target="_blank">http://58.120.98.220/discount/registration?SWversion=ATS3000_20250512</a></strong></li><li>차량번호 검색 후 상황에 맞는 버튼 클릭</li></ul><table><tr><td><strong>일반 (2시간 이내)</strong></td><td>→ <strong>2시간 할인</strong> 클릭<br>멘트: "최대 2시간 지원 가능하여 2시간 등록 해드렸습니다"</td></tr><tr><td><strong>신환, 접수 후 2시간 초과</strong></td><td>→ <strong>2시간 할인(후불)</strong> 클릭<br>멘트: "주차등록 해드렸습니다, 바로 출차 하시면 됩니다"<br><br>환자가 "몇 시간 됐나요?" 질문 시:<br>"최대 2시간 지원 가능하나, 처음 내원 하셔서 지금 출차하시면 비용 따로 발생되지 않으십니다"</td></tr></table><div class='note'>출차 5분 전 반드시 등록. 이 외 추가 설명이나 다른 멘트 금지.</div>` },
 
   { cat:"보험·서류", q:"환자분이 보험서류 요청 시 확인할 것은?", tags:["보험","서류","진단서","소견서","확인서","용도","팩스"], a:`<ul><li>영수증·세부내역서 → <strong>당일 바로 발급</strong><br><span style='font-size:12px;color:#888;'>(구강내과 진료만 본 경우 진료과목 <strong>구강내과</strong>로 출력되었는지 확인)</span></li></ul><div style='background:#e8f0fe;border-radius:8px;padding:10px 12px;margin:6px 0;'><strong>🦷 구강내과 환자</strong><br><ul style='margin:6px 0 0 0;padding-left:1.1rem;'><li>환자분께 <strong>제출 용도 확인</strong> (보험사 제출용·회사 제출용·기관 제출용 등)</li><li>기존 양식 소견서 (보톡스·PDRN·콜라겐·TPI·충격파) 제외한 소견서 또는 진단서 요청 시 → <strong>발급 사유 확인</strong> (어떤 내용이 들어가야 하는지 체크)</li></ul></div><div style='background:#e8f5e9;border-radius:8px;padding:10px 12px;margin:6px 0;'><strong>🦷 통합치과 환자</strong><br><ul style='margin:6px 0 0 0;padding-left:1.1rem;'><li>가입하신 <strong>치아보험사를 통해</strong> 보험사 당사 치과치료확인서 양식 + 필요서류 안내 받으시고 본원에 요청하시는 것 안내</li><li>진단서·수술확인서 요청 시 → <strong>어디 부위, 어떤 치료에 대한 내용이 필요한지</strong> 환자분께 여쭤본 뒤 차트에 기록 남기기<br><span style='color:#888;font-size:12px;'>ex. 오른쪽 아래 레진 때운 부분 진단서 원하심 / 왼쪽 위 임플란트 수술한 것 뼈이식 내용 포함한 내용 원하심 등</span></li></ul></div>` },
   { cat:"보험·서류", q:"서류 발급 비용은 어떻게 되나요?", tags:["서류","비용","소견서","진단서","차트","확인서","사본","발급기간"], a:`<table><tr><td>영수증·세부내역서</td><td class="ok">무료 (당일 발급 가능)</td></tr><tr><td>통원진료확인서</td><td class="ok">무료 (당일 발급 가능)</td></tr><tr><td>소견서 (보톡스·PDRN·TPI·콜라겐·충격파)</td><td class="ok">무료 (당일 발급 가능)</td></tr><tr><td>소견서 (장치·회사 제출·기타)</td><td>1만원 (2~3일 소요 안내 필요)</td></tr><tr><td>진단서 (일반)</td><td>1만원 (2~3일 소요 안내 필요)</td></tr><tr><td>진단서 (영문)</td><td>2만원 (2~3일 소요 안내 필요)</td></tr><tr><td>진단서 (군부대 제출용)</td><td>1만원 (2~3일 소요 안내 필요)</td></tr><tr><td>병무용 진단서</td><td>2만원 (2~3일 소요 안내 필요)</td></tr><tr><td>상해 진단서 (3주 미만)</td><td>10만원 (2~3일 소요 안내 필요)</td></tr><tr><td>상해 진단서 (3주 이상)</td><td>15만원 (2~3일 소요 안내 필요)</td></tr><tr><td>진료 확인서</td><td>1만원 (본원 양식 당일 발급 가능 / 치아보험사 양식 2~3일 소요)</td></tr><tr><td>차트 사본</td><td>1~5장 1천원 / 5장 초과 장당 100원 (2~3일 소요 안내 필요)</td></tr><tr><td>진료 의뢰서·교정 의뢰서·회신서</td><td class="ok">무료 (2~3일 소요 안내 필요)</td></tr></table><div class='note'>본인 직접 수령 or 신분증 확인 후 카카오톡 전송 가능. 가족 수령 시 환자 신분증 사본 + 대리인 신분증 사본 + 가족관계 증명서 필요.</div>` },
@@ -397,7 +397,7 @@ const DEFAULT_DATA = [
   { cat:"예약", q:"세정술 예약 기준이 어떻게 되나요?", tags:["예약","세정술","단위","15분","남현"], a:`<ul><li><strong>15분에 1개씩</strong>, 1시간당 <strong>최대 3개</strong>까지</li><li>목요일 오후 (Dr. 남현만 있는 날)<br><span style='color:#888;font-size:12px;'>ex. 16:00·16:15·16:30·16:45 중 3개만 예약 가능</span></li></ul>` },
   { cat:"기타", q:"수납 후 종이 차트는 어떻게 하나요?", tags:["기타","차트","종이차트","수납","꽂기","남윤","박유진","남현","통합과"], a:`<table><tr><td colspan='2'><strong>🦷 구강내과</strong></td></tr><tr><td>Dr. 남윤</td><td>Dr. 남윤 구분하여 꽂기</td></tr><tr><td>Dr. 박유진</td><td>Dr. 박유진 구분하여 꽂기</td></tr><tr><td>목 오후 Dr. 남현</td><td>Dr. 남현 별도 구분하여 꽂기</td></tr><tr><td colspan='2'><strong>🦷 통합치과</strong></td></tr><tr><td>보존과 + 통합과</td><td>같이 구분하여 꽂기</td></tr></table>` },
 
-  { cat:"기타", q:"구강내과 구환 모바일 문진(QR문진) 안내 시 카메라 인식이 안된다고 할 때는 어떻게 하나요?", tags:["기타","보톡스","문진","링크","카톡","QR","모바일문진","카메라"], a:`<ul><li>카카오톡 혹은 문자로 <strong>문진 링크 보내드리고 작성 요청</strong>하기</li><li>링크 (<strong>Ctrl+Shift+4</strong> 누른 후 붙여넣기): <strong>https://bespoke-horse-b17844.netlify.app</strong></li></ul>` },
+  { cat:"기타", q:"구강내과 구환 모바일 문진(QR문진) 안내 시 카메라 인식이 안된다고 할 때는 어떻게 하나요?", tags:["기타","보톡스","문진","링크","카톡","QR","모바일문진","카메라"], a:`<ul><li>카카오톡 혹은 문자로 <strong>문진 링크 보내드리고 작성 요청</strong>하기</li><li>링크 (<strong>Ctrl+Shift+4</strong> 누른 후 붙여넣기): <strong><a href="https://bespoke-horse-b17844.netlify.app" target="_blank">https://bespoke-horse-b17844.netlify.app</a></strong></li></ul>` },
   { cat:"수납", q:"구강용품 판매 후 처리는?", tags:["수납","구강용품","판매","슬랙","숨그린","수분지킴밴드","징크비타","APS","영양제"], a:`<table><tr><td>숨그린 가글 (1통 20개)</td><td>5천원</td></tr><tr><td>수분지킴밴드 (1통 30매)</td><td>5천원</td></tr><tr><td>징크비타 (하루 1개, 1통 3개월분)</td><td>5만 5천원</td></tr></table><div class='note'>APS 장치 진행하시는 분들 → 다음 기간에 맞춰 <strong>무료 증정 가능</strong><br>(밴드는 반으로 잘라서 사용하기 때문에 1통으로 2달 사용 가능)<br>추가 요청 시 구매 안내 드리기</div><ul><li>덴트웹 → 전자차트 → 진료입력 → <strong>구강내과 탭</strong> → <strong>구강관리용품구매</strong> 클릭 후 판매 용품 선택 <span style='color:#888;font-size:12px;'>(금액은 0으로 설정이 맞음)</span></li><li>슬랙 <strong>#데스크</strong> 채널에 환자 성함·결제수단·판매상품 기재</li></ul>` }
 ];
 
@@ -523,7 +523,7 @@ function render() {
           <span class="item-q">${hl(item.q, q)}</span>
           <span class="item-arrow">▾</span>
         </div>
-        <div class="item-body">${item.a}</div>
+        <div class="item-body" onclick="event.stopPropagation()">${item.a}</div>
       </div>`;
     });
     html += `</div>`;
@@ -547,6 +547,16 @@ function toggle(id) {
   const el = document.getElementById(id);
   if (el) el.classList.toggle("open");
 }
+
+// 답변 내 링크 클릭 시 아이템 닫힘 방지
+document.addEventListener("click", function(e) {
+  if (e.target.tagName === "A") {
+    e.stopPropagation();
+    if (!e.target.getAttribute("target")) {
+      e.target.setAttribute("target", "_blank");
+    }
+  }
+});
 
 const qEl = document.getElementById("q");
 const clearBtn = document.getElementById("clear-btn");
