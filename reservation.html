@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>구강내과 예약 기준 — 예약표 보기</title>
+<style>
+:root{
+  --navy:#1a3a52; --navy2:#2c5282; --bg:#f7f8fa; --line:#e3e6eb; --txt:#2c3340; --muted:#7a828f;
+  --s1:#EAF3DE; --s1t:#3B6D11; --s2:#C0DD97; --s2t:#27500A; --s3:#97C459; --s3t:#173404;
+  --sin:#E6F1FB; --sint:#0C447C; --sinb:#378ADD; --coop:#D7E9F7; --coopt:#185FA5;
+  --lunch:#FBEFD3; --luncht:#8a6d1f; --off:#F1EFE8; --offt:#b4b2a9; --warn:#FAEEDA; --warnt:#854F0B;
+  --soft:#993556; --softb:#ED93B1;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Pretendard','Apple SD Gothic Neo',-apple-system,sans-serif;background:var(--bg);color:var(--txt);}
+.wrap{max-width:720px;margin:0 auto;padding:24px 18px 48px;}
+h1{font-size:19px;font-weight:600;color:var(--navy);margin:0 0 4px;}
+.sub{font-size:12px;color:var(--muted);margin-bottom:18px;}
+.btns{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+.btns button{padding:7px 18px;font-size:14px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;font-weight:500;transition:.15s;}
+.btns button:hover{border-color:var(--navy2);}
+.btns button.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+.leg{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;font-size:12px;color:var(--muted);align-items:center;}
+.leg span{display:inline-flex;align-items:center;gap:5px;}
+.leg i{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,.06);}
+table{width:100%;border-collapse:collapse;table-layout:fixed;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+thead th{font-weight:600;color:#fff;background:var(--navy);padding:9px 2px;font-size:12.5px;}
+thead th.t0{width:50px;}
+td{height:23px;border:1px solid var(--line);text-align:center;vertical-align:middle;padding:0;}
+td.tm{color:var(--muted);font-size:10.5px;border:none;border-right:1px solid var(--line);background:#fafbfc;}
+td.tm.hr{color:var(--txt);font-weight:600;font-size:11px;}
+.cell{width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:3px;font-size:11px;}
+.bdg{font-size:9px;border-radius:3px;padding:0 3px;line-height:1.5;background:#fff;}
+.foot{font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.7;}
+.foot strong{color:var(--txt);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>구강내과 예약 기준 — 예약표 보기</h1>
+  <div class="sub">서울센텀턱구강내과치과 · 데스크 매뉴얼 기준</div>
+  <div class="btns" id="btns"></div>
+  <div class="leg">
+    <span><i style="background:var(--sin);border-color:var(--sinb);"></i>신환</span>
+    <span><i style="background:var(--s1);"></i>구환 1명</span>
+    <span><i style="background:var(--s2);"></i>2명</span>
+    <span><i style="background:var(--s3);"></i>3명</span>
+    <span><i style="background:var(--coop);"></i>협진</span>
+    <span><i style="background:var(--lunch);"></i>점심</span>
+    <span><i style="background:var(--off);"></i>휴진</span>
+    <span><i style="background:var(--warn);"></i>주의</span>
+  </div>
+  <table>
+    <thead><tr><th class="t0"></th><th>Dr. 남윤</th><th>Dr. 남현</th><th>Dr. 박유진</th><th>Dr. 전소영</th></tr></thead>
+    <tbody id="body"></tbody>
+  </table>
+  <div class="foot">
+    ※ 셀 안 숫자 = 구환 예약 인원(줄 수), <strong>신</strong>(파란 테두리) = 신환 가능, <strong>연</strong> = 연조직 신환, 노란 테두리 = 예외 시간(줄 수 변동).<br>
+    ※ 박유진 신환: <strong>월·수오후 = 1시간 단위</strong>(매시 정각) · <strong>수오전·금·토 = 30분 단위</strong>(:00/:30). 남윤 신환: 30분 단위(:00/:30). 남현 목오후 단독: 구환 2명(15분 단위)·신환 1시간 단위.<br>
+    ※ 예외 시간(줄 수 변동) — 남윤: 화·금 13:00→3명/13:15→2명 · 화·금 18:00→3명/18:15→2명 · 수 20:00→3명/20:15→2명 · 토 13:30→3명/13:45→2명. 박유진은 <strong>금·토 동일 적용</strong>(화·목 휴진).<br>
+    ※ 전소영 원장님: 단독 진료 없이 <strong>협진으로만</strong> 진행(근무 월·수·금·토, 수 야간 포함 / 화·목 휴진).<br>
+    ※ 진료시간: 오전 ~13:15 · 점심 13:30~15:15 · 오후 15:30~. 마감은 월·화·목·금 19:00(예약 18:15까지) · 수 야간 21:00(20:15까지) · 토 14:30(13:45까지). 실제와 다르면 알려주세요.
+  </div>
+</div>
+<script>
+(function(){
+var DAYS=['월','화','수','목','금','토'];
+var C={s1:['var(--s1)','var(--s1t)'],s2:['var(--s2)','var(--s2t)'],s3:['var(--s3)','var(--s3t)'],
+ coop:['var(--coop)','var(--coopt)'],solo:['var(--sin)','var(--sint)'],
+ lunch:['var(--lunch)','var(--luncht)'],off:['var(--off)','var(--offt)'],warn:['var(--warn)','var(--warnt)']};
+function inW(t,a,b){return t>=a&&t<b;}
+function lunch(day,t){return day!=='토'&&t>=810&&t<930;}
+var EXC_NY={'화|780':3,'화|795':2,'화|1080':3,'화|1095':2,'목|780':3,'목|795':2,'금|780':3,'금|795':2,'금|1080':3,'금|1095':2,'수|1200':3,'수|1215':2,'토|810':3,'토|825':2};
+function NY(day,t){
+ var open=false;
+ if(day==='월'||day==='화'||day==='금')open=inW(t,600,1140);
+ else if(day==='수')open=inW(t,930,1260);
+ else if(day==='목')open=inW(t,600,810);
+ else if(day==='토')open=inW(t,600,840);
+ if(!open)return null;
+ var min=t%60,even=(min===0||min===30),cap;
+ var ex=EXC_NY[day+'|'+t];
+ if(ex!==undefined)cap=ex;
+ else if(day==='월')cap=2;
+ else if(day==='수')cap=(t>=1080)?(even?2:3):2;
+ else cap=even?2:3;
+ return {cap:cap,sin:even,exc:ex!==undefined};
+}
+function NH(day,t){
+ if(day==='월'||day==='수')return null;
+ if(day==='화'||day==='금')return inW(t,600,1140)?{coop:true}:null;
+ if(day==='토')return inW(t,600,840)?{coop:true}:null;
+ if(day==='목'){
+   if(t<810)return inW(t,600,810)?{coop:true}:null;
+   return inW(t,930,1140)?{cap:2,sin:(t%60===0),solo:true}:null;
+ }
+ return null;
+}
+function PJ(day,t){
+ if(day==='화'||day==='목')return null;
+ var min=t%60,even=(min===0||min===30);
+ if(day==='월')return inW(t,600,1140)?{cap:1,sin:(t>=930&&min===0)}:null;
+ if(day==='수'){
+   if(inW(t,600,810))return {cap:even?2:3,sin:even,soft:(min===15)};
+   if(inW(t,930,1080))return {cap:1,sin:(min===0)};
+   return null;
+ }
+ if(day==='금'){
+   if(!inW(t,600,1140))return null;
+   var capf=even?2:3,exf=EXC_NY['금|'+t];
+   if(exf!==undefined)capf=exf;
+   return {cap:capf,sin:even,soft:(min===45),exc:exf!==undefined};
+ }
+ if(day==='토'){
+   if(!inW(t,600,840))return null;
+   var capt=even?2:3,ext=EXC_NY['토|'+t];
+   if(ext!==undefined)capt=ext;
+   return {cap:capt,sin:even,exc:ext!==undefined};
+ }
+ return null;
+}
+function TS(day,t){
+ if(day==='화'||day==='목')return null;
+ if(day==='토')return inW(t,600,840)?{coop:true}:null;
+ if(day==='수')return inW(t,600,1260)?{coop:true}:null;
+ return inW(t,600,1140)?{coop:true}:null;
+}
+function paint(td,info,who){
+ if(info===null){td.style.background=C.off[0];var oc=document.createElement('div');oc.className='cell';oc.style.color='#9a978e';oc.style.fontSize='9.5px';oc.textContent='휴진';td.appendChild(oc);return;}
+ var cell=document.createElement('div');cell.className='cell';
+ if(info.coop){td.style.background=C.coop[0];cell.style.color=C.coop[1];cell.textContent='협진';td.appendChild(cell);return;}
+ if(info.cap){var col=info.cap===3?C.s3:(info.cap===2?C.s2:C.s1);
+   td.style.background=col[0];cell.style.color=col[1];
+   var html='';
+   html+='<span style="font-weight:600">'+info.cap+'명</span>';
+   if(info.sin)html+='<span class="bdg" style="color:var(--sint);border:1px solid var(--sinb);">신</span>';
+   if(info.soft)html+='<span class="bdg" style="color:var(--soft);border:1px solid var(--softb);">연</span>';
+   if(info.sin)td.style.boxShadow='inset 0 0 0 2px var(--sinb)';
+   if(info.exc||info.warn){td.style.outline='2px solid #EF9F27';td.style.outlineOffset='-2px';}
+   cell.innerHTML=html;td.appendChild(cell);
+   td.title=(info.solo?'목 오후 단독 · ':'')+(info.exc?'예외 시간 ':'')+'구환 '+info.cap+'명'+(info.sin?' · 신환'+(info.solo?' 1시간':' 30분')+'단위':'')+(info.soft?' · 연조직 신환':'')+(info.warn?' / 18시대 Del·세정술 동시금지':'');return;}
+}
+function render(day){
+ var tb=document.getElementById('body');tb.innerHTML='';
+ var end=(day==='토')?840:(day==='수'?1230:1110);
+ for(var t=600;t<end;t+=15){
+   var tr=document.createElement('tr');
+   var min=t%60,hh=Math.floor(t/60);
+   var tc=document.createElement('td');tc.className='tm';
+   tc.textContent=(min===0)?(hh+':00'):(':'+String(min).padStart(2,'0'));
+   if(min===0)tc.classList.add('hr');
+   tr.appendChild(tc);
+   if(lunch(day,t)){
+     var ltd=document.createElement('td');ltd.colSpan=4;ltd.style.background=C.lunch[0];ltd.style.color=C.lunch[1];ltd.style.fontSize='11px';ltd.textContent='점심시간';tr.appendChild(ltd);
+   } else {
+     var defs=[['NY',NY(day,t)],['NH',NH(day,t)],['PJ',PJ(day,t)],['TS',TS(day,t)]];
+     for(var k=0;k<defs.length;k++){var td=document.createElement('td');paint(td,defs[k][1],defs[k][0]);tr.appendChild(td);}
+   }
+   tb.appendChild(tr);
+ }
+}
+var bw=document.getElementById('btns');
+DAYS.forEach(function(d){var b=document.createElement('button');b.textContent=d;if(d==='월')b.classList.add('on');
+ b.onclick=function(){var all=document.querySelectorAll('#btns button');for(var i=0;i<all.length;i++)all[i].classList.remove('on');b.classList.add('on');render(d);};
+ bw.appendChild(b);});
+render('월');
+})();
+</script>
+</body>
+</html>
