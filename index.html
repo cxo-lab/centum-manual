@@ -202,7 +202,7 @@ const CAT_META = {
 };
 
 const DEFAULT_DATA = [
-  { cat:"예약", q:"구강내과 예약 기준을 이미지로 보고 싶어요", tags:["예약","예약기준","이미지","예약표","색칠표","요일","줄수","신환","남윤","남현","박유진","전소영"], a:`<p style='margin:0 0 10px;color:#555;font-size:13px;'>요일 버튼을 누르면 원장님별 예약 가능 줄 수·신환 슬롯이 색으로 표시됩니다.</p><iframe src="reservation.html" title="구강내과 예약표" loading="lazy" style="width:100%;height:1280px;border:1px solid #e3e6eb;border-radius:8px;"></iframe><p style='margin:8px 0 0;font-size:12px;'><a href="reservation.html" target="_blank" rel="noopener">↗ 새 창에서 크게 보기</a></p>` },
+  { cat:"예약", q:"네이버 예약 슬롯은 얼마나 열어야 하나요?", tags:["예약","네이버","슬롯"], a:`<ul><li><strong>남윤·박유진 원장님</strong>: 항상 <strong>2주 뒤 슬롯</strong>만 열기</li><li>그 뒤로는 열려있다면 <strong>한 달 뒤까지 닫아주기</strong></li></ul><div class='note'>📢 매일 오전 슬랙 <strong>#데스크</strong> 채널에 자동 발송되는 메시지 확인 → 슬롯 열었으면 <strong>해당 메시지에 ☑️ 체크박스 표시</strong></div>` },
   { cat:"예약", q:"환자와 예약 일정으로 대화 중에 임의·임시로 잡거나 확정 전 확인 중인 예약의 경우 예약 메모를 어떻게 하나요?", tags:["예약","메모","카톡","톡톡","확인중","임시","임의"], a:`<table><tr><td>카카오톡으로 확인 중</td><td><strong>카톡확인중/본인이름차팅</strong></td></tr><tr><td>네이버 톡톡으로 확인 중</td><td><strong>톡톡확인중/본인이름차팅</strong></td></tr><tr><td>전화로 재연락 예정</td><td><strong>전화확인중/본인이름차팅</strong></td></tr></table><ul><li>① 확인 안 된 예약은 예약표 생성 시 <strong>SMS 발송 제외 꼭 체크</strong></li><li>② 퇴근 전 <strong>'확인중'</strong> 키워드로 예약 검색 → 미완료 건은 <strong>삭제 처리</strong></li></ul><div class='note'>삭제 후 환자에게 꼭 연락<br>멘트: "000님 답변이 없으셔서 연락 드립니다. 가능하신 일정 확인 후 다시 연락 주시면 예약 도와드리겠습니다"</div>` },
   { cat:"예약", q:"예약표에 W) 는 어떤 의미인가요?", tags:["예약","대기","W","w","waiting","웨이팅"], a:`<ul><li>예약기준에 맞춰 예약이 꽉 차 있으나, <strong>예약기준을 벗어나는 추가 예약</strong>을 해야 하는 경우 예약 내용 앞에 <strong>W)</strong> 표시 — <strong>Waiting(대기)</strong>의 의미</li><li>같은 시간대 취소가 생겨 W) 예약이 예약기준에 맞춰질 시 → 취소 예약 받은 담당자는 <strong>동시간대 W) 예약의 'W)' 메모 부분 삭제</strong></li><li>W) 안내 환자분들께는 내원 시 <strong>물리치료가 어려울 수 있는 점 설명</strong>. 내원하셨을 때 진료 상황에 따라 물리치료 진행 여부 안내 드릴 수 있는 점 설명</li></ul><div class='note'>📢 예약 시 환자분께 안내 멘트<br>"안내 드린 일정·시간에 예약이 차 있으나 일정에 맞춰 진료 보시는 게 치료에 도움이 되셔서 예약을 추가로 잡아드렸습니다. 그렇다 보니 내원 시 대기시간이 발생될 수 있어 양해 부탁드립니다! 혹시 같은 시간대 취소하시거나 변경하시는 분이 생기면 대기시간 없이 진료 진행됩니다."</div>` },
   { cat:"예약", q:"예약 취소 시 메모 처리는 어떻게 하나요?", tags:["예약","취소","숨김","메모","hidden"], a:`<ul><li>덴트웹 예약표에서 해당 예약 <strong>취소 처리</strong></li><li>메모 칸에 <strong>'취소 사유 / 담당자 이름'</strong> 작성</li><li>작성 후 전자차트에 취소 사유 자동 연동 기입 → <strong>해당 메모를 숨김(Hidden) 처리</strong>로 반드시 변경</li></ul><table><tr><td><strong>당일 취소</strong></td><td>당일 예약표에 예약 <strong>그대로 유지</strong></td></tr><tr><td><strong>사전 취소·변경</strong> (당일 제외)</td><td>예약 취소 후 예약표의 <strong>'취소' 칸으로 이동</strong></td></tr></table><div class='warn'>⚠️ 숨김 처리 안 되어 있는 경우 진료기록사본 발급 시 취소 메모가 내용에 같이 출력됨<br>→ <strong>진료기록사본 발급 전 취소 메모 숨김 여부 반드시 체크</strong></div>` },
@@ -293,6 +293,72 @@ const DEFAULT_DATA = [
 </table>` },
 
   { cat:"수납", q:"현금영수증 발급은 어떻게 하나요?", tags:["수납","현영","현금영수증","현금","자진","사업자","계좌이체"], a:`<ul><li>현금 or 온라인(계좌이체) 결제 시 환자분이 원하면 발급 가능</li><li>원치 않으시면 발급 안 해도 되나 — <strong>10만원 이상인 경우 자진발급 필수!</strong></li></ul><div class='warn'>⚠️ 10만원 이상 현금 결제인데 환자분이 현금영수증 원치 않는 경우 → <strong>반드시 자진발급</strong></div><ul><li>덴트웹 → 전자차트 → 상세수납창 → <strong>현금수납 ▶</strong> or <strong>기타(온라인) ▶</strong> 클릭 → 수납저장 → <strong>현금영수증 버튼(or 현영발행 ▶)</strong> 클릭</li></ul><table><tr><td>환자분이 원하는 경우</td><td>휴대폰 번호 or 사업자 번호로 발급</td></tr><tr><td>원치 않으나 10만원 이상</td><td>현금영수증 발행 → <strong>자진발급</strong> 클릭</td></tr></table>` },
+  { cat:"수납", q:"비급여 진료 금액이 어떻게 되나요?", tags:["수납","비급여","가격","수가","장치","임플란트","보철","보존","미용"], a:`
+<table>
+<tr><td colspan='3' style='background:#1e3060;color:#fff;font-weight:600;padding:8px 10px;'>🦷 구강내과</td></tr>
+<tr><td>APS</td><td>1,000,000원</td><td>악당</td></tr>
+<tr><td>SS</td><td>1,000,000원</td><td>악당</td></tr>
+<tr><td>APS(+SS)</td><td>1,200,000원</td><td>악당</td></tr>
+<tr><td>이갈이 장치</td><td>800,000원</td><td>악당</td></tr>
+<tr><td>트랙션</td><td>1,200,000원</td><td>악당</td></tr>
+<tr><td>코골이 장치</td><td>1,200,000원</td><td>악당</td></tr>
+<tr><td>판테라 장치</td><td>2,000,000원</td><td>악당</td></tr>
+<tr><td>SS soft type</td><td>600,000원</td><td>악당</td></tr>
+<tr><td>구강보호장치</td><td>800,000원</td><td>악당</td></tr>
+<tr><td>초음파</td><td>20,000원</td><td>회당</td></tr>
+<tr><td>초음파 유도 주사 (교근+측두근)</td><td>200,000원</td><td>부위당</td></tr>
+<tr><td>초음파 유도 주사 (교근)</td><td>130,000원</td><td>부위당</td></tr>
+<tr><td>초음파 유도 주사 (측두근)</td><td>70,000원</td><td>부위당</td></tr>
+<tr><td>초음파 유도 주사</td><td>100,000원</td><td>부위당</td></tr>
+</table>
+<table>
+<tr><td colspan='3' style='background:#1e3060;color:#fff;font-weight:600;padding:8px 10px;'>🦷 임플란트 치료</td></tr>
+<tr><td>오스템 임플란트</td><td>900,000원</td><td>치아당</td></tr>
+<tr><td>단순 뼈이식</td><td>300,000원</td><td>치아당</td></tr>
+<tr><td>복잡 뼈이식</td><td>500,000원</td><td>치아당</td></tr>
+<tr><td>상악동 (Crestal)</td><td>500,000원</td><td>부위당</td></tr>
+<tr><td>상악동 (Lateral)</td><td>1,000,000원</td><td>부위당</td></tr>
+<tr><td>보철 추가 (폰틱/재제작)</td><td>500,000원</td><td>치아당</td></tr>
+<tr><td>Gold 크라운 보철</td><td>200,000원</td><td>치아당</td></tr>
+<tr><td>지르코니아 보철</td><td>100,000원</td><td>치아당</td></tr>
+<tr><td>Abutment</td><td>100,000원</td><td>치아당</td></tr>
+</table>
+<table>
+<tr><td colspan='3' style='background:#1e3060;color:#fff;font-weight:600;padding:8px 10px;'>🦷 보철 치료</td></tr>
+<tr><td>큐탄</td><td>50,000원</td><td>치아당</td></tr>
+<tr><td>지르코니아 (전치부)</td><td>600,000원</td><td>치아당</td></tr>
+<tr><td>Allceramic (전치부)</td><td>600,000원</td><td>치아당</td></tr>
+<tr><td>지르코니아 (구치부)</td><td>600,000원</td><td>치아당</td></tr>
+<tr><td>골드 크라운</td><td>750,000원</td><td>치아당</td></tr>
+<tr><td>PFM 크라운</td><td>400,000원</td><td>치아당</td></tr>
+<tr><td>E-max onlay</td><td>400,000원</td><td>치아당</td></tr>
+</table>
+<table>
+<tr><td colspan='3' style='background:#1e3060;color:#fff;font-weight:600;padding:8px 10px;'>🦷 보존 치료</td></tr>
+<tr><td>Wire splint</td><td>50,000원</td><td>치아당</td></tr>
+<tr><td>CA</td><td>70,000원</td><td>치아당</td></tr>
+<tr><td>R/F (전치부)</td><td>150,000원</td><td>치아당</td></tr>
+<tr><td>R/F (구치부Ⅰ)</td><td>150,000원</td><td>치아당</td></tr>
+<tr><td>R/F (구치부Ⅱ)</td><td>200,000원</td><td>치아당</td></tr>
+<tr><td>R/F (Diastema)</td><td>500,000원</td><td>치아당</td></tr>
+<tr><td>Vericom inlay</td><td>350,000원</td><td>치아당</td></tr>
+<tr><td>E-max inlay</td><td>350,000원</td><td>치아당</td></tr>
+<tr><td>G.inlay</td><td>500,000~550,000원</td><td>치아당</td></tr>
+<tr><td>G.onlay</td><td>600,000원</td><td>치아당</td></tr>
+<tr><td>Resin core</td><td>100,000원</td><td>치아당</td></tr>
+<tr><td>Post</td><td>100,000원</td><td>치아당</td></tr>
+<tr><td>비보험 스케일링</td><td>60,000원</td><td>회당</td></tr>
+</table>
+<table>
+<tr><td colspan='3' style='background:#1e3060;color:#fff;font-weight:600;padding:8px 10px;'>🦷 미용 치료</td></tr>
+<tr><td>징크비타</td><td>55,000원</td><td>개당</td></tr>
+<tr><td>Laminate</td><td>500,000원</td><td>치아당</td></tr>
+<tr><td>Allceramic</td><td>500,000원</td><td>치아당</td></tr>
+<tr><td>전문가 미백 (1cycle)</td><td>100,000원</td><td>회당</td></tr>
+<tr><td>전문가 미백 (2cycle)</td><td>300,000원</td><td>회당</td></tr>
+<tr><td>실활치 미백</td><td>150,000원</td><td>치아당</td></tr>
+<tr><td>Veneer</td><td>600,000원</td><td>치아당</td></tr>
+</table>` },
   { cat:"수납", q:"어떤 결제 수단이 가능한가요?", tags:["수납","결제","페이","카카오페이","삼성페이","네이버페이","제로페이","토스"], a:`<table><tr><td>삼성페이</td><td class="ok">✓ 가능</td></tr><tr><td>제로페이</td><td class="ok">✓ 가능</td></tr><tr><td>네이버페이</td><td class="ok">✓ 가능 (QR 모드로 변경)</td></tr><tr><td>토스 페이스 페이</td><td class="ok">✓ 가능 (QR 모드로 변경)</td></tr><tr><td>카카오페이</td><td class="no">✗ 불가</td></tr></table>` },
   { cat:"수납", q:"수납 전 비보험 진료 비용 체크해야 할 것은?", tags:["수납","비보험","초음파","장치조정","수납체크"], a:`<ul><li>초진 시 초음파 <strong>2만원</strong></li><li>구환 X-ray 촬영 날 장치조정 <strong>무료</strong></li><li>고주파(물리치료 심화) <strong>무료</strong></li></ul><div class='note'>구환 X-ray 날 장치조정 무료 멘트: "오늘 뼈 상태 보기 위해 엑스레이 촬영하셔서 장치조정 비용은 원장님께서 빼주셨어요"</div>` },
   { cat:"수납", q:"계좌이체 수납 확인 순서는?", tags:["수납","계좌이체","이체","온라인","현금영수증","히든메모"], a:`<ul><li>① 환자분께 <strong>계좌번호와 진료금액</strong> 안내 (포스트잇에 적어서 붙여드리기)</li><li>② 이체 후 <strong>화면 확인</strong></li><li>③ <strong>현금영수증 발행 여부</strong> 확인<ul><li>10만원 이상인 경우, 발행 원치 않으시면 <strong>자진발급</strong></li></ul></li><li>④ 덴트웹 전자차트 <strong>히든 메모</strong> 남기기</li></ul><div class='note'>메모 예시<br>• 12,600원 계좌이체, 현영 발급 / 수납자이름<br>• 233,000원 계좌이체, 현영 원치 않아 자진발급 / 수납자이름</div>` },
