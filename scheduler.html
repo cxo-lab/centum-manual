@@ -567,7 +567,10 @@ const DEFAULT_BDAY=`1/16 한혜련
 11/25 엄지애
 12/21 김수영`;
 function parseBirthdays(txt){const o={};(txt||'').split('\n').forEach(line=>{const m=line.match(/(\d{1,2})\s*[\/.\-]\s*(\d{1,2})/);if(!m)return;const name=line.replace(m[0],'').replace(/생일/g,'').trim();if(!name)return;const key=(+m[1])+'-'+(+m[2]);(o[key]=o[key]||[]).push(name);});return o;}
-function bdayMark(iso){if(!iso)return'';const p=iso.split('-');const key=(+p[1])+'-'+(+p[2]);const ns=BIRTHDAYS[key];return ns&&ns.length?`<span class="bday" title="🎂 ${ns.join(', ')} 생일">🎂</span>`:'';}
+function bdayMark(iso){if(!iso)return'';const p=iso.split('-');const key=(+p[1])+'-'+(+p[2]);const ns=BIRTHDAYS[key];
+  if(!ns||!ns.length)return'';const disp=ns.map(n=>DOCTORS.has(n)?n+' 원장님':n);
+  return `<span class="bday" title="🎂 ${disp.join(', ')} 생일">🎂</span>`;}
+const DOCTORS=new Set(['남윤','남현','박유진','전소영','김기홍','한우리']);
 
 function renderCalendar(res,dm){
   let html='';
