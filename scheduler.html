@@ -631,6 +631,7 @@ let importedFair=null,CURRENT=null,seedCounter=0;
 let PUBLISHED={};const PUB_KEY='centum_pub_v1';const MONTHSRC={};
 let ADMIN=false,forceSeed=null;
 const LS_KEY='centum_sched_v1';
+let DRAFTS={};const DRAFT_KEY='centum_drafts_v1';
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 const HIRE={'엄지애':'2022-03-03','한혜련':'2023-11-17','장다인':'2024-02-13','윤소윤':'2024-06-03','유수진':'2024-06-10','배주련':'2024-09-09','신지수':'2025-05-07','신하늘':'2025-06-17','안유진':'2025-07-07','김수영':'2025-07-07','이현경':'2025-09-29','이신비':'2025-09-29','김민재':'2025-12-08','송슬기':'2025-12-11','정은영':'2026-01-08','신미애':'2026-03-23','전주경':'2024-06-17','김하은':'2024-08-01','조민아':'2024-10-04','남정원':'2026-04-21','김청하':'2024-04-22'};
@@ -682,19 +683,20 @@ async function addMemo(){const nm=$('memoName').value.trim();if(!nm){alert('이�
   $('memoAdd').disabled=true;await putAdd(m);$('memoAdd').disabled=false;$('memoText').value='';renderMemos();$('memoText').focus();}
 function deepFair(f){const o=freshFair();for(const n in o)for(let d=1;d<=6;d++)o[n][d]=(f[n]&&f[n][d])||0;return o;}
 function saveState(){if(!CURRENT)return;
-  const st={v:1,year:CURRENT.year,month:CURRENT.month,holidays:$('holidays').value,annual:$('annualBox').value,carry:$('carryBox').value,fixed:FIXED,seed:CURRENT.seed,baseFair:importedFair,priorUsed:PRIORUSED,off:serializeOff(CURRENT.dm.dateOff),edited:!!CURRENT.edited};
-  lsSet(LS_KEY,JSON.stringify(st));}
-function loadState(){const raw=lsGet(LS_KEY);if(!raw)return false;
-  try{const st=JSON.parse(raw);
-    $('year').value=st.year;$('month').value=st.month;
-    $('holidays').value=st.holidays||'';$('annualBox').value=st.annual||'';$('carryBox').value=st.carry||'';
-    if(st.fixed){FIXED=st.fixed;renderFixedBox();}
-    if(st.priorUsed)PEOPLE.forEach(p=>PRIORUSED[p.name]=st.priorUsed[p.name]||0);
-    importedFair=st.baseFair||null;forceSeed=st.seed;
-    generate(false);
-    if(st.off&&CURRENT){applySavedOff(CURRENT.dm,st.off);CURRENT.edited=!!st.edited;renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),`${CURRENT.year}-${String(CURRENT.month).padStart(2,'0')}`);setStamp(CURRENT.year,CURRENT.month);}
-    return true;
-  }catch(e){return false;}}
+  const k=`${CURRENT.year}-${String(CURRENT.month).padStart(2,'0')}`;
+  DRAFTS[k]={v:1,year:CURRENT.year,month:CURRENT.month,holidays:$('holidays').value,annual:$('annualBox').value,carry:$('carryBox').value,fixed:FIXED,seed:CURRENT.seed,baseFair:importedFair,priorUsed:PRIORUSED,off:serializeOff(CURRENT.dm.dateOff),edited:!!CURRENT.edited};
+  lsSet(DRAFT_KEY,JSON.stringify(DRAFTS));}
+function loadDrafts(){try{DRAFTS=JSON.parse(lsGet(DRAFT_KEY)||'{}');}catch(e){DRAFTS={};}
+  if(!Object.keys(DRAFTS).length){const old=lsGet(LS_KEY);if(old){try{const st=JSON.parse(old);DRAFTS[`${st.year}-${String(st.month).padStart(2,'0')}`]=st;lsSet(DRAFT_KEY,JSON.stringify(DRAFTS));}catch(e){}}}}
+function loadDraftIntoForm(month){const st=DRAFTS[month];if(!st)return false;
+  $('year').value=st.year;$('month').value=st.month;
+  $('holidays').value=st.holidays||'';$('annualBox').value=st.annual||'';$('carryBox').value=st.carry||'';
+  if(st.fixed){FIXED=st.fixed;renderFixedBox();}
+  if(st.priorUsed)PEOPLE.forEach(p=>PRIORUSED[p.name]=st.priorUsed[p.name]||0);
+  importedFair=st.baseFair||null;forceSeed=st.seed;
+  generate(false);
+  if(st.off&&CURRENT){applySavedOff(CURRENT.dm,st.off);CURRENT.edited=!!st.edited;renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),month);setStamp(CURRENT.year,CURRENT.month);}
+  return true;}
 function setAdmin(on){ADMIN=on;document.body.classList.toggle('admin',on);
   $('adminBtn').textContent=on?'보기 전용으로 전환':'관리자 로그인';
   $('viewBanner').style.display=on?'none':'block';
@@ -726,10 +728,10 @@ async function loadPublished(){if(BOARD_URL){try{const r=await fetch(BOARD_URL+'
   try{return JSON.parse(lsGet(PUB_KEY)||'{}');}catch(e){return {};}}
 async function savePublish(month,data){PUBLISHED[month]=data;
   if(BOARD_URL){try{await fetch(BOARD_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'publish',month,data})});}catch(e){}}
-  else{lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}}
+  lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}
 async function removePublish(month){delete PUBLISHED[month];
   if(BOARD_URL){try{await fetch(BOARD_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'unpublish',month})});}catch(e){}}
-  else{lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}}
+  lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}
 function curKey(){return CURRENT?`${CURRENT.year}-${String(CURRENT.month).padStart(2,'0')}`:null;}
 async function publishCurrent(){if(!CURRENT)return;const k=curKey();await savePublish(k,snapshotFromCurrent());MONTHSRC[k]='pub';refreshViewSel();updatePubStatus();alert(`${CURRENT.year}년 ${CURRENT.month}월 휴무표를 배포했습니다.\n이제 직원이 볼 수 있어요.`);}
 async function unpublishCurrent(){if(!CURRENT)return;const k=curKey();if(!confirm('배포를 취소하면 직원 화면에서 사라집니다. 진행할까요?'))return;await removePublish(k);refreshViewSel();updatePubStatus();}
@@ -738,12 +740,13 @@ function updatePubStatus(){const el=$('pubStatus');if(!el||!CURRENT)return;const
   const ub=$('unpubBtn');if(ub)ub.style.display=pub?'':'none';}
 function refreshViewSel(){const sel=$('viewSel');const prev=sel.value;const liveKey=curKey();
   Object.keys(PUBLISHED).forEach(k=>MONTHSRC[k]='pub');Object.keys(ARCHIVE).forEach(k=>{if(MONTHSRC[k]!=='pub')MONTHSRC[k]='arc';});
-  const allKeys=[...new Set([...Object.keys(PUBLISHED),...Object.keys(ARCHIVE)])].sort().reverse();
   let opts='';
-  if(ADMIN&&liveKey){const tag=PUBLISHED[liveKey]?' · 배포됨':' · 배포 전';opts+=`<option value="live">${CURRENT.year}년 ${CURRENT.month}월 작업본${tag}</option>`;}
-  allKeys.forEach(k=>{if(ADMIN&&k===liveKey)return;const[y,m]=k.split('-');const lab=MONTHSRC[k]==='pub'?'배포본':'보관본';opts+=`<option value="${k}">${y}년 ${+m}월 (${lab})</option>`;});
+  if(ADMIN){const dset=new Set(Object.keys(DRAFTS));if(liveKey)dset.add(liveKey);
+    [...dset].sort().reverse().forEach(k=>{const[y,m]=k.split('-');const t=PUBLISHED[k]?' · 배포됨':' · 배포 전';opts+=`<option value="d:${k}">${y}년 ${+m}월 작업본${t}</option>`;});}
+  const allKeys=[...new Set([...Object.keys(PUBLISHED),...Object.keys(ARCHIVE)])].sort().reverse();
+  allKeys.forEach(k=>{const[y,m]=k.split('-');const lab=MONTHSRC[k]==='pub'?'배포본':'보관본';opts+=`<option value="${k}">${y}년 ${+m}월 (${lab})</option>`;});
   sel.innerHTML=opts;
-  let def=ADMIN?'live':(allKeys[0]||'');
+  let def=ADMIN?(liveKey?`d:${liveKey}`:(allKeys[0]||'')):(allKeys[0]||'');
   if([...sel.options].some(o=>o.value===prev))def=prev;
   sel.value=def;if(sel.value)showMonth(sel.value);}
 function setStamp(y,m){const suf=(CURRENT&&CURRENT.edited)?' (수정본)':'';$('stampMonth').textContent=`${y}.${String(m).padStart(2,'0')}`;const pt=$('printTitle');if(pt)pt.textContent=`서울센텀턱구강내과치과 · ${y}년 ${+m}월 휴무표${suf}`;const eb=$('editedBadge');if(eb)eb.style.display=(CURRENT&&CURRENT.edited)?'inline-block':'none';}
@@ -763,8 +766,12 @@ function deAddOff(){const nm=$('deName').value;if(!nm)return;const ty=$('deType'
   (CURRENT.dm.personOff[nm]=CURRENT.dm.personOff[nm]||[]).push({iso:editIso,type:ty});deApply();}
 function serializeOff(dateOff){const o={};for(const iso in dateOff){const a=dateOff[iso];if(a&&a.length)o[iso]=a.map(x=>({n:x.name,t:x.type}));}return o;}
 function applySavedOff(dm,off){dm.dateOff={};dm.personOff={};for(const iso in off){dm.dateOff[iso]=off[iso].map(o=>({name:o.n,team:teamOf(o.n),type:o.t}));off[iso].forEach(o=>{(dm.personOff[o.n]=dm.personOff[o.n]||[]).push({iso,type:o.t});});}}
-function showMonth(v){if(v==='live'){document.body.classList.remove('viewing-archive');
-    if(CURRENT){renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),`${CURRENT.year}-${String(CURRENT.month).padStart(2,'0')}`);setStamp(CURRENT.year,CURRENT.month);}return;}
+function showMonth(v){
+  if(v&&v.indexOf('d:')===0){const mk=v.slice(2);
+    if(mk===curKey()){document.body.classList.remove('viewing-archive');
+      if(CURRENT){renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),mk);setStamp(CURRENT.year,CURRENT.month);}}
+    else loadDraftIntoForm(mk);
+    return;}
   const data=PUBLISHED[v]||ARCHIVE[v];if(!data)return;
   document.body.classList.add('viewing-archive');renderSnapshot(data);renderPersonSummary(buildSnapshotByPerson(data),v);
   const[y,m]=v.split('-');$('stampMonth').textContent=`${y}.${m}`;const pt=$('printTitle');if(pt)pt.textContent=`서울센텀턱구강내과치과 · ${y}년 ${+m}월 휴무표`;const eb=$('editedBadge');if(eb)eb.style.display='none';}
@@ -818,7 +825,9 @@ const DEFAULT_CARRY=`6/29 장다인, 김수영, 이신비, 남정원
       else{importedFair=data;}
       generate(true);saveState();}catch(err){alert('JSON을 읽지 못했습니다.');}};r.readAsText(f);e.target.value='';};
   $('cumReset').onclick=()=>{importedFair=null;PEOPLE.forEach(p=>PRIORUSED[p.name]=0);generate(true);saveState();};
-  $('month').onchange=()=>{$('annualBox').value='';$('carryBox').value='';};
+  function onPeriodChange(){const k=`${+$('year').value}-${String(+$('month').value).padStart(2,'0')}`;
+    if(DRAFTS[k]){loadDraftIntoForm(k);}else{$('annualBox').value='';$('carryBox').value='';$('holidays').value='';}}
+  $('month').onchange=onPeriodChange;$('year').onchange=onPeriodChange;
   $('adminBtn').onclick=()=>{if(ADMIN){setAdmin(false);return;}const pw=prompt('관리자 비밀번호를 입력하세요');if(pw===null)return;if(pw==='1030')setAdmin(true);else alert('비밀번호가 올바르지 않습니다.');};
   $('viewSel').onchange=()=>showMonth($('viewSel').value);
   $('memoAdd').onclick=addMemo;$('memoRefresh').onclick=renderMemos;renderMemos();
@@ -831,8 +840,11 @@ const DEFAULT_CARRY=`6/29 장다인, 김수영, 이신비, 남정원
   if(BOARD_URL)setInterval(renderMemos,30000);
   try{PUBLISHED=JSON.parse(lsGet(PUB_KEY)||'{}');}catch(e){PUBLISHED={};}
   setAdmin(false);
-  if(!loadState())generate(true);
-  if(BOARD_URL)loadPublished().then(p=>{PUBLISHED=p||{};refreshViewSel();updatePubStatus();});
+  loadDrafts();
+  const dkeys=Object.keys(DRAFTS).sort();
+  if(dkeys.length)loadDraftIntoForm(dkeys[dkeys.length-1]);
+  else generate(true);
+  if(BOARD_URL)loadPublished().then(p=>{PUBLISHED=p||{};try{lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}catch(e){}refreshViewSel();updatePubStatus();});
 })();
 </script>
 </body>
