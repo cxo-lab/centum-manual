@@ -90,6 +90,10 @@
   .c-통합치과{color:var(--t-통합치과)}.c-물리치료{color:var(--t-물리치료)}.c-고객지원실{color:var(--t-고객지원실)}
   .legend{display:flex;gap:14px;flex-wrap:wrap;margin:14px 2px 0;font-size:12px;color:var(--muted)}
   .legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .dr-sched{margin:14px 2px 0;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:12.5px;background:#fafbfc}
+  .dr-sched h4{margin:0 0 6px;font-size:12px;color:var(--navy);font-weight:800}
+  .dr-sched .dr-line{padding:2px 0;color:#333}
+  .bday{font-size:11px;margin-left:3px;cursor:help;vertical-align:middle}
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}@media(max-width:880px){.cols{grid-template-columns:1fr}}
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
   .card h2{margin:0;font-size:14px;font-weight:800;color:var(--navy);padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
@@ -189,6 +193,9 @@
     .chip{font-size:7.5pt;font-weight:700;padding:1px 6px;margin:1px 2px 1px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .chip.am{border:1px dashed currentColor}
     .chip.annual::after{font-size:6pt}
+    .dr-sched{border:1px solid #999;border-radius:0;margin:8px 0 0;padding:7px 11px;font-size:8.5pt;background:#fff;page-break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .dr-sched h4{font-size:9pt;margin:0 0 4px;color:#1E3A5F}
+    .dr-sched .dr-line{padding:1px 0}
   }
 </style>
 </head>
@@ -245,8 +252,9 @@
 
   <div class="status ok live-only" id="status" style="display:none"><span class="dot"></span><span id="statusText"></span><span class="seed" id="seedText"></span></div>
 
-  <table class="cal" id="cal"><thead><tr><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th><th class="sun">일</th></tr></thead><tbody id="calBody"></tbody></table>
+  <table class="cal" id="cal"><thead><tr><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead><tbody id="calBody"></tbody></table>
   <div class="legend" id="legend"></div>
+  <div id="drSchedule" class="dr-sched"></div>
 
   <div class="card">
     <h2>직원별 휴무 요약 <span style="font-size:11px;font-weight:500;color:var(--muted)">사람별 쉬는 날 · (연)=연차 · (오전)=오전반차</span></h2>
@@ -266,10 +274,10 @@
     </div>
   </div>
 
-  <div class="card live-only" id="annualCard" style="margin-top:20px">
+  <div class="card" id="annualCard" style="margin-top:20px">
     <h2>연차 현황 <span style="font-size:11px;font-weight:500;color:var(--muted)">입사일 기준 배정·갱신일 자동 계산</span></h2>
     <div class="body" style="overflow-x:auto"><div id="annualTable"></div>
-      <div class="hint"><b>배정</b>은 입사일 기준 한국 법정 연차로 자동 계산(1년 미만 = 만 1개월 개근당 1일, 최대 11일 / 1년 이상 = 15일 / 3년차부터 2년마다 +1일, 최대 25일). <b>연차연도 시작</b> 이후 쓴 연차만 <b>이전사용</b>에 넣으면 <b>잔여</b>가 계산됩니다(그 전 연차는 이전 연도분). <b>이달</b>은 이번 달 연차 자동 반영. 갱신일이 지난 사람은 다음 달에 이전사용을 0으로 리셋하세요. 값은 <b>누적 저장</b>에 함께 기록됩니다.</div>
+      <div class="hint" id="annualHint"><b>배정</b>은 입사일 기준 자동 계산(첫해 = 만 1개월당 1일, 최대 12일 / 1년 이상 = 15일 / 3년차부터 2년마다 +1일, 최대 25일). <b>연차연도 시작</b> 이후 쓴 연차만 <b>이전사용</b>에 넣으면 <b>잔여</b>가 계산됩니다(그 전 연차는 이전 연도분). <b>이달</b>은 이번 달 연차 자동 반영. 갱신일이 지난 사람은 다음 달에 이전사용을 0으로 리셋하세요. 배정은 칸에 직접 입력해 조절할 수도 있습니다.</div>
     </div>
   </div>
 
@@ -291,6 +299,12 @@
       <h4>이번 달 고정휴무</h4>
       <div class="hint">요일을 한글로 (예: <b>화</b> / <b>금,토</b>). 월마다 바뀌면 여기서 수정.</div>
       <div class="fixedbox" id="fixedBox"></div>
+      <h4>원장님 휴진 안내 (인쇄물 하단에 표시)</h4>
+      <textarea id="drBox" rows="4"></textarea>
+      <div class="hint">한 줄에 원장님 한 분씩. 달력 아래(인쇄 포함)에 그대로 표시됩니다.</div>
+      <h4>직원 생일 (달력에 🎂 표시)</h4>
+      <textarea id="bdayBox" rows="4" placeholder="신미애 3/23&#10;유수진 6/10"></textarea>
+      <div class="hint">한 줄에 한 명: <code>이름 월/일</code> — 예: <code>신미애 3/23</code>. 해당 날짜에 🎂가 뜨고, 마우스를 올리면 이름이 보입니다(연도 무관, 매년 반복).</div>
       <h4>적용 규칙 (투명성)</h4>
       <ul>
         <li>1인당 주 1회 휴무 · 일/공휴일 휴진(해당 주 주오프 없음, 연차·고정은 유지) · 연차 있는 주는 연차로 대체</li>
@@ -298,7 +312,7 @@
         <li>월·수·금·토 같은 요일 월 2회 휴무 금지(고정 제외) · 내과상담자 매일 ≥2명 근무</li>
         <li>실장끼리·내과 1·2팀 팀장끼리 휴무 비겹침 · 통합팀 금·토만 · 유수진 화 제외</li>
         <li><b>연간 공평성</b>: 그동안 적게 쉰 요일을 우선 배정 → 누적이 쌓일수록 요일이 고르게</li>
-        <li>토요일 휴무자는 수요일 오전(9:30~15:30) 오프(점선) — 전주경·윤소윤 제외, 연차로 인한 토 휴무 제외</li>
+        <li>토요일 휴무자는 수요일 오전(9:30~15:30) 오프(점선) — 전주경 제외, 연차로 인한 토 휴무 제외</li>
       </ul>
     </div>
   </details>
@@ -332,11 +346,11 @@ const PEOPLE=[
  {name:'김수영',team:'내과1팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'이현경',team:'내과1팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'정은영',team:'내과1팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
- {name:'신미애',team:'내과1팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
+ {name:'신미애',team:'내과2팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'송슬기',team:'내과1팀',sil:false,jang:false,clin:true,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'안유진',team:'내과2팀',sil:false,jang:true,clin:true,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'이신비',team:'내과2팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
- {name:'윤소윤',team:'통합치과',sil:false,jang:false,clin:true,naegwa:false,cs:false,allow:[5,6]},
+ {name:'윤소윤',team:'통합치과',sil:false,jang:false,clin:true,naegwa:false,cs:false,allow:[5,6],lead:true},
  {name:'배주련',team:'통합치과',sil:false,jang:false,clin:false,naegwa:false,cs:false,allow:[5,6],narrow:true},
  {name:'신지수',team:'통합치과',sil:false,jang:false,clin:false,naegwa:false,cs:false,allow:[5,6],narrow:true},
  {name:'김청하',team:'물리치료',sil:false,jang:false,clin:false,naegwa:false,cs:false,allow:[1,2,3,4,5,6]},
@@ -353,7 +367,7 @@ let FIXED={'엄지애':[2],'윤소윤':[6],'전주경':[6],'배주련':[5],'신�
 const NAEGWA_CAP={1:3,2:4,3:3,4:4,5:2,6:3}, CLIN_AVAIL={1:4,2:4,3:4,4:4,5:5,6:4};
 const RESTRICTED=new Set([1,3,5,6]); const DOW=['일','월','화','수','목','금','토'];
 const DOWMAP={'월':1,'화':2,'수':3,'목':4,'금':5,'토':6,'일':0};
-const NO_WED_AM=new Set(['전주경','윤소윤']);
+const NO_WED_AM=new Set(['전주경']);
 const isForced=p=>FIXED[p.name]&&FIXED[p.name].length>0;
 function mul(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 function shuffle(a,r){for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -409,7 +423,7 @@ function assignWeek(week,annualByDow,selfAnnual,monthHist,fairHist,rnd,flags){
       const fc=fairHist[p.name]; const minC=Math.min(...cands.map(d=>fc[d]));
       const wts=cands.map(d=>{let w=6/(1+(fc[d]-minC));
         if(p.cs&&csOff[d]>0)w*=0.18;
-        if(p.naegwa&&(d===2||d===4))w*=1.08;
+        if(p.naegwa){w*=Math.max(0.2,1+0.7*(NAEGWA_CAP[d]-(nOff[d]+1)));if(d===2||d===4)w*=1.7;}
         w+=Math.max(0,2-nPer[d])*0.1;return Math.max(0.02,w);});
       const tot=wts.reduce((a,b)=>a+b,0);let r=rnd()*tot,pick=cands[0];
       for(let i=0;i<cands.length;i++){r-=wts[i];if(r<=0){pick=cands[i];break;}}
@@ -524,12 +538,42 @@ function spannedDates(res){const out=[];for(const w of res.weeks)for(const x of 
 const $=id=>document.getElementById(id);
 function renderLegend(){$('legend').innerHTML=TEAMS.map(t=>`<span><i class="t-${t}"></i>${t}</span>`).join('')
   +`<span><i style="border:1px dashed #888;background:#fff"></i>수 오전오프</span><span><i style="border:1.5px solid #fff;box-shadow:inset 0 0 0 2px #c0392b;background:#c0392b"></i>연차</span>`;}
+const DR_KEY='centum_dr_v1';
+const DEFAULT_DR=`구강내과 1팀 Dr.남윤  수 오전, 목 오후 휴진
+구강내과 2팀 Dr.박유진  화·수 야간(19:00–21:00), 목 휴진
+통합치과 Dr.김기홍  금·토 휴진`;
+function renderDrSchedule(){const el=$('drSchedule');if(!el)return;const txt=($('drBox')&&$('drBox').value)||'';
+  const lines=txt.split('\n').map(s=>s.trim()).filter(Boolean);
+  if(!lines.length){el.style.display='none';el.innerHTML='';return;}
+  el.style.display='';el.innerHTML='<h4>원장님 휴진 안내</h4>'+lines.map(l=>`<div class="dr-line">${escapeHtml(l)}</div>`).join('');}
+let BIRTHDAYS={};const BDAY_KEY='centum_bday_v1';
+const DEFAULT_BDAY=`1/16 한혜련
+2/3 김하은
+2/17 김청하
+2/27 김기홍
+3/8 남윤
+4/23 배주련
+4/29 안유진
+5/13 한우리
+5/17 신지수
+6/3 윤소윤
+6/11 전주경
+6/20 신하늘
+7/4 조민아
+8/17 박유진
+8/28 남현
+11/6 유수진
+11/8 장다인
+11/25 엄지애
+12/21 김수영`;
+function parseBirthdays(txt){const o={};(txt||'').split('\n').forEach(line=>{const m=line.match(/(\d{1,2})\s*[\/.\-]\s*(\d{1,2})/);if(!m)return;const name=line.replace(m[0],'').replace(/생일/g,'').trim();if(!name)return;const key=(+m[1])+'-'+(+m[2]);(o[key]=o[key]||[]).push(name);});return o;}
+function bdayMark(iso){if(!iso)return'';const p=iso.split('-');const key=(+p[1])+'-'+(+p[2]);const ns=BIRTHDAYS[key];return ns&&ns.length?`<span class="bday" title="🎂 ${ns.join(', ')} 생일">🎂</span>`:'';}
 
 function renderCalendar(res,dm){
   let html='';
   for(const w of res.weeks){
     html+='<tr>';const byDow={};w.week.days.forEach(x=>byDow[x.dow===0?7:x.dow]=x);
-    for(let col=1;col<=7;col++){const x=byDow[col];
+    for(let col=1;col<=6;col++){const x=byDow[col];
       if(!x){html+='<td class="out"></td>';continue;}
       const sun=(x.dow===0),hol=x.holiday;const cls=[];if(!x.inMonth)cls.push('out');if(sun)cls.push('sun');if(hol)cls.push('holiday');
       let tag='';
@@ -542,7 +586,7 @@ function renderCalendar(res,dm){
         chips=offs.map(o=>o.type==='am'?`<span class="chip am c-${o.team}">${o.name}·오전</span>`
           :o.type==='annual'?`<span class="chip annual t-${o.team}">${o.name}</span>`
           :`<span class="chip t-${o.team}">${o.name}</span>`).join('');}
-      html+=`<td class="${cls.join(' ')}"${(!sun&&!hol)?` data-iso="${x.iso}"`:''}><div class="daynum"><span>${x.d}</span>${tag}</div><div class="off-list">${chips}</div></td>`;}
+      html+=`<td class="${cls.join(' ')}"${(!sun&&!hol)?` data-iso="${x.iso}"`:''}><div class="daynum"><span>${x.d}</span>${bdayMark(x.iso)}${tag}</div><div class="off-list">${chips}</div></td>`;}
     html+='</tr>';
   }
   $('calBody').innerHTML=html;
@@ -559,14 +603,12 @@ function poChip(e){const[Y,M,D]=e.iso.split('-').map(Number);const w=DOWK[new Da
   return `<span class="po-day">${D}(${w})</span>`;}
 function renderPersonSummary(byPerson,ym){
   let html='';const used=new Set();
-  for(const t of TEAMS){const members=PEOPLE.filter(p=>p.team===t);
+  for(const t of TEAMS){const members=PEOPLE.filter(p=>p.team===t).slice().sort((a,b)=>{
+      const ra=(a.sil||a.jang||a.lead)?0:1,rb=(b.sil||b.jang||b.lead)?0:1;
+      return ra!==rb?ra-rb:a.name.localeCompare(b.name,'ko');});
     members.forEach((p,i)=>{used.add(p.name);
       const es=(byPerson[p.name]||[]).filter(e=>e.iso.startsWith(ym)).sort((a,b)=>a.iso.localeCompare(b.iso));
       html+=`<div class="po-row${i===0?' po-teamtop':''}"><span class="po-team c-${t}">${i===0?TEAMAB(t):''}</span><span class="po-name">${p.name}</span><span class="po-days">${es.length?es.map(poChip).join(''):'<span class="po-none">휴무 없음</span>'}</span></div>`;});}
-  const extra=Object.keys(byPerson).filter(n=>!used.has(n)&&(byPerson[n]||[]).some(e=>e.iso.startsWith(ym)));
-  if(extra.length){html+='<div class="po-row po-teamtop"><span class="po-team" style="color:#9aa3af">퇴사</span><span></span><span></span></div>';
-    extra.forEach(n=>{const es=byPerson[n].filter(e=>e.iso.startsWith(ym)).sort((a,b)=>a.iso.localeCompare(b.iso));
-      html+=`<div class="po-row"><span class="po-team"></span><span class="po-name" style="color:#9aa3af">${n}</span><span class="po-days">${es.map(poChip).join('')}</span></div>`;});}
   $('personTable').innerHTML=html;}
 
 function renderValidation(res,annual){
@@ -636,11 +678,12 @@ function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 const HIRE={'엄지애':'2022-03-03','한혜련':'2023-11-17','장다인':'2024-02-13','윤소윤':'2024-06-03','유수진':'2024-06-10','배주련':'2024-09-09','신지수':'2025-05-07','신하늘':'2025-06-17','안유진':'2025-07-07','김수영':'2025-07-07','이현경':'2025-09-29','이신비':'2025-09-29','김민재':'2025-12-08','송슬기':'2025-12-11','정은영':'2026-01-08','신미애':'2026-03-23','전주경':'2024-06-17','김하은':'2024-08-01','조민아':'2024-10-04','남정원':'2026-04-21','김청하':'2024-04-22'};
 let PRIORUSED={};PEOPLE.forEach(p=>PRIORUSED[p.name]=0);
+let ALLOT_OVERRIDE={};
 function tenureInfo(hireISO,year,month){
   const [hy,hm,hd]=hireISO.split('-').map(Number);const asOf=new Date(year,month-1,1);
   let ay=year,anniv=new Date(ay,hm-1,hd);if(anniv>asOf){ay--;anniv=new Date(ay,hm-1,hd);}
   const yc=ay-hy;let allot;
-  if(yc>=1)allot=Math.min(15+Math.floor((yc-1)/2),25);else{let m=(year-hy)*12+(month-1-(hm-1));if(1<hd)m--;allot=Math.max(0,Math.min(11,m));}
+  if(yc>=1)allot=Math.min(15+Math.floor((yc-1)/2),25);else{let m=(year-hy)*12+(month-hm);allot=Math.max(0,Math.min(12,m));}
   return {allot,startISO:`${ay}-${String(hm).padStart(2,'0')}-${String(hd).padStart(2,'0')}`,renewISO:`${ay+1}-${String(hm).padStart(2,'0')}-${String(hd).padStart(2,'0')}`,renewsThisMonth:(hm===month),yc};
 }
 function currentUsedMap(annual,month){const u={};PEOPLE.forEach(p=>u[p.name]=0);
@@ -650,18 +693,21 @@ function priorPlusCurrent(){const cur=CURRENT?currentUsedMap(CURRENT.annual,CURR
 function renderAnnualStatus(annual,year,month){
   const cur=currentUsedMap(annual,month);let rows='';let last=null;const ab=t=>t.replace('고객지원실','CS').replace('물리치료','물치').replace('통합치과','통합');
   for(const t of TEAMS){const ms=PEOPLE.filter(p=>p.team===t);
-    ms.forEach((p,i)=>{const ti=tenureInfo(HIRE[p.name],year,month);const prior=PRIORUSED[p.name]||0;const used=prior+cur[p.name];const rem=ti.allot-used;
+    ms.forEach((p,i)=>{const ti=tenureInfo(HIRE[p.name],year,month);const prior=PRIORUSED[p.name]||0;
+      const ovr=ALLOT_OVERRIDE[p.name];const hasOvr=(ovr!=null&&ovr!=='');const allot=hasOvr?+ovr:ti.allot;
+      const used=prior+cur[p.name];const rem=allot-used;
       const rc=rem<0?'devB':(rem<=2?'dev1':'dev0');
       const rtag=ti.renewsThisMonth?` <span style="color:var(--accent);font-size:9px">${ti.renewISO.slice(5)}갱신→15</span>`:'';
       rows+=`<tr class="${i===0&&last!==null?'teamsep':''}"><td class="team c-${t}">${i===0?ab(t):''}</td><td class="nm">${p.name}</td>`
         +`<td style="font-size:11px;color:#777">${HIRE[p.name].slice(2)}</td>`
-        +`<td><b>${ti.allot}</b></td>`
+        +`<td><input type="number" min="0" class="allotInp" data-name="${p.name}" value="${hasOvr?ovr:''}" placeholder="${ti.allot}" title="비우면 자동(법정) ${ti.allot}일" style="width:46px;text-align:center;font:inherit;font-weight:700;border:1px solid ${hasOvr?'var(--accent)':'var(--line)'};border-radius:6px;padding:3px;color:${hasOvr?'var(--accent)':'inherit'}"></td>`
         +`<td style="font-size:11px;color:#777">${ti.startISO.slice(2)}~${rtag}</td>`
         +`<td><input type="number" min="0" class="priorInp" data-name="${p.name}" value="${prior}" style="width:42px;text-align:center;font:inherit;border:1px solid var(--line);border-radius:6px;padding:3px"></td>`
         +`<td>${cur[p.name]?`<span style="color:var(--accent)">${cur[p.name]}</span>`:0}</td>`
         +`<td class="${rc}"><b>${rem}</b></td></tr>`;});last=t;}
   $('annualTable').innerHTML=`<table class="ctable"><thead><tr><th></th><th>이름</th><th>입사일</th><th>배정</th><th>연차연도 시작</th><th>이전사용</th><th>이달</th><th>잔여</th></tr></thead><tbody>${rows}</tbody></table>`;
   document.querySelectorAll('.priorInp').forEach(inp=>{inp.disabled=!ADMIN;inp.onchange=()=>{PRIORUSED[inp.dataset.name]=+inp.value||0;renderAnnualStatus(annual,year,month);if(ADMIN)saveState();};});
+  document.querySelectorAll('.allotInp').forEach(inp=>{inp.disabled=!ADMIN;inp.onchange=()=>{const v=inp.value.trim();if(v==='')delete ALLOT_OVERRIDE[inp.dataset.name];else ALLOT_OVERRIDE[inp.dataset.name]=+v||0;renderAnnualStatus(annual,year,month);if(ADMIN)saveState();};});
 }
 const MEMO_KEY='centum_memos_v1';
 const BOARD_URL='https://script.google.com/macros/s/AKfycbw-1DxPUksUzZkcf3bbVIxjly8qNRCarQwFn1zWUCJTT1whYZx-CekrXZ6hzuCQ6Xve/exec';/* 공용 게시판 + 휴무표 배포 백엔드 */
@@ -684,7 +730,7 @@ async function addMemo(){const nm=$('memoName').value.trim();if(!nm){alert('이�
 function deepFair(f){const o=freshFair();for(const n in o)for(let d=1;d<=6;d++)o[n][d]=(f[n]&&f[n][d])||0;return o;}
 function saveState(){if(!CURRENT)return;
   const k=`${CURRENT.year}-${String(CURRENT.month).padStart(2,'0')}`;
-  DRAFTS[k]={v:1,year:CURRENT.year,month:CURRENT.month,holidays:$('holidays').value,annual:$('annualBox').value,carry:$('carryBox').value,fixed:FIXED,seed:CURRENT.seed,baseFair:importedFair,priorUsed:PRIORUSED,off:serializeOff(CURRENT.dm.dateOff),edited:!!CURRENT.edited};
+  DRAFTS[k]={v:1,year:CURRENT.year,month:CURRENT.month,holidays:$('holidays').value,annual:$('annualBox').value,carry:$('carryBox').value,fixed:FIXED,seed:CURRENT.seed,baseFair:importedFair,priorUsed:PRIORUSED,allotOverride:ALLOT_OVERRIDE,off:serializeOff(CURRENT.dm.dateOff),edited:!!CURRENT.edited};
   lsSet(DRAFT_KEY,JSON.stringify(DRAFTS));}
 function loadDrafts(){try{DRAFTS=JSON.parse(lsGet(DRAFT_KEY)||'{}');}catch(e){DRAFTS={};}
   if(!Object.keys(DRAFTS).length){const old=lsGet(LS_KEY);if(old){try{const st=JSON.parse(old);DRAFTS[`${st.year}-${String(st.month).padStart(2,'0')}`]=st;lsSet(DRAFT_KEY,JSON.stringify(DRAFTS));}catch(e){}}}}
@@ -693,6 +739,7 @@ function loadDraftIntoForm(month){const st=DRAFTS[month];if(!st)return false;
   $('holidays').value=st.holidays||'';$('annualBox').value=st.annual||'';$('carryBox').value=st.carry||'';
   if(st.fixed){FIXED=st.fixed;renderFixedBox();}
   if(st.priorUsed)PEOPLE.forEach(p=>PRIORUSED[p.name]=st.priorUsed[p.name]||0);
+  ALLOT_OVERRIDE=st.allotOverride?Object.assign({},st.allotOverride):{};
   importedFair=st.baseFair||null;forceSeed=st.seed;
   generate(false);
   if(st.off&&CURRENT){applySavedOff(CURRENT.dm,st.off);CURRENT.edited=!!st.edited;renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),month);setStamp(CURRENT.year,CURRENT.month);}
@@ -700,12 +747,12 @@ function loadDraftIntoForm(month){const st=DRAFTS[month];if(!st)return false;
 function setAdmin(on){ADMIN=on;document.body.classList.toggle('admin',on);
   $('adminBtn').textContent=on?'보기 전용으로 전환':'관리자 로그인';
   $('viewBanner').style.display=on?'none':'block';
-  document.querySelectorAll('.priorInp').forEach(i=>i.disabled=!on);refreshViewSel();updatePubStatus();}
+  document.querySelectorAll('.priorInp,.allotInp').forEach(i=>i.disabled=!on);refreshViewSel();updatePubStatus();}
 const ARCHIVE={"2026-01":{"weeks":[[{"d":"2025-12-28","in":false,"note":null,"e":[]},{"d":"2025-12-29","in":false,"note":null,"e":[]},{"d":"2025-12-30","in":false,"note":null,"e":[]},{"d":"2025-12-31","in":false,"note":null,"e":[{"n":"엄지애","t":"annual"}]},{"d":"2026-01-01","in":true,"note":"신정","e":[]},{"d":"2026-01-02","in":true,"note":null,"e":[{"n":"엄지애","t":"annual"}]},{"d":"2026-01-03","in":true,"note":null,"e":[{"n":"배주련","t":"annual"}]}],[{"d":"2026-01-04","in":true,"note":null,"e":[]},{"d":"2026-01-05","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"이신비","t":"off"},{"n":"배주련","t":"annual"},{"n":"조민아","t":"off"}]},{"d":"2026-01-06","in":true,"note":null,"e":[{"n":"엄지애","t":"off"},{"n":"이현경","t":"off"},{"n":"김하은","t":"off"}]},{"d":"2026-01-07","in":true,"note":null,"e":[{"n":"신지수","t":"off"},{"n":"윤소윤","t":"am"},{"n":"김민재","t":"off"}]},{"d":"2026-01-08","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"송슬기","t":"off"},{"n":"신하늘","t":"off"},{"n":"전주경","t":"annual"}]},{"d":"2026-01-09","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"김수영","t":"off"},{"n":"배주련","t":"off"},{"n":"전주경","t":"annual"},{"n":"유수진","t":"off"}]},{"d":"2026-01-10","in":true,"note":null,"e":[{"n":"안유진","t":"annual"},{"n":"윤소윤","t":"off"},{"n":"전주경","t":"off"}]}],[{"d":"2026-01-11","in":true,"note":null,"e":[]},{"d":"2026-01-12","in":true,"note":null,"e":[{"n":"엄지애","t":"off"},{"n":"이현경","t":"off"},{"n":"윤소윤","t":"annual"},{"n":"전주경","t":"annual"}]},{"d":"2026-01-13","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"송슬기","t":"off"},{"n":"신지수","t":"off"},{"n":"전주경","t":"off"}]},{"d":"2026-01-14","in":true,"note":null,"e":[{"n":"이신비","t":"off"},{"n":"김수영","t":"am"},{"n":"유수진","t":"am"},{"n":"조민아","t":"am"}]},{"d":"2026-01-15","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"장다인","t":"off"},{"n":"정은영","t":"off"},{"n":"김민재","t":"off"}]},{"d":"2026-01-16","in":true,"note":null,"e":[{"n":"신하늘","t":"off"},{"n":"윤소윤","t":"off"},{"n":"배주련","t":"off"},{"n":"김청하","t":"off"},{"n":"김하은","t":"off"}]},{"d":"2026-01-17","in":true,"note":null,"e":[{"n":"신지수","t":"annual"},{"n":"김수영","t":"off"},{"n":"조민아","t":"off"}]}],[{"d":"2026-01-18","in":true,"note":null,"e":[]},{"d":"2026-01-19","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"송슬기","t":"off"},{"n":"김하은","t":"off"}]},{"d":"2026-01-20","in":true,"note":null,"e":[{"n":"엄지애","t":"off"},{"n":"한혜련","t":"off"},{"n":"상은","t":"off"},{"n":"김민재","t":"off"}]},{"d":"2026-01-21","in":true,"note":null,"e":[{"n":"장다인","t":"am"},{"n":"이현경","t":"am"},{"n":"배주련","t":"am"},{"n":"김청하","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-01-22","in":true,"note":null,"e":[{"n":"신하늘","t":"off"},{"n":"이신비","t":"off"}]},{"d":"2026-01-23","in":true,"note":null,"e":[{"n":"신지수","t":"off"},{"n":"정은영","t":"off"},{"n":"윤소윤","t":"off"},{"n":"김수영","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-01-24","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"배주련","t":"off"},{"n":"전주경","t":"off"}]}],[{"d":"2026-01-25","in":true,"note":null,"e":[]},{"d":"2026-01-26","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"신하늘","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-01-27","in":true,"note":null,"e":[{"n":"엄지애","t":"off"},{"n":"이신비","t":"off"},{"n":"정은영","t":"off"},{"n":"김청하","t":"off"}]},{"d":"2026-01-28","in":true,"note":null,"e":[{"n":"한혜련","t":"am"},{"n":"상은","t":"am"},{"n":"김수영","t":"am"},{"n":"김하은","t":"off"}]},{"d":"2026-01-29","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"신지수","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-01-30","in":true,"note":null,"e":[{"n":"송슬기","t":"off"},{"n":"이현경","t":"off"},{"n":"윤소윤","t":"off"},{"n":"배주련","t":"off"},{"n":"김민재","t":"off"}]},{"d":"2026-01-31","in":true,"note":null,"e":[{"n":"안유진","t":"annual"},{"n":"엄지애","t":"annual"},{"n":"상은","t":"off"},{"n":"김수영","t":"off"},{"n":"전주경","t":"off"}]}]]},"2026-02":{"weeks":[[{"d":"2026-02-01","in":true,"note":null,"e":[]},{"d":"2026-02-02","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"정은영","t":"off"},{"n":"엄지애","t":"off"},{"n":"전주경","t":"off"}]},{"d":"2026-02-03","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"신지수","t":"off"},{"n":"진서","t":"off"},{"n":"김민재","t":"off"}]},{"d":"2026-02-04","in":true,"note":null,"e":[{"n":"송슬기","t":"am"},{"n":"엄지애","t":"am"},{"n":"신하늘","t":"am"},{"n":"배주련","t":"am"},{"n":"김청하","t":"am"},{"n":"김하은","t":"am"}]},{"d":"2026-02-05","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"이신비","t":"off"},{"n":"상은","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-02-06","in":true,"note":null,"e":[{"n":"엄지애","t":"annual"},{"n":"이현경","t":"off"},{"n":"윤소윤","t":"off"},{"n":"김수영","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-02-07","in":true,"note":null,"e":[{"n":"신하늘","t":"off"},{"n":"배주련","t":"off"},{"n":"김청하","t":"off"},{"n":"김하은","t":"off"},{"n":"전주경","t":"off"}]}],[{"d":"2026-02-08","in":true,"note":null,"e":[]},{"d":"2026-02-09","in":true,"note":null,"e":[{"n":"엄지애","t":"off"},{"n":"신지수","t":"off"},{"n":"김청하","t":"off"},{"n":"김하은","t":"off"}]},{"d":"2026-02-10","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"송슬기","t":"off"},{"n":"이신비","t":"off"},{"n":"김하은","t":"off"}]},{"d":"2026-02-11","in":true,"note":null,"e":[{"n":"진서","t":"off"},{"n":"엄지애","t":"annual"},{"n":"한혜련","t":"am"},{"n":"윤소윤","t":"am"},{"n":"김민재","t":"off"}]},{"d":"2026-02-12","in":true,"note":null,"e":[{"n":"상은","t":"off"},{"n":"신하늘","t":"off"},{"n":"이현경","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-02-13","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"정은영","t":"off"},{"n":"김수영","t":"off"},{"n":"배주련","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-02-14","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"윤소윤","t":"off"},{"n":"전주경","t":"off"}]}],[{"d":"2026-02-15","in":true,"note":null,"e":[]},{"d":"2026-02-16","in":true,"note":null,"e":[]},{"d":"2026-02-17","in":true,"note":null,"e":[]},{"d":"2026-02-18","in":true,"note":null,"e":[]},{"d":"2026-02-19","in":true,"note":null,"e":[{"n":"배주련","t":"annual"},{"n":"김수영","t":"annual"},{"n":"조민아","t":"annual"}]},{"d":"2026-02-20","in":true,"note":null,"e":[{"n":"조민아","t":"annual"}]},{"d":"2026-02-21","in":true,"note":null,"e":[{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]}],[{"d":"2026-02-22","in":true,"note":null,"e":[]},{"d":"2026-02-23","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"정은영","t":"off"},{"n":"조민아","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-02-24","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"이현경","t":"off"},{"n":"상은","t":"off"},{"n":"김청하","t":"off"},{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-02-25","in":true,"note":null,"e":[{"n":"신하늘","t":"am"},{"n":"정은영","t":"am"},{"n":"김수영","t":"am"},{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-02-26","in":true,"note":null,"e":[{"n":"송슬기","t":"off"},{"n":"신지수","t":"off"},{"n":"진서","t":"off"},{"n":"김민재","t":"off"},{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-02-27","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"이신비","t":"off"},{"n":"윤소윤","t":"off"},{"n":"배주련","t":"off"},{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-02-28","in":true,"note":null,"e":[{"n":"정은영","t":"off"},{"n":"김수영","t":"off"},{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]}],[{"d":"2026-03-01","in":false,"note":null,"e":[]},{"d":"2026-03-02","in":false,"note":"대체공휴일","e":[]},{"d":"2026-03-03","in":false,"note":null,"e":[{"n":"김청하","t":"annual"},{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-03-04","in":false,"note":null,"e":[{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-03-05","in":false,"note":null,"e":[{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-03-06","in":false,"note":null,"e":[{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-03-07","in":false,"note":null,"e":[{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]}]]},"2026-03":{"weeks":[[{"d":"2026-03-01","in":true,"note":null,"e":[]},{"d":"2026-03-02","in":true,"note":"대체공휴일","e":[]},{"d":"2026-03-03","in":true,"note":null,"e":[{"n":"김수영","t":"annual"},{"n":"김청하","t":"annual"},{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-03-04","in":true,"note":null,"e":[{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-03-05","in":true,"note":null,"e":[{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-03-06","in":true,"note":null,"e":[{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]},{"d":"2026-03-07","in":true,"note":null,"e":[{"n":"송슬기","t":"annual"},{"n":"상은","t":"annual"},{"n":"조민아","t":"annual"},{"n":"유수진","t":"annual"}]}],[{"d":"2026-03-08","in":true,"note":null,"e":[]},{"d":"2026-03-09","in":true,"note":null,"e":[{"n":"송슬기","t":"off"},{"n":"윤소윤","t":"annual"},{"n":"유수진","t":"off"},{"n":"김하은","t":"annual"}]},{"d":"2026-03-10","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"정은영","t":"off"},{"n":"이현경","t":"off"},{"n":"윤소윤","t":"off"},{"n":"유수진","t":"annual"},{"n":"김민재","t":"off"}]},{"d":"2026-03-11","in":true,"note":null,"e":[{"n":"상은","t":"off"},{"n":"배주련","t":"am"},{"n":"유수진","t":"annual"}]},{"d":"2026-03-12","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"신하늘","t":"off"},{"n":"이신비","t":"off"},{"n":"김청하","t":"off"},{"n":"유수진","t":"annual"},{"n":"조민아","t":"off"}]},{"d":"2026-03-13","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"신지수","t":"off"},{"n":"김수영","t":"off"},{"n":"유수진","t":"annual"},{"n":"김하은","t":"off"}]},{"d":"2026-03-14","in":true,"note":null,"e":[{"n":"이현경","t":"annual"},{"n":"배주련","t":"off"},{"n":"유수진","t":"annual"}]}],[{"d":"2026-03-15","in":true,"note":null,"e":[]},{"d":"2026-03-16","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"신지수","t":"off"}]},{"d":"2026-03-17","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"신하늘","t":"off"},{"n":"이신비","t":"off"},{"n":"김청하","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-03-18","in":true,"note":null,"e":[{"n":"정은영","t":"off"},{"n":"이현경","t":"off"},{"n":"김수영","t":"am"},{"n":"조민아","t":"off"}]},{"d":"2026-03-19","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"송슬기","t":"off"},{"n":"상은","t":"off"},{"n":"김민재","t":"off"}]},{"d":"2026-03-20","in":true,"note":null,"e":[{"n":"엄지애","t":"off"},{"n":"윤소윤","t":"off"},{"n":"배주련","t":"off"},{"n":"김하은","t":"off"}]},{"d":"2026-03-21","in":true,"note":null,"e":[{"n":"장다인","t":"annual"},{"n":"송슬기","t":"annual"},{"n":"김수영","t":"off"},{"n":"전주경","t":"off"}]}],[{"d":"2026-03-22","in":true,"note":null,"e":[]},{"d":"2026-03-23","in":true,"note":null,"e":[{"n":"정은영","t":"annual"},{"n":"엄지애","t":"off"},{"n":"이현경","t":"off"},{"n":"김청하","t":"off"}]},{"d":"2026-03-24","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"송슬기","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-03-25","in":true,"note":null,"e":[{"n":"장다인","t":"am"},{"n":"이신비","t":"am"},{"n":"윤소윤","t":"am"},{"n":"김민재","t":"off"}]},{"d":"2026-03-26","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"신하늘","t":"off"},{"n":"정은영","t":"off"},{"n":"김하은","t":"off"}]},{"d":"2026-03-27","in":true,"note":null,"e":[{"n":"신지수","t":"off"},{"n":"상은","t":"off"},{"n":"김수영","t":"off"},{"n":"배주련","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-03-28","in":true,"note":null,"e":[{"n":"이신비","t":"off"},{"n":"윤소윤","t":"off"},{"n":"전주경","t":"off"}]}],[{"d":"2026-03-29","in":true,"note":null,"e":[]},{"d":"2026-03-30","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"이신비","t":"off"}]},{"d":"2026-03-31","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"상은","t":"off"},{"n":"신하늘","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-04-01","in":false,"note":null,"e":[{"n":"엄지애","t":"am"},{"n":"신지수","t":"am"},{"n":"배주련","t":"am"},{"n":"김하은","t":"am"},{"n":"김민재","t":"am"}]},{"d":"2026-04-02","in":false,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"이현경","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-04-03","in":false,"note":null,"e":[{"n":"송슬기","t":"off"},{"n":"정은영","t":"off"},{"n":"윤소윤","t":"off"},{"n":"김수영","t":"off"},{"n":"김청하","t":"off"},{"n":"전주경","t":"off"}]},{"d":"2026-04-04","in":false,"note":null,"e":[{"n":"신지수","t":"off"},{"n":"배주련","t":"off"},{"n":"김민재","t":"off"}]}]]},"2026-04":{"weeks":[[{"d":"2026-03-29","in":false,"note":null,"e":[]},{"d":"2026-03-30","in":false,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"이신비","t":"off"}]},{"d":"2026-03-31","in":false,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"상은","t":"off"},{"n":"신하늘","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-04-01","in":true,"note":null,"e":[{"n":"엄지애","t":"am"},{"n":"신지수","t":"am"},{"n":"배주련","t":"am"},{"n":"김민재","t":"am"},{"n":"김하은","t":"am"}]},{"d":"2026-04-02","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"이현경","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-04-03","in":true,"note":null,"e":[{"n":"송슬기","t":"off"},{"n":"정은영","t":"off"},{"n":"윤소윤","t":"off"},{"n":"김수영","t":"off"},{"n":"김청하","t":"off"},{"n":"전주경","t":"off"}]},{"d":"2026-04-04","in":true,"note":null,"e":[{"n":"신지수","t":"off"},{"n":"배주련","t":"off"},{"n":"김민재","t":"off"}]}],[{"d":"2026-04-05","in":true,"note":null,"e":[]},{"d":"2026-04-06","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"신지수","t":"annual"},{"n":"김하은","t":"annual"}]},{"d":"2026-04-07","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"상은","t":"off"},{"n":"이신비","t":"off"},{"n":"김청하","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-04-08","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"이현경","t":"off"},{"n":"윤소윤","t":"am"},{"n":"김하은","t":"am"}]},{"d":"2026-04-09","in":true,"note":null,"e":[{"n":"송슬기","t":"off"},{"n":"신하늘","t":"off"},{"n":"정은영","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-04-10","in":true,"note":null,"e":[{"n":"엄지애","t":"off"},{"n":"신지수","t":"off"},{"n":"김수영","t":"off"},{"n":"배주련","t":"off"},{"n":"김민재","t":"off"},{"n":"전주경","t":"off"}]},{"d":"2026-04-11","in":true,"note":null,"e":[{"n":"한혜련","t":"annual"},{"n":"윤소윤","t":"off"},{"n":"김하은","t":"off"}]}],[{"d":"2026-04-12","in":true,"note":null,"e":[]},{"d":"2026-04-13","in":true,"note":null,"e":[{"n":"한혜련","t":"annual"},{"n":"이신비","t":"annual"},{"n":"정은영","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-04-14","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"신지수","t":"off"},{"n":"이신비","t":"annual"},{"n":"김하은","t":"off"}]},{"d":"2026-04-15","in":true,"note":null,"e":[{"n":"장다인","t":"am"},{"n":"이신비","t":"annual"},{"n":"신하늘","t":"am"},{"n":"배주련","t":"am"},{"n":"유수진","t":"am"}]},{"d":"2026-04-16","in":true,"note":null,"e":[{"n":"엄지애","t":"off"},{"n":"송슬기","t":"off"},{"n":"이신비","t":"off"},{"n":"이현경","t":"off"},{"n":"김청하","t":"off"},{"n":"김민재","t":"off"}]},{"d":"2026-04-17","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"상은","t":"off"},{"n":"윤소윤","t":"off"},{"n":"김수영","t":"off"},{"n":"전주경","t":"off"}]},{"d":"2026-04-18","in":true,"note":null,"e":[{"n":"신하늘","t":"off"},{"n":"배주련","t":"off"},{"n":"유수진","t":"off"}]}],[{"d":"2026-04-19","in":true,"note":null,"e":[]},{"d":"2026-04-20","in":true,"note":null,"e":[{"n":"엄지애","t":"off"},{"n":"이현경","t":"off"},{"n":"김수영","t":"off"},{"n":"김민재","t":"annual"}]},{"d":"2026-04-21","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"정은영","t":"off"},{"n":"신지수","t":"off"},{"n":"김민재","t":"annual"}]},{"d":"2026-04-22","in":true,"note":null,"e":[{"n":"송슬기","t":"am"},{"n":"신지수","t":"annual"},{"n":"이신비","t":"am"},{"n":"김수영","t":"annual"},{"n":"김청하","t":"off"},{"n":"유수진","t":"am"},{"n":"조민아","t":"am"}]},{"d":"2026-04-23","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"한혜련","t":"off"},{"n":"상은","t":"off"},{"n":"김수영","t":"annual"},{"n":"김하은","t":"off"}]},{"d":"2026-04-24","in":true,"note":null,"e":[{"n":"신하늘","t":"off"},{"n":"윤소윤","t":"off"},{"n":"배주련","t":"off"},{"n":"김수영","t":"annual"}]},{"d":"2026-04-25","in":true,"note":null,"e":[{"n":"이신비","t":"off"},{"n":"김수영","t":"annual"},{"n":"조민아","t":"off"}]}],[{"d":"2026-04-26","in":true,"note":null,"e":[]},{"d":"2026-04-27","in":true,"note":null,"e":[{"n":"신하늘","t":"annual"},{"n":"신지수","t":"annual"},{"n":"전주경","t":"annual"}]},{"d":"2026-04-28","in":true,"note":null,"e":[{"n":"신하늘","t":"annual"},{"n":"신지수","t":"annual"},{"n":"전주경","t":"annual"}]},{"d":"2026-04-29","in":true,"note":null,"e":[{"n":"전주경","t":"annual"}]},{"d":"2026-04-30","in":true,"note":null,"e":[{"n":"김민재","t":"off"},{"n":"전주경","t":"annual"}]},{"d":"2026-05-01","in":false,"note":"노동절","e":[]},{"d":"2026-05-02","in":false,"note":"휴진","e":[{"n":"엄지애","t":"annual"},{"n":"정은영","t":"annual"},{"n":"전주경","t":"annual"}]}]]},"2026-05":{"weeks":[[{"d":"2026-04-26","in":false,"note":null,"e":[]},{"d":"2026-04-27","in":false,"note":null,"e":[{"n":"신하늘","t":"annual"},{"n":"신지수","t":"annual"},{"n":"전주경","t":"annual"}]},{"d":"2026-04-28","in":false,"note":null,"e":[{"n":"신하늘","t":"annual"},{"n":"신지수","t":"annual"},{"n":"전주경","t":"annual"}]},{"d":"2026-04-29","in":false,"note":null,"e":[{"n":"전주경","t":"annual"}]},{"d":"2026-04-30","in":false,"note":null,"e":[{"n":"장다인","t":"annual"},{"n":"김민재","t":"off"},{"n":"전주경","t":"annual"}]},{"d":"2026-05-01","in":true,"note":"노동절","e":[]},{"d":"2026-05-02","in":true,"note":null,"e":[{"n":"엄지애","t":"annual"},{"n":"정은영","t":"annual"},{"n":"이신비","t":"annual"},{"n":"전주경","t":"annual"}]}],[{"d":"2026-05-03","in":true,"note":null,"e":[]},{"d":"2026-05-04","in":true,"note":"휴진","e":[]},{"d":"2026-05-05","in":true,"note":"어린이날","e":[]},{"d":"2026-05-06","in":true,"note":null,"e":[{"n":"신지수","t":"annual"},{"n":"이현경","t":"annual"}]},{"d":"2026-05-07","in":true,"note":null,"e":[{"n":"신지수","t":"annual"}]},{"d":"2026-05-08","in":true,"note":null,"e":[{"n":"한혜련","t":"annual"}]},{"d":"2026-05-09","in":true,"note":null,"e":[{"n":"한혜련","t":"annual"}]}],[{"d":"2026-05-10","in":true,"note":null,"e":[]},{"d":"2026-05-11","in":true,"note":null,"e":[{"n":"신미애","t":"off"},{"n":"이신비","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-05-12","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"신하늘","t":"off"},{"n":"이현경","t":"off"},{"n":"김민재","t":"off"},{"n":"남정원","t":"off"}]},{"d":"2026-05-13","in":true,"note":null,"e":[{"n":"안유진","t":"annual"},{"n":"김수영","t":"off"},{"n":"배주련","t":"am"},{"n":"김하은","t":"am"}]},{"d":"2026-05-14","in":true,"note":null,"e":[{"n":"송슬기","t":"annual"},{"n":"한혜련","t":"off"},{"n":"정은영","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-05-15","in":true,"note":null,"e":[{"n":"송슬기","t":"annual"},{"n":"엄지애","t":"off"},{"n":"윤소윤","t":"off"},{"n":"신지수","t":"off"},{"n":"김청하","t":"off"},{"n":"전주경","t":"off"}]},{"d":"2026-05-16","in":true,"note":null,"e":[{"n":"송슬기","t":"annual"},{"n":"안유진","t":"off"},{"n":"배주련","t":"off"},{"n":"김하은","t":"off"}]}],[{"d":"2026-05-17","in":true,"note":null,"e":[]},{"d":"2026-05-18","in":true,"note":null,"e":[{"n":"송슬기","t":"annual"},{"n":"엄지애","t":"off"},{"n":"김수영","t":"off"},{"n":"남정원","t":"off"}]},{"d":"2026-05-19","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"정은영","t":"off"},{"n":"김청하","t":"off"},{"n":"김하은","t":"off"}]},{"d":"2026-05-20","in":true,"note":null,"e":[{"n":"신하늘","t":"am"},{"n":"이현경","t":"am"},{"n":"신지수","t":"am"},{"n":"조민아","t":"off"}]},{"d":"2026-05-21","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"송슬기","t":"off"},{"n":"신미애","t":"off"},{"n":"김민재","t":"off"}]},{"d":"2026-05-22","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"이신비","t":"off"},{"n":"윤소윤","t":"off"},{"n":"배주련","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-05-23","in":true,"note":null,"e":[{"n":"엄지애","t":"annual"},{"n":"이현경","t":"off"},{"n":"신지수","t":"off"},{"n":"전주경","t":"off"}]}],[{"d":"2026-05-24","in":true,"note":null,"e":[]},{"d":"2026-05-25","in":true,"note":null,"e":[]},{"d":"2026-05-26","in":true,"note":null,"e":[{"n":"김하은","t":"annual"}]},{"d":"2026-05-27","in":true,"note":null,"e":[{"n":"김하은","t":"annual"}]},{"d":"2026-05-28","in":true,"note":null,"e":[]},{"d":"2026-05-29","in":true,"note":null,"e":[{"n":"이현경","t":"annual"}]},{"d":"2026-05-30","in":true,"note":null,"e":[]}]]},"2026-06":{"weeks":[[{"d":"2026-06-01","in":true,"note":null,"e":[{"n":"엄지애","t":"annual"},{"n":"김청하","t":"annual"}]},{"d":"2026-06-02","in":true,"note":null,"e":[{"n":"엄지애","t":"annual"},{"n":"김청하","t":"annual"}]},{"d":"2026-06-03","in":true,"note":"선거일","e":[]},{"d":"2026-06-04","in":true,"note":null,"e":[{"n":"엄지애","t":"annual"},{"n":"신하늘","t":"annual"},{"n":"한혜련","t":"annual"},{"n":"김수영","t":"annual"}]},{"d":"2026-06-05","in":true,"note":null,"e":[{"n":"엄지애","t":"annual"},{"n":"송슬기","t":"annual"},{"n":"신하늘","t":"annual"},{"n":"한혜련","t":"annual"},{"n":"김수영","t":"off"}]},{"d":"2026-06-06","in":true,"note":"현충일","e":[]}],[{"d":"2026-06-07","in":true,"note":null,"e":[]},{"d":"2026-06-08","in":true,"note":null,"e":[{"n":"신미애","t":"off"},{"n":"정은영","t":"off"},{"n":"민경","t":"off"},{"n":"김청하","t":"off"},{"n":"남정원","t":"off"},{"n":"배주련","t":"annual"}]},{"d":"2026-06-09","in":true,"note":null,"e":[{"n":"엄지애","t":"off"},{"n":"송슬기","t":"off"},{"n":"이현경","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-06-10","in":true,"note":null,"e":[{"n":"한혜련","t":"am"},{"n":"신지수","t":"am"},{"n":"장다인","t":"off"},{"n":"전주경","t":"am"},{"n":"유수진","t":"am"}]},{"d":"2026-06-11","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"신하늘","t":"off"},{"n":"이신비","t":"off"},{"n":"김하은","t":"off"}]},{"d":"2026-06-12","in":true,"note":null,"e":[{"n":"김수영","t":"off"},{"n":"윤소윤","t":"off"},{"n":"배주련","t":"off"},{"n":"김민재","t":"off"}]},{"d":"2026-06-13","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"신지수","t":"off"},{"n":"유수진","t":"off"},{"n":"신하늘","t":"annual"}]}],[{"d":"2026-06-14","in":true,"note":null,"e":[]},{"d":"2026-06-15","in":true,"note":null,"e":[{"n":"엄지애","t":"off"},{"n":"정은영","t":"off"},{"n":"김하은","t":"off"},{"n":"신하늘","t":"annual"}]},{"d":"2026-06-16","in":true,"note":null,"e":[{"n":"신미애","t":"off"},{"n":"이신비","t":"off"},{"n":"민경","t":"off"},{"n":"김청하","t":"off"},{"n":"남정원","t":"off"},{"n":"신하늘","t":"annual"}]},{"d":"2026-06-17","in":true,"note":null,"e":[{"n":"윤소윤","t":"am"},{"n":"송슬기","t":"am"},{"n":"한혜련","t":"off"},{"n":"신하늘","t":"off"},{"n":"전주경","t":"am"},{"n":"김민재","t":"am"}]},{"d":"2026-06-18","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"김수영","t":"off"},{"n":"이현경","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-06-19","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"배주련","t":"off"},{"n":"신지수","t":"off"},{"n":"조민아","t":"off"}]},{"d":"2026-06-20","in":true,"note":null,"e":[{"n":"송슬기","t":"off"},{"n":"윤소윤","t":"off"},{"n":"김민재","t":"off"},{"n":"이현경","t":"annual"}]}],[{"d":"2026-06-21","in":true,"note":null,"e":[]},{"d":"2026-06-22","in":true,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"신하늘","t":"off"},{"n":"남정원","t":"off"}]},{"d":"2026-06-23","in":true,"note":null,"e":[{"n":"김수영","t":"off"},{"n":"정은영","t":"off"},{"n":"이현경","t":"off"},{"n":"유수진","t":"off"},{"n":"안유진","t":"annual"}]},{"d":"2026-06-24","in":true,"note":null,"e":[{"n":"이신비","t":"am"},{"n":"배주련","t":"am"},{"n":"엄지애","t":"off"},{"n":"김청하","t":"off"},{"n":"전주경","t":"am"},{"n":"조민아","t":"am"},{"n":"안유진","t":"annual"}]},{"d":"2026-06-25","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"장다인","t":"off"},{"n":"신미애","t":"off"},{"n":"김하은","t":"off"},{"n":"김수영","t":"annual"}]},{"d":"2026-06-26","in":true,"note":null,"e":[{"n":"송슬기","t":"off"},{"n":"민경","t":"off"},{"n":"윤소윤","t":"off"},{"n":"신지수","t":"off"},{"n":"김민재","t":"off"}]},{"d":"2026-06-27","in":true,"note":null,"e":[{"n":"이신비","t":"off"},{"n":"배주련","t":"off"},{"n":"조민아","t":"off"},{"n":"윤소윤","t":"annual"}]}],[{"d":"2026-06-28","in":true,"note":null,"e":[]},{"d":"2026-06-29","in":true,"note":null,"e":[{"n":"장다인","t":"off"},{"n":"김수영","t":"off"},{"n":"이신비","t":"off"},{"n":"남정원","t":"off"},{"n":"엄지애","t":"annual"},{"n":"윤소윤","t":"annual"},{"n":"김민재","t":"annual"}]},{"d":"2026-06-30","in":true,"note":null,"e":[{"n":"한혜련","t":"off"},{"n":"정은영","t":"off"},{"n":"민경","t":"off"},{"n":"조민아","t":"off"},{"n":"엄지애","t":"annual"},{"n":"김민재","t":"annual"}]},{"d":"2026-07-01","in":false,"note":null,"e":[{"n":"안유진","t":"am"},{"n":"신지수","t":"am"},{"n":"김청하","t":"am"},{"n":"김하은","t":"off"}]},{"d":"2026-07-02","in":false,"note":null,"e":[{"n":"신하늘","t":"off"},{"n":"송슬기","t":"off"},{"n":"이현경","t":"off"},{"n":"유수진","t":"off"}]},{"d":"2026-07-03","in":false,"note":null,"e":[{"n":"신미애","t":"off"},{"n":"윤소윤","t":"off"},{"n":"배주련","t":"off"},{"n":"김민재","t":"off"}]},{"d":"2026-07-04","in":false,"note":null,"e":[{"n":"안유진","t":"off"},{"n":"신지수","t":"off"},{"n":"김청하","t":"off"},{"n":"전주경","t":"off"},{"n":"신미애","t":"annual"}]}]]}};
 function teamOf(n){const p=PEOPLE.find(x=>x.name===n);return p?p.team:'';}
 function renderSnapshot(data){if(!data)return;let html='';
   for(const wk of data.weeks){html+='<tr>';
-    for(const idx of [1,2,3,4,5,6,0]){const x=wk[idx];
+    for(const idx of [1,2,3,4,5,6]){const x=wk[idx];
       if(!x){html+='<td class="out"></td>';continue;}
       const [Y,M,D]=x.d.split('-').map(Number);const dow=new Date(Y,M-1,D).getDay();const sun=(dow===0);
       const cls=[];if(!x.in)cls.push('out');if(sun)cls.push('sun');if(x.note)cls.push('holiday');
@@ -713,7 +760,7 @@ function renderSnapshot(data){if(!data)return;let html='';
       let chips='';if(!sun){const offs=x.e.slice().sort((a,b)=>TEAMS.indexOf(teamOf(a.n))-TEAMS.indexOf(teamOf(b.n)));
         chips=offs.map(o=>{const tm=teamOf(o.n),tc=tm?'t-'+tm:'',cc=tm?'c-'+tm:'';
           return o.t==='am'?`<span class="chip am ${cc}">${o.n}·오전</span>`:o.t==='annual'?`<span class="chip annual ${tc}">${o.n}</span>`:`<span class="chip ${tc}">${o.n}</span>`;}).join('');}
-      html+=`<td class="${cls.join(' ')}"><div class="daynum"><span>${D}</span>${tag}</div><div class="off-list">${chips}</div></td>`;}
+      html+=`<td class="${cls.join(' ')}"><div class="daynum"><span>${D}</span>${bdayMark(x.d)}${tag}</div><div class="off-list">${chips}</div></td>`;}
     html+='</tr>';}
   $('calBody').innerHTML=html;}
 function renderArchive(key){renderSnapshot(ARCHIVE[key]);}
@@ -723,7 +770,20 @@ function snapshotFromCurrent(){
       const offs=(CURRENT.dm.dateOff[d.iso]||[]).map(o=>({n:o.name,t:o.type}));
       arr.push({d:d.iso,in:d.inMonth,note:d.holiday?'휴진':null,e:offs});}
     return arr;});
-  return {weeks};}
+  const cur=currentUsedMap(CURRENT.annual,CURRENT.month);const annual=[];
+  for(const p of PEOPLE){const ti=tenureInfo(HIRE[p.name],CURRENT.year,CURRENT.month);
+    const ovr=ALLOT_OVERRIDE[p.name];const allot=(ovr!=null&&ovr!=='')?+ovr:ti.allot;
+    const mon=cur[p.name]||0;const rem=allot-(PRIORUSED[p.name]||0)-mon;
+    annual.push({n:p.name,hire:HIRE[p.name],mon,rem});}
+  return {weeks,annual};}
+function renderSnapshotAnnual(snap){const card=$('annualCard');if(!card)return;const h=$('annualHint');
+  if(!snap||!snap.annual||!snap.annual.length){card.style.display='none';return;}
+  card.style.display='';if(h)h.style.display='none';
+  const by={};snap.annual.forEach(r=>by[r.n]=r);let rows='';let last=null;
+  for(const t of TEAMS){const ms=PEOPLE.filter(p=>p.team===t).slice().sort((a,b)=>{const ra=(a.sil||a.jang||a.lead)?0:1,rb=(b.sil||b.jang||b.lead)?0:1;return ra!==rb?ra-rb:a.name.localeCompare(b.name,'ko');});
+    ms.forEach((p,i)=>{const r=by[p.name];if(!r)return;const rc=r.rem<0?'devB':(r.rem<=2?'dev1':'dev0');
+      rows+=`<tr class="${i===0&&last!==null?'teamsep':''}"><td class="team c-${t}">${i===0?TEAMAB(t):''}</td><td class="nm">${p.name}</td><td style="font-size:11px;color:#777">${(r.hire||'').slice(2)}</td><td>${r.mon?`<span style="color:var(--accent)">${r.mon}</span>`:0}</td><td class="${rc}"><b>${r.rem}</b></td></tr>`;});last=t;}
+  $('annualTable').innerHTML=`<table class="ctable"><thead><tr><th></th><th>이름</th><th>입사일</th><th>이달</th><th>잔여</th></tr></thead><tbody>${rows}</tbody></table>`;}
 async function loadPublished(){if(BOARD_URL){try{const r=await fetch(BOARD_URL+'?kind=pub&_='+Date.now(),{cache:'no-store'});const j=await r.json();return j.published||{};}catch(e){return {};}}
   try{return JSON.parse(lsGet(PUB_KEY)||'{}');}catch(e){return {};}}
 async function savePublish(month,data){PUBLISHED[month]=data;
@@ -733,7 +793,32 @@ async function removePublish(month){delete PUBLISHED[month];
   if(BOARD_URL){try{await fetch(BOARD_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'unpublish',month})});}catch(e){}}
   lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}
 function curKey(){return CURRENT?`${CURRENT.year}-${String(CURRENT.month).padStart(2,'0')}`:null;}
-async function publishCurrent(){if(!CURRENT)return;const k=curKey();await savePublish(k,snapshotFromCurrent());MONTHSRC[k]='pub';refreshViewSel();updatePubStatus();alert(`${CURRENT.year}년 ${CURRENT.month}월 휴무표를 배포했습니다.\n이제 직원이 볼 수 있어요.`);}
+function publishIssues(){
+  if(!CURRENT)return [];const dm=CURRENT.dm,weeks=CURRENT.res.weeks,out=[];
+  const FULL=new Set(['off','weekly','annual','carry']);
+  for(const w of weeks){
+    if(w.locked||w.empty)continue;const isHol=!!w.holiday;
+    for(const x of w.week.days){
+      if(x.dow<1||x.dow>6||!x.inMonth||x.holiday)continue;
+      const full=(dm.dateOff[x.iso]||[]).filter(o=>FULL.has(o.type));
+      const nae=full.filter(o=>{const p=byName(o.name);return p&&p.naegwa;}).length;
+      const clinOff=full.filter(o=>{const p=byName(o.name);return p&&p.clin;}).length;
+      const present=CLIN_AVAIL[x.dow]-clinOff;const md=x.iso.slice(5).replace('-','/');
+      if(!isHol&&nae===0)out.push(`${md}(${DOW[x.dow]}) 내과 휴무 0명`);
+      if(nae>NAEGWA_CAP[x.dow])out.push(`${md}(${DOW[x.dow]}) 내과 휴무 ${nae}명 — 상한 ${NAEGWA_CAP[x.dow]} 초과`);
+      if(present<2)out.push(`${md}(${DOW[x.dow]}) 내과 상담자 근무 ${present}명 — 2명 미만`);
+    }
+    if(!isHol){const isos=new Set(w.week.days.filter(d=>d.dow>=1&&d.dow<=6).map(d=>d.iso));
+      for(const p of PEOPLE){const has=(dm.personOff[p.name]||[]).some(e=>isos.has(e.iso));
+        if(!has)out.push(`${w.week.key} 주: ${p.name} 휴무 없음`);}}
+  }
+  return [...new Set(out)];
+}
+async function publishCurrent(){if(!CURRENT)return;
+  const issues=publishIssues();
+  if(issues.length){const show=issues.slice(0,15).map(s=>'· '+s).join('\n')+(issues.length>15?`\n…외 ${issues.length-15}건`:'');
+    if(!confirm(`⚠️ 다음 오류가 있습니다 (${issues.length}건):\n\n${show}\n\n그래도 배포하시겠습니까?`))return;}
+  const k=curKey();await savePublish(k,snapshotFromCurrent());MONTHSRC[k]='pub';refreshViewSel();updatePubStatus();alert(`${CURRENT.year}년 ${CURRENT.month}월 휴무표를 배포했습니다.\n이제 직원이 볼 수 있어요.`);}
 async function unpublishCurrent(){if(!CURRENT)return;const k=curKey();if(!confirm('배포를 취소하면 직원 화면에서 사라집니다. 진행할까요?'))return;await removePublish(k);refreshViewSel();updatePubStatus();}
 function updatePubStatus(){const el=$('pubStatus');if(!el||!CURRENT)return;const pub=!!PUBLISHED[curKey()];
   el.innerHTML=pub?'<span style="color:#1f9d57;font-weight:800">● 배포됨</span> — 직원에게 보입니다':'<span style="color:#c08a2a;font-weight:800">● 배포 전</span> — 직원에게 안 보입니다';
@@ -769,11 +854,12 @@ function applySavedOff(dm,off){dm.dateOff={};dm.personOff={};for(const iso in of
 function showMonth(v){
   if(v&&v.indexOf('d:')===0){const mk=v.slice(2);
     if(mk===curKey()){document.body.classList.remove('viewing-archive');
-      if(CURRENT){renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),mk);setStamp(CURRENT.year,CURRENT.month);}}
+      if(CURRENT){renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),mk);setStamp(CURRENT.year,CURRENT.month);
+        renderAnnualStatus(CURRENT.annual,CURRENT.year,CURRENT.month);$('annualCard').style.display='';const h=$('annualHint');if(h)h.style.display='';}}
     else loadDraftIntoForm(mk);
     return;}
   const data=PUBLISHED[v]||ARCHIVE[v];if(!data)return;
-  document.body.classList.add('viewing-archive');renderSnapshot(data);renderPersonSummary(buildSnapshotByPerson(data),v);
+  document.body.classList.add('viewing-archive');renderSnapshot(data);renderPersonSummary(buildSnapshotByPerson(data),v);renderSnapshotAnnual(data);
   const[y,m]=v.split('-');$('stampMonth').textContent=`${y}.${m}`;const pt=$('printTitle');if(pt)pt.textContent=`서울센텀턱구강내과치과 · ${y}년 ${+m}월 휴무표`;const eb=$('editedBadge');if(eb)eb.style.display='none';}
 function generate(newSeed){
   readFixedFromUI();
@@ -812,6 +898,10 @@ const DEFAULT_CARRY=`6/29 장다인, 김수영, 이신비, 남정원
   $('holidays').value='2026-07-17';
   $('annualBox').value=DEFAULT_ANNUAL;$('carryBox').value=DEFAULT_CARRY;
   renderLegend();renderFixedBox();
+  $('drBox').value=lsGet(DR_KEY)||DEFAULT_DR;renderDrSchedule();
+  $('drBox').oninput=()=>{lsSet(DR_KEY,$('drBox').value);renderDrSchedule();};
+  $('bdayBox').value=lsGet(BDAY_KEY)||DEFAULT_BDAY;BIRTHDAYS=parseBirthdays($('bdayBox').value);
+  $('bdayBox').oninput=()=>{lsSet(BDAY_KEY,$('bdayBox').value);BIRTHDAYS=parseBirthdays($('bdayBox').value);if($('viewSel').value)showMonth($('viewSel').value);};
   $('genBtn').onclick=()=>{generate(true);saveState();};
   $('reGenBtn').onclick=()=>{generate(true);saveState();};
   $('xlsxBtn').onclick=()=>{if(CURRENT)exportXlsx(CURRENT.res,CURRENT.dm);};
