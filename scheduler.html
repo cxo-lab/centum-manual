@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>휴무표 생성기 · 서울센텀턱구강내과치과</title>
+<title>센텀 플래너 · 서울센텀턱구강내과치과</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
     --navy:#1E3A5F;--navy-7:#16314f;--navy-9:#0f2238;--ink:#222732;--muted:#6b7280;
     --line:#e6e0d4;--line-2:#efe9dd;--paper:#f6f3ec;--card:#fff;--accent:#d6336c;--accent-soft:#fce4ee;
     --ok:#15803d;--ok-soft:#e7f4ea;--warn:#b45309;--warn-soft:#fdf2e2;
-    --t-총괄:#64748b;--t-내과1팀:#2563eb;--t-내과2팀:#0891b2;--t-통합치과:#7c3aed;--t-물리치료:#d97706;--t-고객지원실:#db2777;
+    --t-총괄:#8a9ab0;--t-내과1팀:#6b8fcf;--t-내과2팀:#4da3b8;--t-통합치과:#9b82cc;--t-물리치료:#c49a4a;--t-고객지원실:#c4688e;
     --radius:14px;--shadow:0 1px 2px rgba(20,40,70,.06),0 8px 24px rgba(20,40,70,.06);
   }
   *{box-sizing:border-box}html,body{margin:0;padding:0}
@@ -202,7 +202,7 @@
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><div class="eyebrow">월간 휴무 배정 · 연간 공평성</div><h1>휴무표 생성기</h1>
+    <div class="brand"><div class="eyebrow">월간 휴무 배정 · 연간 공평성</div><h1>센텀 플래너</h1>
       <div class="sub">서울센텀턱구강내과치과 · 규칙 기반 자동 배정</div></div>
     <div class="stamp">대상 월<b id="stampMonth">2026.07</b><span id="editedBadge">수동 수정됨</span></div>
   </header>
@@ -320,7 +320,7 @@
   </main>
   </div>
 
-  <footer>규칙 기반 랜덤 배정 + 연간 요일 공평성 · 모든 하드 규칙을 만족시킵니다.</footer>
+  <footer>센텀 플래너 · 규칙 기반 랜덤 배정 + 연간 요일 공평성 · 모든 하드 규칙을 만족시킵니다.</footer>
 
   <div id="dayEditor" class="dayedit-back" style="display:none">
     <div class="dayedit">
@@ -347,12 +347,13 @@ const PEOPLE=[
  {name:'이현경',team:'내과1팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'정은영',team:'내과1팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'신미애',team:'내과2팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
- {name:'송슬기',team:'내과1팀',sil:false,jang:false,clin:true,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
+ {name:'송슬기',team:'내과2팀',sil:false,jang:false,clin:true,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'안유진',team:'내과2팀',sil:false,jang:true,clin:true,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'이신비',team:'내과2팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'윤소윤',team:'통합치과',sil:false,jang:false,clin:true,naegwa:false,cs:false,allow:[5,6],lead:true},
  {name:'배주련',team:'통합치과',sil:false,jang:false,clin:false,naegwa:false,cs:false,allow:[5,6],narrow:true},
  {name:'신지수',team:'통합치과',sil:false,jang:false,clin:false,naegwa:false,cs:false,allow:[5,6],narrow:true},
+ {name:'국승연',team:'통합치과',sil:false,jang:false,clin:false,naegwa:false,cs:false,allow:[],narrow:true},
  {name:'김청하',team:'물리치료',sil:false,jang:false,clin:false,naegwa:false,cs:false,allow:[1,2,3,4,5,6]},
  {name:'유수진',team:'고객지원실',sil:true,jang:false,clin:false,naegwa:false,cs:true,allow:[1,3,4,5,6]},
  {name:'김하은',team:'고객지원실',sil:false,jang:false,clin:false,naegwa:false,cs:true,allow:[1,2,3,4,5,6]},
@@ -364,6 +365,7 @@ const PEOPLE=[
 const TEAMS=['총괄','내과1팀','내과2팀','통합치과','물리치료','고객지원실'];
 const byName=n=>PEOPLE.find(p=>p.name===n);
 let FIXED={'엄지애':[2],'윤소윤':[6],'전주경':[6],'배주련':[5],'신지수':[5]};
+const FORBIDDEN=[['엄지애','유수진'],['유수진','김민재']];
 const NAEGWA_CAP={1:3,2:4,3:3,4:4,5:2,6:3}, CLIN_AVAIL={1:4,2:4,3:4,4:4,5:5,6:4};
 const RESTRICTED=new Set([1,3,5,6]); const DOW=['일','월','화','수','목','금','토'];
 const DOWMAP={'월':1,'화':2,'수':3,'목':4,'금':5,'토':6,'일':0};
@@ -397,17 +399,18 @@ function assignWeek(week,annualByDow,selfAnnual,monthHist,fairHist,rnd,flags){
   flags=flags||{};
   const W=new Set(week.workingDows);
   const nOff={1:0,2:0,3:0,4:0,5:0,6:0},csOff={1:0,2:0,3:0,4:0,5:0,6:0},clOff={1:0,2:0,3:0,4:0,5:0,6:0},nPer={1:0,2:0,3:0,4:0,5:0,6:0};
+  const annualClOff={1:0,2:0,3:0,4:0,5:0,6:0}; // 연차로 빠진 clin 인원 (회전 배정 체크에서 제외)
   const silD=new Set(),jangD=new Set(),assign={};let fairCost=0;
-  const add=(p,d)=>{if(p.naegwa){nOff[d]++;nPer[d]++;}if(p.cs)csOff[d]++;if(p.clin)clOff[d]++;if(p.sil)silD.add(d);if(p.jang)jangD.add(d);};
+  const add=(p,d,isAnnual)=>{if(p.naegwa){nOff[d]++;nPer[d]++;}if(p.cs)csOff[d]++;if(p.clin){clOff[d]++;if(isAnnual)annualClOff[d]++;}if(p.sil)silD.add(d);if(p.jang)jangD.add(d);};
   // 연차: 항상 배치(상한·상담자·팀장 반영) — 주차와 별개
   for(const dStr in annualByDow){const d=+dStr;if(!W.has(d))continue;
-    for(const nm of annualByDow[d]){const p=byName(nm);if(!p)continue;(assign[nm]=assign[nm]||[]);if(!assign[nm].includes(d))assign[nm].push(d);add(p,d);}}
+    for(const nm of annualByDow[d]){const p=byName(nm);if(!p)continue;(assign[nm]=assign[nm]||[]);if(!assign[nm].includes(d))assign[nm].push(d);add(p,d,true);}}
   // 고정(공휴일주면 생략)
   if(!flags.noFixed){for(const p of PEOPLE){if(!isForced(p))continue;const ds=FIXED[p.name].filter(d=>W.has(d));
     (assign[p.name]=assign[p.name]||[]);ds.forEach(d=>{if(!assign[p.name].includes(d)){assign[p.name].push(d);add(p,d);}});}}
   // 회전 주차(공휴일주면 생략) — 연차 있어도 별도로 받음, 연차 당일엔 주차 X
   if(!flags.noRotate){
-    let free=shuffle(PEOPLE.filter(p=>!isForced(p)),rnd);
+    let free=shuffle(PEOPLE.filter(p=>!isForced(p)&&p.allow.length>0),rnd);
     free.sort((a,b)=>(b.clin?1:0)-(a.clin?1:0)||(b.jang?1:0)-(a.jang?1:0));
     for(const p of free){
       const myA=selfAnnual[p.name];
@@ -415,9 +418,11 @@ function assignWeek(week,annualByDow,selfAnnual,monthHist,fairHist,rnd,flags){
         if(myA&&myA.has(d))return false;
         if(RESTRICTED.has(d)&&!p.narrow&&monthHist[p.name]&&monthHist[p.name].has(d))return false;
         if(p.naegwa&&nOff[d]+1>NAEGWA_CAP[d])return false;
-        if(p.clin&&(CLIN_AVAIL[d]-(clOff[d]+1))<2)return false;
+        if(p.clin&&(CLIN_AVAIL[d]-(clOff[d]-annualClOff[d]+1))<2)return false;
         if(p.sil&&silD.has(d))return false;
         if(p.jang&&jangD.has(d))return false;
+        // FORBIDDEN 쌍: 같은 날 겹침 금지
+        if(FORBIDDEN.some(([a,b])=>{const other=p.name===a?b:p.name===b?a:null;return other&&(assign[other]||[]).includes(d);}))return false;
         return true;});
       if(cands.length===0)return null;
       const fc=fairHist[p.name]; const minC=Math.min(...cands.map(d=>fc[d]));
@@ -455,7 +460,7 @@ function solveMonth(year,month,opts){
     for(const iso in annual){const dt=week.days.find(x=>x.iso===iso);if(dt&&dt.dow>=1&&dt.dow<=6){
       (annualByDow[dt.dow]=annualByDow[dt.dow]||[]).push(...annual[iso]);
       for(const nm of annual[iso]){(selfAnnual[nm]=selfAnnual[nm]||new Set()).add(dt.dow);}}}
-    if(week.weekHasHoliday){const r=assignWeek(week,annualByDow,selfAnnual,monthHist,fairHist,rnd,{noRotate:true,noFixed:true});out.push({week,assign:r.assign,holiday:true});continue;}
+    if(week.weekHasHoliday){const r=assignWeek(week,annualByDow,selfAnnual,monthHist,fairHist,rnd,{noRotate:true,noFixed:true});out.push({week,assign:(r?r.assign:{}),holiday:true});continue;}
     if(week.workingDows.length===0){out.push({week,assign:null,empty:true});continue;}
     let best=null;
     for(let t=0;t<4500;t++){const r=assignWeek(week,annualByDow,selfAnnual,monthHist,fairHist,rnd,{});if(!r)continue;if(!best||r.penalty<best.penalty)best=r;if(best.penalty<=0.5)break;}
@@ -606,7 +611,7 @@ function poChip(e){const[Y,M,D]=e.iso.split('-').map(Number);const w=DOWK[new Da
   return `<span class="po-day">${D}(${w})</span>`;}
 function renderPersonSummary(byPerson,ym){
   let html='';const used=new Set();
-  for(const t of TEAMS){const members=PEOPLE.filter(p=>p.team===t).slice().sort((a,b)=>{
+  for(const t of TEAMS){const members=PEOPLE.filter(p=>p.team===t&&p.allow.length>0).slice().sort((a,b)=>{
       const ra=(a.sil||a.jang||a.lead)?0:1,rb=(b.sil||b.jang||b.lead)?0:1;
       return ra!==rb?ra-rb:a.name.localeCompare(b.name,'ko');});
     members.forEach((p,i)=>{used.add(p.name);
@@ -668,7 +673,7 @@ function readFixedFromUI(){const f={};document.querySelectorAll('#fixedBox .row'
   const name=row.dataset.name;const v=row.querySelector('input').value.trim();
   const days=v.split(/[,\s]+/).map(x=>DOWMAP[x]).filter(x=>x!==undefined&&x>=1);
   if(days.length)f[name]=[...new Set(days)].sort();});FIXED=f;}
-function renderFixedBox(){const show=['엄지애','윤소윤','전주경','배주련','신지수'];
+function renderFixedBox(){const show=['윤소윤','전주경','배주련','신지수'];
   $('fixedBox').innerHTML=show.map(n=>{const days=(FIXED[n]||[]).map(d=>DOW[d]).join(',');
     return `<div class="row" data-name="${n}"><b>${n}</b><input value="${days}" placeholder="예: 화 / 금,토"></div>`;}).join('');}
 
@@ -679,11 +684,11 @@ const LS_KEY='centum_sched_v1';
 let DRAFTS={};const DRAFT_KEY='centum_drafts_v1';
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-const HIRE={'엄지애':'2022-03-03','한혜련':'2023-11-17','장다인':'2024-02-13','윤소윤':'2024-06-03','유수진':'2024-06-10','배주련':'2024-09-09','신지수':'2025-05-07','신하늘':'2025-06-17','안유진':'2025-07-07','김수영':'2025-07-07','이현경':'2025-09-29','이신비':'2025-09-29','김민재':'2025-12-08','송슬기':'2025-12-11','정은영':'2026-01-08','신미애':'2026-03-23','전주경':'2024-06-17','김하은':'2024-08-01','조민아':'2024-10-04','남정원':'2026-04-21','김청하':'2024-04-22'};
-let PRIORUSED={};PEOPLE.forEach(p=>PRIORUSED[p.name]=0);
-let ALLOT_OVERRIDE={};
+const HIRE={'엄지애':'2022-03-03','한혜련':'2023-11-17','장다인':'2024-02-13','윤소윤':'2024-06-03','유수진':'2024-06-10','배주련':'2024-09-09','신지수':'2025-05-07','신하늘':'2025-06-17','안유진':'2025-07-07','김수영':'2025-07-07','이현경':'2025-09-29','이신비':'2025-09-29','김민재':'2025-12-08','송슬기':'2025-12-11','정은영':'2026-01-08','신미애':'2026-03-23','전주경':'2024-06-17','김하은':'2024-08-01','조민아':'2024-10-04','남정원':'2026-04-21','김청하':'2024-04-22','국승연':'2026-06-01'};
+let PRIORUSED={'엄지애':5,'한혜련':11,'장다인':3,'김청하':7,'윤소윤':0,'유수진':4,'전주경':0,'김하은':14,'배주련':10,'조민아':14,'신지수':1,'신하늘':8,'안유진':7,'김수영':11,'이현경':3,'이신비':6,'김민재':2,'송슬기':9,'정은영':1,'신미애':0,'남정원':1,'국승연':0};PEOPLE.forEach(p=>{if(!(p.name in PRIORUSED))PRIORUSED[p.name]=0;});
+let ALLOT_OVERRIDE={'전주경':11};
 function tenureInfo(hireISO,year,month){
-  const [hy,hm,hd]=hireISO.split('-').map(Number);const asOf=new Date(year,month-1,1);
+  const [hy,hm,hd]=hireISO.split('-').map(Number);const asOf=new Date(year,month,0);/* 월 마지막 날 — 기념일 당일 포함 */
   let ay=year,anniv=new Date(ay,hm-1,hd);if(anniv>asOf){ay--;anniv=new Date(ay,hm-1,hd);}
   const yc=ay-hy;let allot;
   if(yc>=1)allot=Math.min(15+Math.floor((yc-1)/2),25);else{let m=(year-hy)*12+(month-hm);allot=Math.max(0,Math.min(12,m));}
@@ -740,7 +745,7 @@ function loadDrafts(){try{DRAFTS=JSON.parse(lsGet(DRAFT_KEY)||'{}');}catch(e){DR
 function loadDraftIntoForm(month){const st=DRAFTS[month];if(!st)return false;
   $('year').value=st.year;$('month').value=st.month;
   $('holidays').value=st.holidays||'';$('annualBox').value=st.annual||'';$('carryBox').value=st.carry||'';
-  if(st.fixed){FIXED=st.fixed;renderFixedBox();}
+  if(st.fixed){const DEFAULT_FIXED={'엄지애':[2],'윤소윤':[6],'전주경':[6],'배주련':[5],'신지수':[5]};const merged={};const allNames=new Set([...Object.keys(DEFAULT_FIXED),...Object.keys(st.fixed)]);allNames.forEach(n=>{const saved=st.fixed[n];const def=DEFAULT_FIXED[n];merged[n]=(saved&&saved.length)?saved:(def||[]);});FIXED=merged;renderFixedBox();}
   if(st.priorUsed)PEOPLE.forEach(p=>PRIORUSED[p.name]=st.priorUsed[p.name]||0);
   ALLOT_OVERRIDE=st.allotOverride?Object.assign({},st.allotOverride):{};
   importedFair=st.baseFair||null;forceSeed=st.seed;
@@ -787,8 +792,20 @@ function renderSnapshotAnnual(snap){const card=$('annualCard');if(!card)return;c
     ms.forEach((p,i)=>{const r=by[p.name];if(!r)return;const rc=r.rem<0?'devB':(r.rem<=2?'dev1':'dev0');
       rows+=`<tr class="${i===0&&last!==null?'teamsep':''}"><td class="team c-${t}">${i===0?TEAMAB(t):''}</td><td class="nm">${p.name}</td><td style="font-size:11px;color:#777">${(r.hire||'').slice(2)}</td><td>${r.mon?`<span style="color:var(--accent)">${r.mon}</span>`:0}</td><td class="${rc}"><b>${r.rem}</b></td></tr>`;});last=t;}
   $('annualTable').innerHTML=`<table class="ctable"><thead><tr><th></th><th>이름</th><th>입사일</th><th>이달</th><th>잔여</th></tr></thead><tbody>${rows}</tbody></table>`;}
-async function loadPublished(){if(BOARD_URL){try{const r=await fetch(BOARD_URL+'?kind=pub&_='+Date.now(),{cache:'no-store'});const j=await r.json();return j.published||{};}catch(e){return {};}}
-  try{return JSON.parse(lsGet(PUB_KEY)||'{}');}catch(e){return {};}}
+function normalizePublishedKeys(raw){
+  const out={};
+  for(const k in raw){
+    let nk=k;
+    // already YYYY-MM
+    if(/^\d{4}-\d{2}$/.test(k)){nk=k;}
+    // Date string like "Wed Jul 01 2026 ..."
+    else{try{const d=new Date(k);if(!isNaN(d)){nk=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}}catch(e){}}
+    out[nk]=raw[k];
+  }
+  return out;
+}
+async function loadPublished(){if(BOARD_URL){try{const r=await fetch(BOARD_URL+'?kind=pub&_='+Date.now(),{cache:'no-store'});const j=await r.json();return normalizePublishedKeys(j.published||{});}catch(e){return {};}}
+  try{return normalizePublishedKeys(JSON.parse(lsGet(PUB_KEY)||'{}'));}catch(e){return {};}}
 async function savePublish(month,data){PUBLISHED[month]=data;
   if(BOARD_URL){try{await fetch(BOARD_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'publish',month,data})});}catch(e){}}
   lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}
@@ -812,7 +829,7 @@ function publishIssues(){
       if(present<2)out.push(`${md}(${DOW[x.dow]}) 내과 상담자 근무 ${present}명 — 2명 미만`);
     }
     if(!isHol){const isos=new Set(w.week.days.filter(d=>d.dow>=1&&d.dow<=6).map(d=>d.iso));
-      for(const p of PEOPLE){const has=(dm.personOff[p.name]||[]).some(e=>isos.has(e.iso));
+      for(const p of PEOPLE){if(!p.allow.length)continue;const has=(dm.personOff[p.name]||[]).some(e=>isos.has(e.iso));
         if(!has)out.push(`${w.week.key} 주: ${p.name} 휴무 없음`);}}
   }
   return [...new Set(out)];
@@ -831,7 +848,7 @@ function refreshViewSel(){const sel=$('viewSel');const prev=sel.value;const live
   let opts='';
   if(ADMIN){const dset=new Set(Object.keys(DRAFTS));if(liveKey)dset.add(liveKey);
     [...dset].sort().reverse().forEach(k=>{const[y,m]=k.split('-');const t=PUBLISHED[k]?' · 배포됨':' · 배포 전';opts+=`<option value="d:${k}">${y}년 ${+m}월 작업본${t}</option>`;});}
-  const allKeys=[...new Set([...Object.keys(PUBLISHED),...Object.keys(ARCHIVE)])].sort().reverse();
+  const allKeys=[...new Set([...Object.keys(PUBLISHED),...Object.keys(ARCHIVE)])].filter(k=>/^\d{4}-\d{2}$/.test(k)).sort().reverse();
   allKeys.forEach(k=>{const[y,m]=k.split('-');const lab=MONTHSRC[k]==='pub'?'배포본':'보관본';opts+=`<option value="${k}">${y}년 ${+m}월 (${lab})</option>`;});
   sel.innerHTML=opts;
   let def=ADMIN?(liveKey?`d:${liveKey}`:(allKeys[0]||'')):(allKeys[0]||'');
@@ -884,8 +901,12 @@ function generate(newSeed){
   document.body.classList.remove('viewing-archive');refreshViewSel();updatePubStatus();
 }
 
-const DEFAULT_ANNUAL=`7/15 신하늘
-7/18 엄지애, 한혜련
+const DEFAULT_ANNUAL=`6/29 엄지애, 김민재, 윤소윤
+6/30 엄지애, 김민재
+7/4 신미애
+7/6 신미애
+7/15 신하늘
+7/18 엄지애, 한혜련, 전주경
 7/20 정은영, 이현경
 7/21 정은영, 이현경`;
 const DEFAULT_CARRY=`6/29 장다인, 김수영, 이신비, 남정원
@@ -937,7 +958,10 @@ const DEFAULT_CARRY=`6/29 장다인, 김수영, 이신비, 남정원
   const dkeys=Object.keys(DRAFTS).sort();
   if(dkeys.length)loadDraftIntoForm(dkeys[dkeys.length-1]);
   else generate(true);
-  if(BOARD_URL)loadPublished().then(p=>{PUBLISHED=p||{};try{lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}catch(e){}refreshViewSel();updatePubStatus();});
+  if(BOARD_URL)loadPublished().then(p=>{
+    const raw=p||{};const normalized={};
+    for(const k in raw){if(/^\d{4}-\d{2}$/.test(k))normalized[k]=raw[k];}
+    PUBLISHED=normalized;try{lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}catch(e){}refreshViewSel();updatePubStatus();});
 })();
 </script>
 </body>
