@@ -688,7 +688,7 @@ const HIRE={'엄지애':'2022-03-03','한혜련':'2023-11-17','장다인':'2024-
 let PRIORUSED={'엄지애':5,'한혜련':11,'장다인':3,'김청하':7,'윤소윤':0,'유수진':4,'전주경':0,'김하은':14,'배주련':10,'조민아':14,'신지수':1,'신하늘':8,'안유진':7,'김수영':11,'이현경':3,'이신비':6,'김민재':2,'송슬기':9,'정은영':1,'신미애':0,'남정원':1,'국승연':0};PEOPLE.forEach(p=>{if(!(p.name in PRIORUSED))PRIORUSED[p.name]=0;});
 let ALLOT_OVERRIDE={'전주경':11};
 function tenureInfo(hireISO,year,month){
-  const [hy,hm,hd]=hireISO.split('-').map(Number);const asOf=new Date(year,month,0);/* 월 마지막 날 — 기념일 당일 포함 */
+  const [hy,hm,hd]=hireISO.split('-').map(Number);const asOf=new Date(year,month-1,1);
   let ay=year,anniv=new Date(ay,hm-1,hd);if(anniv>asOf){ay--;anniv=new Date(ay,hm-1,hd);}
   const yc=ay-hy;let allot;
   if(yc>=1)allot=Math.min(15+Math.floor((yc-1)/2),25);else{let m=(year-hy)*12+(month-hm);allot=Math.max(0,Math.min(12,m));}
