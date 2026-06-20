@@ -584,7 +584,8 @@ const DOCTORS=new Set(['남윤','남현','박유진','전소영','김기홍','�
 let EVENTS={};const EVENT_KEY='centum_event_v1';
 const DEFAULT_EVENT=`7/16 병원 전체 회식`;
 function parseEvents(txt){const o={};(txt||'').split('\n').forEach(line=>{const m=line.match(/(\d{1,2})\s*[\/.\-]\s*(\d{1,2})/);if(!m)return;const text=line.replace(m[0],'').trim();if(!text)return;const key=(+m[1])+'-'+(+m[2]);(o[key]=o[key]||[]).push(text);});return o;}
-function eventMark(iso){if(!iso)return'';const p=iso.split('-');const key=(+p[1])+'-'+(+p[2]);const ev=EVENTS[key];
+let SNAP_EVENTS=null;
+function eventMark(iso){if(!iso)return'';const p=iso.split('-');const key=(+p[1])+'-'+(+p[2]);const src=SNAP_EVENTS||EVENTS;const ev=src[key];
   if(!ev||!ev.length)return'';return ev.map(t=>`<div class="cal-event" title="${t}">${t}</div>`).join('');}
 
 function renderCalendar(res,dm){
@@ -793,7 +794,7 @@ function snapshotFromCurrent(){
     const ovr=ALLOT_OVERRIDE[p.name];const allot=(ovr!=null&&ovr!=='')?+ovr:ti.allot;
     const mon=cur[p.name]||0;const rem=allot-(PRIORUSED[p.name]||0)-mon;
     annual.push({n:p.name,hire:HIRE[p.name],mon,rem});}
-  return {weeks,annual};}
+  return {weeks,annual,events:EVENTS};}
 function renderSnapshotAnnual(snap){const card=$('annualCard');if(!card)return;const h=$('annualHint');
   if(!snap||!snap.annual||!snap.annual.length){card.style.display='none';return;}
   card.style.display='';if(h)h.style.display='none';
@@ -850,8 +851,9 @@ async function publishCurrent(){if(!CURRENT)return;
     if(!confirm(`⚠️ 다음 오류가 있습니다 (${issues.length}건):\n\n${show}\n\n그래도 배포하시겠습니까?`))return;}
   const k=curKey();await savePublish(k,snapshotFromCurrent());MONTHSRC[k]='pub';refreshViewSel();updatePubStatus();alert(`${CURRENT.year}년 ${CURRENT.month}월 휴무표를 배포했습니다.\n이제 직원이 볼 수 있어요.`);}
 async function unpublishCurrent(){if(!CURRENT)return;const k=curKey();if(!confirm('배포를 취소하면 직원 화면에서 사라집니다. 진행할까요?'))return;await removePublish(k);refreshViewSel();updatePubStatus();}
-function updatePubStatus(){const el=$('pubStatus');if(!el||!CURRENT)return;const pub=!!PUBLISHED[curKey()];
-  el.innerHTML=pub?'<span style="color:#1f9d57;font-weight:800">● 배포됨</span> — 직원에게 보입니다':'<span style="color:#c08a2a;font-weight:800">● 배포 전</span> — 직원에게 안 보입니다';
+function updatePubStatus(){const el=$('pubStatus');const pb=$('pubBtn');if(!CURRENT)return;const pub=!!PUBLISHED[curKey()];
+  if(pb)pb.textContent=pub?'변경사항 재배포':'직원에게 배포';
+  if(el)el.innerHTML=pub?'<span style="color:#1f9d57;font-weight:800">● 배포됨</span> — 수정한 뒤 <b>변경사항 재배포</b>를 누르면 직원 화면도 갱신됩니다':'<span style="color:#c08a2a;font-weight:800">● 배포 전</span> — 직원에게 안 보입니다';
   const ub=$('unpubBtn');if(ub)ub.style.display=pub?'':'none';}
 function refreshViewSel(){const sel=$('viewSel');const prev=sel.value;const liveKey=curKey();
   Object.keys(PUBLISHED).forEach(k=>MONTHSRC[k]='pub');Object.keys(ARCHIVE).forEach(k=>{if(MONTHSRC[k]!=='pub')MONTHSRC[k]='arc';});
@@ -882,13 +884,13 @@ function deAddOff(){const nm=$('deName').value;if(!nm)return;const ty=$('deType'
 function serializeOff(dateOff){const o={};for(const iso in dateOff){const a=dateOff[iso];if(a&&a.length)o[iso]=a.map(x=>({n:x.name,t:x.type}));}return o;}
 function applySavedOff(dm,off){dm.dateOff={};dm.personOff={};for(const iso in off){dm.dateOff[iso]=off[iso].map(o=>({name:o.n,team:teamOf(o.n),type:o.t}));off[iso].forEach(o=>{(dm.personOff[o.n]=dm.personOff[o.n]||[]).push({iso,type:o.t});});}}
 function showMonth(v){
-  if(v&&v.indexOf('d:')===0){const mk=v.slice(2);
+  if(v&&v.indexOf('d:')===0){const mk=v.slice(2);SNAP_EVENTS=null;
     if(mk===curKey()){document.body.classList.remove('viewing-archive');
       if(CURRENT){renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),mk);setStamp(CURRENT.year,CURRENT.month);
         renderAnnualStatus(CURRENT.annual,CURRENT.year,CURRENT.month);$('annualCard').style.display='';const h=$('annualHint');if(h)h.style.display='';}}
     else loadDraftIntoForm(mk);
     return;}
-  const data=PUBLISHED[v]||ARCHIVE[v];if(!data)return;
+  const data=PUBLISHED[v]||ARCHIVE[v];if(!data)return;SNAP_EVENTS=data.events||null;
   document.body.classList.add('viewing-archive');renderSnapshot(data);renderPersonSummary(buildSnapshotByPerson(data),v);renderSnapshotAnnual(data);
   const[y,m]=v.split('-');$('stampMonth').textContent=`${y}.${m}`;const pt=$('printTitle');if(pt)pt.textContent=`서울센텀턱구강내과치과 · ${y}년 ${+m}월 휴무표`;const eb=$('editedBadge');if(eb)eb.style.display='none';}
 function generate(newSeed){
