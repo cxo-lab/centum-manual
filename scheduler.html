@@ -753,6 +753,9 @@ function saveState(){if(!CURRENT)return;
   lsSet(DRAFT_KEY,JSON.stringify(DRAFTS));}
 function loadDrafts(){try{DRAFTS=JSON.parse(lsGet(DRAFT_KEY)||'{}');}catch(e){DRAFTS={};}
   if(!Object.keys(DRAFTS).length){const old=lsGet(LS_KEY);if(old){try{const st=JSON.parse(old);DRAFTS[`${st.year}-${String(st.month).padStart(2,'0')}`]=st;lsSet(DRAFT_KEY,JSON.stringify(DRAFTS));}catch(e){}}}}
+function offFromSnapshot(snap){const off={};if(!snap||!snap.weeks)return off;
+  for(const wk of snap.weeks)for(const d of wk){if(!d||!d.e||!d.e.length)continue;off[d.d]=d.e.map(x=>({n:x.n,t:x.t}));}
+  return off;}
 function loadDraftIntoForm(month){const st=DRAFTS[month];if(!st)return false;
   $('year').value=st.year;$('month').value=st.month;
   $('holidays').value=st.holidays||'';$('annualBox').value=st.annual||'';$('carryBox').value=st.carry||'';
@@ -761,7 +764,8 @@ function loadDraftIntoForm(month){const st=DRAFTS[month];if(!st)return false;
   ALLOT_OVERRIDE=st.allotOverride?Object.assign({},st.allotOverride):{};
   importedFair=st.baseFair||null;forceSeed=st.seed;
   generate(false);
-  if(st.off&&CURRENT){applySavedOff(CURRENT.dm,st.off);CURRENT.edited=!!st.edited;renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),month);setStamp(CURRENT.year,CURRENT.month);}
+  const pub=PUBLISHED[month];const off=pub?offFromSnapshot(pub):st.off;
+  if(off&&CURRENT){applySavedOff(CURRENT.dm,off);CURRENT.edited=pub?false:!!st.edited;renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),month);setStamp(CURRENT.year,CURRENT.month);}
   return true;}
 function setAdmin(on){ADMIN=on;document.body.classList.toggle('admin',on);
   $('adminBtn').textContent=on?'보기 전용으로 전환':'관리자 로그인';
