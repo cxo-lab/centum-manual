@@ -861,7 +861,8 @@ function refreshViewSel(){const sel=$('viewSel');const prev=sel.value;const live
   if(ADMIN){const dset=new Set(Object.keys(DRAFTS));if(liveKey)dset.add(liveKey);
     [...dset].sort().reverse().forEach(k=>{const[y,m]=k.split('-');const t=PUBLISHED[k]?' · 배포됨':' · 배포 전';opts+=`<option value="d:${k}">${y}년 ${+m}월 작업본${t}</option>`;});}
   const allKeys=[...new Set([...Object.keys(PUBLISHED),...Object.keys(ARCHIVE)])].filter(k=>/^\d{4}-\d{2}$/.test(k)).sort().reverse();
-  allKeys.forEach(k=>{const[y,m]=k.split('-');const lab=MONTHSRC[k]==='pub'?'배포본':'보관본';opts+=`<option value="${k}">${y}년 ${+m}월 (${lab})</option>`;});
+  const drafted=new Set(ADMIN?[...Object.keys(DRAFTS),...(liveKey?[liveKey]:[])]:[]);
+  allKeys.forEach(k=>{if(drafted.has(k))return;const[y,m]=k.split('-');const lab=MONTHSRC[k]==='pub'?'배포본':'보관본';opts+=`<option value="${k}">${y}년 ${+m}월 (${lab})</option>`;});
   sel.innerHTML=opts;
   let def=ADMIN?(liveKey?`d:${liveKey}`:(allKeys[0]||'')):(allKeys[0]||'');
   if([...sel.options].some(o=>o.value===prev))def=prev;
