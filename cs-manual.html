@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서울센텀턱구강내과치과 CS·MOT 서비스 매뉴얼</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif; background: #f0f2f5; color: #1a1a1a; min-height: 100vh; }
+
+/* ===== 비밀번호 화면 ===== */
+#lock-screen { position: fixed; inset: 0; background: #1a2744; display: flex; align-items: center; justify-content: center; z-index: 9999; flex-direction: column; gap: 20px; }
+.lock-box { background: #fff; border-radius: 16px; padding: 2.5rem 2rem; text-align: center; max-width: 360px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+.lock-logo { font-size: 36px; margin-bottom: 12px; }
+.lock-title { font-size: 17px; font-weight: 700; color: #1a2744; margin-bottom: 4px; }
+.lock-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+.lock-input { width: 100%; padding: 12px 16px; border: 1px solid #dde1e8; border-radius: 10px; font-size: 15px; font-family: inherit; outline: none; text-align: center; letter-spacing: 2px; transition: border-color 0.15s; }
+.lock-input:focus { border-color: #4a7fd4; box-shadow: 0 0 0 3px rgba(74,127,212,0.1); }
+.lock-btn { width: 100%; margin-top: 12px; padding: 13px; background: #1e3060; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+.lock-btn:hover { background: #1a2744; }
+.lock-error { font-size: 12px; color: #e53935; margin-top: 8px; display: none; }
+
+/* ===== 메인 레이아웃 ===== */
+#app { display: none; }
+.top-header { background: #1a2744; color: #fff; padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.header-left { display: flex; align-items: center; gap: 14px; }
+.header-title { font-size: 15px; font-weight: 600; color: #fff; }
+.header-badge { font-size: 11px; background: rgba(255,255,255,0.15); color: #fff; padding: 3px 10px; border-radius: 20px; }
+.header-search { display: flex; align-items: center; gap: 8px; }
+.header-search input { padding: 7px 14px 7px 36px; border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; background: rgba(255,255,255,0.1); color: #fff; font-size: 13px; font-family: inherit; outline: none; width: 220px; }
+.header-search input::placeholder { color: rgba(255,255,255,0.5); }
+.header-search input:focus { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.4); }
+.header-search-wrap { position: relative; }
+.header-search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); pointer-events: none; }
+
+.layout { display: flex; margin-top: 64px; min-height: calc(100vh - 64px); }
+
+/* ===== 사이드바 ===== */
+.sidebar { width: 220px; background: #1e3060; position: fixed; top: 64px; left: 0; bottom: 0; overflow-y: auto; padding: 1rem 0; z-index: 90; }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+.sidebar-section { margin-bottom: 4px; }
+.sidebar-header { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em; padding: 12px 16px 4px; }
+.sidebar-item { display: flex; align-items: center; gap: 8px; padding: 9px 16px; cursor: pointer; color: rgba(255,255,255,0.7); font-size: 13px; transition: all 0.15s; border-left: 3px solid transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.sidebar-item.active { background: rgba(255,255,255,0.13); color: #fff; border-left-color: #7eb3ff; font-weight: 600; }
+.sidebar-item .icon { font-size: 14px; flex-shrink: 0; }
+.sidebar-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 6px 16px; }
+
+/* ===== 메인 컨텐츠 ===== */
+.main { margin-left: 220px; flex: 1; }
+
+/* ===== 섹션 ===== */
+.section { padding: 2rem 2.5rem; max-width: 900px; display: none; }
+.section.visible { display: block; }
+
+/* 섹션 헤더 */
+.section-hero { background: linear-gradient(135deg, #1a2744 0%, #1e3060 100%); border-radius: 14px; padding: 1.8rem 2rem; margin-bottom: 1.5rem; color: #fff; }
+.section-hero-icon { font-size: 32px; margin-bottom: 8px; }
+.section-hero-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.section-hero-desc { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6; }
+
+/* 컨텐츠 블록 */
+.content-block { background: #fff; border-radius: 12px; border: 1px solid #e8ecf2; padding: 1.4rem 1.6rem; margin-bottom: 1rem; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+.block-title { font-size: 15px; font-weight: 700; color: #1a2744; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.block-title .badge { font-size: 11px; background: #e8f0fe; color: #1a3a6e; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+.tip-box { background: #eef3fc; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 13px; color: #1a3a6e; border-left: 3px solid #4a7fd4; line-height: 1.6; }
+.script-box { background: #f8f9fa; border-radius: 8px; padding: 12px 16px; margin: 8px 0; font-size: 13px; border-left: 3px solid #8899bb; color: #444; line-height: 1.85; }
+.warn-box { background: #fff8e1; border-radius: 8px; padding: 10px 14px; margin: 8px 0; font-size: 13px; border-left: 3px solid #ffa000; color: #e65100; }
+.good-box { background: #f0fff4; border-radius: 8px; padding: 10px 14px; margin: 8px 0; font-size: 13px; border-left: 3px solid #43a047; color: #1b5e20; }
+.dont-box { background: #fff0f0; border-radius: 8px; padding: 10px 14px; margin: 8px 0; font-size: 13px; border-left: 3px solid #e53935; color: #b71c1c; }
+
+/* MOT 표 */
+.mot-table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+.mot-table th { background: #1e3060; color: #fff; padding: 9px 12px; text-align: left; font-weight: 600; font-size: 12px; }
+.mot-table td { padding: 9px 12px; border-bottom: 1px solid #f0f2f5; vertical-align: top; line-height: 1.6; }
+.mot-table tr:last-child td { border-bottom: none; }
+.mot-table tr:hover td { background: #f8f9fb; }
+.mot-table td:first-child { font-weight: 600; color: #1a2744; width: 30%; white-space: nowrap; }
+.mot-table td.check { color: #7a8599; font-size: 12px; width: 25%; }
+.mot-table .x { color: #e53935; }
+.mot-table .o { color: #2e7d32; }
+
+/* 비전 카드 */
+.vision-cards { display: grid; gap: 10px; margin: 10px 0; }
+.vision-card { background: #f8f9fb; border-radius: 10px; padding: 12px 16px; border-left: 4px solid #4a7fd4; display: flex; gap: 12px; align-items: flex-start; }
+.vision-num { background: #1e3060; color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.vision-text { font-size: 13px; line-height: 1.65; color: #333; }
+.vision-text strong { color: #1a2744; display: block; margin-bottom: 3px; font-size: 14px; }
+
+/* DON'T DO */
+.dont-list { list-style: none; padding: 0; }
+.dont-list li { padding: 9px 0; border-bottom: 1px solid #f0f2f5; font-size: 13px; line-height: 1.65; display: flex; gap: 10px; align-items: flex-start; }
+.dont-list li:last-child { border-bottom: none; }
+.dont-list .cat-tag { font-size: 10px; background: #fee2e2; color: #b91c1c; padding: 2px 7px; border-radius: 10px; flex-shrink: 0; margin-top: 2px; font-weight: 600; white-space: nowrap; }
+
+/* 단계 카드 */
+.steps { display: grid; gap: 8px; margin: 10px 0; }
+.step { background: #f8f9fb; border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start; }
+.step-num { background: #4a7fd4; color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.step-content { font-size: 13px; line-height: 1.65; }
+.step-content strong { color: #1a2744; display: block; margin-bottom: 2px; }
+
+/* 검색 하이라이트 */
+mark { background: #fff176; padding: 0 1px; border-radius: 2px; }
+
+/* 검색 결과 */
+#search-results { padding: 2rem 2.5rem; max-width: 900px; display: none; }
+.search-result-item { background: #fff; border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; border: 1px solid #e8ecf2; cursor: pointer; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.search-result-item:hover { border-color: #4a7fd4; box-shadow: 0 2px 8px rgba(74,127,212,0.1); }
+.search-result-cat { font-size: 11px; color: #7a8599; margin-bottom: 4px; font-weight: 600; }
+.search-result-title { font-size: 14px; font-weight: 600; color: #1a2744; }
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .section, #search-results { padding: 1.25rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- 비밀번호 화면 -->
+<div id="lock-screen">
+  <div class="lock-box">
+    <div class="lock-logo">🔒</div>
+    <div class="lock-title">서울센텀턱구강내과치과</div>
+    <div class="lock-sub">CS · MOT 서비스 매뉴얼<br>열람 비밀번호를 입력해주세요</div>
+    <input class="lock-input" type="password" id="pw-input" placeholder="비밀번호" onkeydown="if(event.key==='Enter')checkPw()">
+    <button class="lock-btn" onclick="checkPw()">열람하기</button>
+    <div class="lock-error" id="pw-error">비밀번호가 맞지 않습니다.</div>
+  </div>
+</div>
+
+<!-- 메인 앱 -->
+<div id="app">
+  <div class="top-header">
+    <div class="header-left">
+      <span class="header-title">서울센텀턱구강내과치과</span>
+      <span class="header-badge">CS · MOT 서비스 매뉴얼</span>
+    </div>
+    <div class="header-search-wrap">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="검색..." oninput="handleSearch(this.value)">
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- 사이드바 -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-header">기초</div>
+        <div class="sidebar-item active" onclick="showSection('vision')" id="nav-vision"><span class="icon">⭐</span> 서비스 비전</div>
+        <div class="sidebar-item" onclick="showSection('dontdo')" id="nav-dontdo"><span class="icon">🚫</span> DON'T DO</div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-header">MOT 응대</div>
+        <div class="sidebar-item" onclick="showSection('phone')" id="nav-phone"><span class="icon">📱</span> 전화 응대</div>
+        <div class="sidebar-item" onclick="showSection('reception')" id="nav-reception"><span class="icon">🗂️</span> 접수 데스크</div>
+        <div class="sidebar-item" onclick="showSection('waiting')" id="nav-waiting"><span class="icon">⏱️</span> 대기실 응대</div>
+        <div class="sidebar-item" onclick="showSection('exam')" id="nav-exam"><span class="icon">🩺</span> 검사실</div>
+        <div class="sidebar-item" onclick="showSection('diagnosis')" id="nav-diagnosis"><span class="icon">🔍</span> 진단실</div>
+        <div class="sidebar-item" onclick="showSection('consult')" id="nav-consult"><span class="icon">💬</span> 상담실</div>
+        <div class="sidebar-item" onclick="showSection('treatment')" id="nav-treatment"><span class="icon">🦷</span> 진료실</div>
+        <div class="sidebar-item" onclick="showSection('closing')" id="nav-closing"><span class="icon">🎓</span> 치료 종결</div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-header">교육</div>
+        <div class="sidebar-item" onclick="showSection('kick')" id="nav-kick"><span class="icon">📋</span> 킥매뉴얼</div>
+      </div>
+    </div>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="main">
+
+      <!-- 검색 결과 -->
+      <div id="search-results"></div>
+
+      <!-- ===== 서비스 비전 ===== -->
+      <div class="section visible" id="sec-vision">
+        <div class="section-hero">
+          <div class="section-hero-icon">⭐</div>
+          <div class="section-hero-title">서비스 비전</div>
+          <div class="section-hero-desc">우리 병원이 추구하는 서비스의 방향과 핵심 가치입니다.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">😊 친절한 설명으로 신뢰감이 느껴지는 치과</div>
+          <div class="vision-cards">
+            <div class="vision-card"><div class="vision-num">01</div><div class="vision-text"><strong>내가 먼저 밝게 눈 맞추며 인사합니다.</strong>고객과 마주치면 눈 맞추며 목례 — "네~ 안녕하세요^^" "안녕히 가세요^^"</div></div>
+            <div class="vision-card"><div class="vision-num">02</div><div class="vision-text"><strong>환자의 긴장/불안을 이해하고 공감 표현합니다.</strong>"긴장되시죠~" "걱정 많으셨죠~"</div></div>
+            <div class="vision-card"><div class="vision-num">03</div><div class="vision-text"><strong>고압적인 말투가 아닌 부드러운 말투로 대화합니다.</strong>말의 끝음절을 부드럽게 장음처리 — "잠~시만 기다려 주세요~~"</div></div>
+            <div class="vision-card"><div class="vision-num">04</div><div class="vision-text"><strong>이해하기 쉬운 표현으로 반복 설명합니다.</strong>환자가 모를 수 있는 점을 충분히 인지하고 성의있게 반복 설명하기</div></div>
+            <div class="vision-card"><div class="vision-num">05</div><div class="vision-text"><strong>다음이 궁금하지 않도록 무엇을 할지 반드시 다음 안내합니다.</strong>"앉아서 기다려주세요" ✗ → "앉아서 기다리시면 OOO 안내해 드리겠습니다" ✓</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DON'T DO ===== -->
+      <div class="section" id="sec-dontdo">
+        <div class="section-hero">
+          <div class="section-hero-icon">🚫</div>
+          <div class="section-hero-title">DON'T DO — 하지 말아야 할 행동</div>
+          <div class="section-hero-desc">우리 병원에서 절대 하지 말아야 할 행동 가이드입니다.</div>
+        </div>
+        <div class="content-block">
+          <div class="block-title">직장 마인드 부족</div>
+          <ul class="dont-list">
+            <li><span class="cat-tag">직장마인드</span>환자에게 노출된 공간에서 <strong>간식을 먹지 않습니다.</strong> 환자 즉각 응대가 어렵고, 병원이 청결하지 않다고 느껴질 수 있습니다.</li>
+            <li><span class="cat-tag">직장마인드</span>환자에게 노출된 공간에서 <strong>핸드폰을 보지 않습니다.</strong></li>
+            <li><span class="cat-tag">직장마인드</span>직원들끼리 모여 <strong>잡담을 하지 않습니다.</strong> 환자들은 자기 일을 빨리 처리하지 않는다고 오해합니다.</li>
+            <li><span class="cat-tag">직장마인드</span>전화 중 다가온 고객을 <strong>모른 체 하지 않습니다.</strong></li>
+            <li><span class="cat-tag">직장마인드</span>근무 중에 베드에 <strong>누워 자는 일이 없도록</strong> 합니다.</li>
+            <li><span class="cat-tag">직장마인드</span>환자가 있는 공간에서 <strong>대화 소리 노출에 주의합니다.</strong> 포로 눈이 가려진 환자의 귀는 예민해져 업무 대화(타환자 정보 등)가 유독 잘 들립니다.</li>
+          </ul>
+        </div>
+        <div class="content-block">
+          <div class="block-title">고객 무시</div>
+          <ul class="dont-list">
+            <li><span class="cat-tag">고객무시</span>환자와 대화 중 <strong>환자의 말을 자르고 내 말을 앞세우지 않습니다.</strong></li>
+            <li><span class="cat-tag">고객무시</span>상황을 잘 파악하지 않고 <strong>확정적으로 말하지 않습니다.</strong></li>
+            <li><span class="cat-tag">고객무시</span>환자가 협조가 잘 안 될 때 <strong>환자와 싸우지 않습니다.</strong></li>
+            <li><span class="cat-tag">고객무시</span>환자 통증에 대해 <strong>당연하다고 생각하지 않습니다.</strong></li>
+            <li><span class="cat-tag">고객무시</span>환자가 말하고 있는 도중에 <strong>포를 덮지 않습니다.</strong></li>
+          </ul>
+        </div>
+        <div class="content-block">
+          <div class="block-title">직원 간 배려 부족 · 태도 불량</div>
+          <ul class="dont-list">
+            <li><span class="cat-tag">직원간배려</span>직원 간 <strong>반말을 하지 않습니다.</strong> '언니' '누구야'로 부르거나 '~해라' '~해줘' 하지 않습니다.</li>
+            <li><span class="cat-tag">직원간배려</span>환자가 보는 앞에서 <strong>직원을 꾸중하지 않습니다.</strong></li>
+            <li><span class="cat-tag">직원간배려</span>직원 간에 <strong>편 가르기나 험담을 하지 않습니다.</strong></li>
+            <li><span class="cat-tag">태도</span><strong>신발 끄는 소리를 내지 않습니다.</strong> 환자에게 불안감과 불편감을 줍니다.</li>
+            <li><span class="cat-tag">태도</span><strong>뛰어 다니지 않습니다.</strong> 환자들이 응급상황처럼 느껴 불안해 합니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ===== 전화 응대 ===== -->
+      <div class="section" id="sec-phone">
+        <div class="section-hero">
+          <div class="section-hero-icon">📱</div>
+          <div class="section-hero-title">전화 응대</div>
+          <div class="section-hero-desc">전화는 환자가 병원을 처음 경험하는 접점입니다. 3콜 이내 수신, 밝고 또렷한 목소리, 정중한 종료로 첫인상을 만드세요.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">📞 전화 수신</div>
+          <table class="mot-table"><thead><tr><th>행동 포인트</th><th>체크 포인트</th></tr></thead><tbody>
+            <tr><td>3콜 이내 수신</td><td class="check">3콜 이내 수신 확인</td></tr>
+            <tr><td>밝고 또렷한 목소리로 인사, 병원명·담당자 함께</td><td class="check">밝은 목소리 유지</td></tr>
+            <tr><td>미소 지으며 응대 — 목소리에 표정이 전달된다</td><td class="check">미소 지으며 응대</td></tr>
+          </tbody></table>
+          <div class="script-box">"반갑습니다, 서울센텀턱구강내과치과 OO입니다. 무엇을 도와드릴까요? ☺"<br>"기다려주셔서 감사합니다. 서울센텀턱구강내과치과 OO입니다."</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">📞 전화 중 응대</div>
+          <table class="mot-table"><thead><tr><th>행동 포인트</th><th>체크 포인트</th></tr></thead><tbody>
+            <tr><td>용건을 끝까지 경청</td><td class="check">끝까지 경청</td></tr>
+            <tr><td>단답형 응답 지양, 요조체(~세요/~습니다) 사용</td><td class="check">요조체 사용</td></tr>
+            <tr><td>잠시 대기 시 반드시 양해를 구한다</td><td class="check">대기 전 반드시 양해</td></tr>
+            <tr><td>내용을 메모하며 정확히 파악</td><td class="check">메모하며 파악</td></tr>
+          </tbody></table>
+          <div class="script-box">"잠시만 기다려 주시겠습니까? 확인 후 바로 안내드리겠습니다."</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">📅 예약 안내</div>
+          <table class="mot-table"><thead><tr><th>행동 포인트</th><th>체크 포인트</th></tr></thead><tbody>
+            <tr><td>예약 가능 일정을 2~3개 제시</td><td class="check">일정 2~3개 제시</td></tr>
+            <tr><td>예약 확정 후 날짜·시간 재확인</td><td class="check">날짜·시간 재확인</td></tr>
+            <tr><td>첫 내원 환자에게 위치·주차 안내 추가</td><td class="check">초진 시 위치·주차 안내</td></tr>
+          </tbody></table>
+          <div class="script-box">"OO님, 가능한 일정이 OO일 OO시, OO일 OO시가 있는데 어느 쪽이 편하세요?"<br>"처음 오시는 거죠? 오실 때 신분증 지참해주시고, 주차는 건물 지하에 가능합니다."</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">❓ 문의 응대 · 불만 전화</div>
+          <table class="mot-table"><thead><tr><th>상황</th><th>응대 멘트</th></tr></thead><tbody>
+            <tr><td>즉답 어려운 경우</td><td>"확인이 필요한 부분이라 담당자 확인 후 다시 연락드려도 될까요?"</td></tr>
+            <tr><td>진료비 문의</td><td>"정확한 비용은 진료 후 확인 가능하고, 대략적인 범위는 내원 시 안내드리겠습니다."</td></tr>
+            <tr><td>불만 전화</td><td>"불편하셨겠습니다. 말씀해 주셔서 감사합니다. 확인 후 바로 연락드리겠습니다."</td></tr>
+          </tbody></table>
+          <div class="dont-box">⚠️ 진료비·치료 내용 등 민감한 사항은 전화상 단정 짓지 않습니다. 불만 전화 시 즉각 부정 금지.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">📞 전화 종료</div>
+          <ul style="padding-left:1.1rem;font-size:13px;line-height:2;">
+            <li>감사 인사 후 <strong>고객이 먼저 끊도록</strong> 기다린다</li>
+            <li>수화기를 <strong>조용히</strong> 내려놓는다 — 급하게 끊지 않는다</li>
+            <li>통화 내용을 <strong>즉시 기록</strong>한다</li>
+          </ul>
+          <div class="script-box">"감사합니다. 내원하시면 편안하게 진료받으실 수 있도록 준비하겠습니다. 좋은 하루 되세요!"</div>
+        </div>
+      </div>
+
+      <!-- ===== 접수 데스크 ===== -->
+      <div class="section" id="sec-reception">
+        <div class="section-hero">
+          <div class="section-hero-icon">🗂️</div>
+          <div class="section-hero-title">접수 데스크 응대</div>
+          <div class="section-hero-desc">첫인상이 전체 경험을 좌우합니다. 내원 시 밝고 따뜻한 첫 응대로 신뢰를 형성하세요.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">👋 접수 맞이 <span class="badge">초진 / 재진</span></div>
+          <table class="mot-table"><thead><tr><th>포인트</th><th>체크</th></tr></thead><tbody>
+            <tr><td>눈을 보며 <strong>일어서서</strong> 인사</td><td class="check">앉아서 응대하지 않기. 미소 유지</td></tr>
+            <tr><td>짧은 말 주의, 요조체 사용</td><td class="check">끝음절 낮추며 부드럽게</td></tr>
+          </tbody></table>
+          <div class="script-box"><strong>#. 기본</strong><br>"안녕하세요? 이쪽에서 접수 도와드리겠습니다. 성함이 어떻게 되세요?"<br><br><strong>#. 초진</strong><br>"저희 병원 처음이신가요? 여기 접수증 한 장 작성 부탁드립니다."<br><br><strong>#. 재진</strong><br>"OOO님, O월에 마지막으로 내원하시고 오랜만에 오셨네요~ 진료 후에 좀 어떠셨어요?"</div>
+          <div class="dont-box">✗ "이쪽? 저쪽?" → ✓ "이쪽이세요? 저쪽 말씀이세요?"</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">⏱️ 대기 안내</div>
+          <table class="mot-table"><thead><tr><th>상황</th><th>응대 멘트</th></tr></thead><tbody>
+            <tr><td>대기 1차 (30분 예상 시)</td><td>"현재 OO로 인해 OO분 정도 더 대기 예상됩니다. 혹시 다른 일정 괜찮으실까요?"</td></tr>
+            <tr><td>대기 2차 (30분 초과 시)</td><td>"오늘 월요일이다 보니 응급환자가 많아 대기가 예상보다 길어지는 점 양해 부탁드립니다."</td></tr>
+            <tr><td>이견 발생 시</td><td>"네~ 그러셨군요. 제가 정확하게 확인해 보고 말씀드리겠습니다."</td></tr>
+          </tbody></table>
+          <div class="dont-box">✗ "그게 아니구요." → ✓ "네~ 그러셨군요."</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">💳 수납</div>
+          <div class="tip-box">💡 금액 안내 전 오늘 진료 내용을 먼저 설명합니다. 카드·영수증은 두 손으로 전달.</div>
+          <div class="script-box">"오늘 OO검사, OO진료하셔서 총 OO원입니다."<br>"오늘 OO부위 보시면서 진료하셨네요. 검사 결과 보시고 잇몸치료도 하셨고, 약처방도 있습니다."</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">📄 서류 발급</div>
+          <table class="mot-table"><thead><tr><th>상황</th><th>응대 멘트</th></tr></thead><tbody>
+            <tr><td>기본 확인</td><td>"OO님, 신청하신 서류가 진단서, 소견서 O부 맞으신가요?"</td></tr>
+            <tr><td>당일 발급 불가</td><td>"원장님 확인이 필요한 서류이다 보니 소요기간이 있습니다. (3~4일 소요 안내)"</td></tr>
+            <tr><td>대리 발급 요청</td><td>"개인정보 보호 및 의료법에 근거해서 대리 수령 시 OO서류를 제출하도록 규정하고 있습니다."</td></tr>
+          </tbody></table>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">🚶 배웅</div>
+          <div class="script-box">"네에~ 감사합니다."<br>"혹시 주차 하셨을까요?"<br>"조심히 들어가세요."</div>
+          <div class="tip-box">💡 끝까지 눈을 마주치며 인사. 주차 여부 확인.</div>
+        </div>
+      </div>
+
+      <!-- ===== 대기실 응대 ===== -->
+      <div class="section" id="sec-waiting">
+        <div class="section-hero">
+          <div class="section-hero-icon">⏱️</div>
+          <div class="section-hero-title">대기실 대기환자 응대</div>
+          <div class="section-hero-desc">늦게 오신 환자에게 지적하지 않고, 일찍 오신 환자에게는 정확한 기대 조절로 신뢰를 유지합니다.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">A. 예약보다 1시간 일찍 온 환자</div>
+          <table class="mot-table"><thead><tr><th>상황</th><th>응대 멘트</th></tr></thead><tbody>
+            <tr><td>반갑게 맞이</td><td>"OO님, 일찍 와주셨네요. 내원 확인 도와드리겠습니다."</td></tr>
+            <tr><td>기대 조절</td><td>"예약 시간보다 조금 일찍 오셔서, 앞 진료 상황을 확인해보고 가능한 경우 먼저 안내드리겠습니다."</td></tr>
+            <tr><td>대기 기준 안내</td><td>"다만 현재는 예약 순서대로 진료가 진행되고 있어서, 원래 예약 시간에 맞춰 안내될 수 있습니다."</td></tr>
+            <tr><td>편의 제공</td><td>"잠시 외출 원하시면 말씀해주세요. 순서 가까워지면 안내드리겠습니다."</td></tr>
+            <tr><td>중간 확인 (20~30분 초과)</td><td>"OO님, 아직 앞 진료가 진행 중이라 조금 더 기다리셔야 할 것 같습니다."</td></tr>
+          </tbody></table>
+          <div class="good-box">✓ 핵심: "가능하면 먼저 안내드리되, 예약 시간에 맞춰 진행될 수 있습니다."</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">B. 예약보다 10분 이상 늦은 환자</div>
+          <table class="mot-table"><thead><tr><th>상황</th><th>응대 멘트</th></tr></thead><tbody>
+            <tr><td>맞이</td><td>"OO님, 오시느라 고생 많으셨습니다. 내원 확인 도와드리겠습니다."</td></tr>
+            <tr><td>예약 시간 확인</td><td>"OO님 예약은 2시로 확인되시고, 지금 접수 도와드리겠습니다." <span class="x">('늦으셨네요' 금지)</span></td></tr>
+            <tr><td>진료 가능 시</td><td>"확인해보니 오늘 진료 가능하십니다. 바로 준비 도와드리겠습니다."</td></tr>
+            <tr><td>진료 축소 필요 시</td><td>"오늘은 시간상 꼭 필요한 부분을 먼저 확인하고, 추가 치료는 다음 예약으로 이어가겠습니다."</td></tr>
+            <tr><td>재예약 필요 시</td><td>"오늘은 충분한 진료 시간을 확보하기 어려워, 가장 빠른 일정으로 다시 도와드리겠습니다."</td></tr>
+          </tbody></table>
+          <div class="good-box">✓ 핵심: "오늘 가능한 방법을 확인해드리겠습니다. 다만 예약 시간이 지나 순서 조정이 필요할 수 있습니다."</div>
+        </div>
+      </div>
+
+      <!-- ===== 검사실 ===== -->
+      <div class="section" id="sec-exam">
+        <div class="section-hero">
+          <div class="section-hero-icon">🩺</div>
+          <div class="section-hero-title">검사실 안내</div>
+          <div class="section-hero-desc">검사실은 환자가 처음으로 '처치'를 경험하는 공간입니다. 차분하고 정확한 안내로 불안을 줄여주세요.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">X-ray 촬영실 안내</div>
+          <table class="mot-table"><thead><tr><th>행동 포인트</th><th>체크 포인트</th></tr></thead><tbody>
+            <tr><td>호명 후 눈인사 및 정중한 안내 제스처</td><td class="check">눈인사 및 안내 제스처 사용</td></tr>
+            <tr><td>촬영 목적과 비용 사전 안내</td><td class="check">비용 사전 안내</td></tr>
+          </tbody></table>
+          <div class="script-box">"안녕하세요? 원장님께서 엑스레이 촬영 먼저 해달라고 하셔서요. 엑스레이는 3가지 종류를 각각 촬영할 예정인데 비용은 OO 예상됩니다. 촬영실로 모셔도 될까요?"</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">촬영 중 안내</div>
+          <table class="mot-table"><thead><tr><th>상황</th><th>응대 멘트</th></tr></thead><tbody>
+            <tr><td>소지품 확인</td><td>"귀걸이, 목걸이 착용하셨을까요?" "입 안에 뺐다 꼈다 하는 장치 있으신가요?"</td></tr>
+            <tr><td>여성 환자</td><td>"임신 가능성은 없으신가요?"</td></tr>
+            <tr><td>촬영 미동의</td><td>"네~ 우선 진료실로 안내해드리고 원장님 검진 후 다시 안내해 드리겠습니다."</td></tr>
+          </tbody></table>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">촬영 후</div>
+          <div class="script-box">"검사 모두 끝났습니다. 수고 많으셨습니다."<br>"다음은 OO를 위해 진단실로 안내해 드리겠습니다."</div>
+        </div>
+      </div>
+
+      <!-- ===== 진단실 ===== -->
+      <div class="section" id="sec-diagnosis">
+        <div class="section-hero">
+          <div class="section-hero-icon">🔍</div>
+          <div class="section-hero-title">진단실 안내</div>
+          <div class="section-hero-desc">진단실은 환자가 문진과 원장님 소개를 처음 받는 공간입니다. 따뜻한 첫 만남과 정확한 정보 전달로 신뢰를 쌓으세요.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">문진 응대 순서</div>
+          <div class="steps">
+            <div class="step"><div class="step-num">1</div><div class="step-content"><strong>자기소개</strong>"안녕하세요. 문진부터 계획 설명까지 도와드릴 실장 OO입니다."</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>문진 안내</strong>"원장님 검사 전 몇 가지 확인하면서 도와드릴게요. 편하게 말씀해 주세요."</div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-content"><strong>증상 확인 및 생활습관</strong>문진 매뉴얼 지침에 따라 진행</div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-content"><strong>환자 니즈 확인</strong>"오늘 가장 먼저 해결하고 싶은 부분이나 걱정되시는 부분은 어떤 부분이세요?"</div></div>
+            <div class="step"><div class="step-num">5</div><div class="step-content"><strong>원장님 검사 및 초음파 안내</strong>"초음파 검사는 비급여로 2만 원 정도 발생되시는데 진행해도 될까요?"</div></div>
+            <div class="step"><div class="step-num">6</div><div class="step-content"><strong>협진 안내</strong>"저희 병원은 구강내과 전문의 원장님들이 계셔서 필요 시 협진으로 더 전문적인 진료를 진행합니다."</div></div>
+          </div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">원장님 소개 · 대기 안내</div>
+          <div class="script-box">"지금 검진해주실 원장님은 대표원장님이신 남윤원장님인데요. OO님이 걱정하시는 부분을 잘 봐주실거예요."</div>
+          <div class="script-box">"원장님은 10분 정도 후에 오실 수 있을 것 같은데요. 기다리는 동안 궁금한 부분 설명해드릴까요, 아니면 조용히 계실 수 있도록 해드릴까요?"</div>
+          <div class="good-box">✓ 단순 대기 지시 금지 — 선택권 제공으로 배려 표현. 대기 예상 시간 안내.</div>
+        </div>
+      </div>
+
+      <!-- ===== 상담실 ===== -->
+      <div class="section" id="sec-consult">
+        <div class="section-hero">
+          <div class="section-hero-icon">💬</div>
+          <div class="section-hero-title">상담실 상담</div>
+          <div class="section-hero-desc">상담은 환자가 말하게 만들고, 그 다음에 결정하게 만드는 과정입니다. 핵심 단계를 순서대로 따라가세요.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">💡 핵심 상담 8단계</div>
+          <div class="steps">
+            <div class="step"><div class="step-num">1</div><div class="step-content"><strong>마중물 질문</strong>환자 분위기·생각 파악 — "설명 들으시고 어떠셨어요?"</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>공감 브릿지 (필수)</strong>"맞아요. 그 부분이 가장 걱정되실 수 있어요."</div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-content"><strong>문제 정의</strong>"지금은 디스크가 뒤로 빠져 있어서 관절이 보호받지 못하는 상태입니다."</div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-content"><strong>위험 인식</strong>"이 상태가 계속되면 뼈끼리 갈리면서 교합 문제까지 이어질 수 있어요."</div></div>
+            <div class="step"><div class="step-num">5</div><div class="step-content"><strong>치료 기준</strong>"이번 치료의 핵심은 통증이 아니라 디스크를 제자리로 돌려놓는 겁니다."</div></div>
+            <div class="step"><div class="step-num">6</div><div class="step-content"><strong>해결 방법</strong>"그를 위해 필요한 치료가 장치 치료입니다."</div></div>
+            <div class="step"><div class="step-num">7</div><div class="step-content"><strong>비용 안내 (간결하게)</strong>"장치는 100만 원, 보톡스는 20만 원 정도입니다."</div></div>
+            <div class="step"><div class="step-num">8</div><div class="step-content"><strong>클로징 · 선택 질문</strong>"오늘 장치 치료부터 시작 도와드릴까요?"</div></div>
+          </div>
+          <div class="warn-box">⚠️ 클로징 직전 필수: "지금 결정하시는데 고민되는 부분 있으실까요?"</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">보류 환자 응대</div>
+          <div class="dont-box">⚠️ 바로 결정하지 않는 환자에게 압박하지 않습니다.</div>
+          <table class="mot-table"><thead><tr><th>상황</th><th>응대 멘트</th></tr></thead><tbody>
+            <tr><td>보류 시</td><td>"오늘 바로 결정하지 않으셔도 괜찮습니다. 다만 치료 시기를 놓치지 않도록 체크 예약은 잡아두시는 걸 추천드립니다."</td></tr>
+            <tr><td>진료 동의 시</td><td>"그럼 오늘 설명드린 치료 목표에 맞춰 장치 치료 예약을 도와드리겠습니다."</td></tr>
+          </tbody></table>
+          <div class="good-box">✓ 핵심: 보류라도 반드시 다음 체크 예약을 잡는 것으로 마무리. 예약 없이 마무리 금지.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">소개·추천 유도 멘트</div>
+          <table class="mot-table"><thead><tr><th>상황</th><th>응대 멘트</th></tr></thead><tbody>
+            <tr><td>소개 시스템 안내</td><td>"혹시 지인 소개로 오셨을까요? 저희가 소개 받고 오시거나 소개해주시는 분들께 혜택을 드리고 있어요."</td></tr>
+            <tr><td>명함 추천</td><td>"혹시 주변에 치과 치료로 고민하는 분 계시면 이 명함 전해주시겠어요? 소개해주신 분께도 감사 혜택을 드려요."</td></tr>
+          </tbody></table>
+          <div class="dont-box">✗ "소개해주시면 선물 드릴게요." → ✓ "오늘 와주셔서 감사한 마음으로 드리는 선물입니다."</div>
+        </div>
+      </div>
+
+      <!-- ===== 진료실 ===== -->
+      <div class="section" id="sec-treatment">
+        <div class="section-hero">
+          <div class="section-hero-icon">🦷</div>
+          <div class="section-hero-title">진료실 응대</div>
+          <div class="section-hero-desc">핵심 응대 흐름: 확인 → 안내 → 설명 → 안심 → 확인 → 인계 → 배웅</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">진료 전 준비 · 환자 호명</div>
+          <table class="mot-table"><thead><tr><th>행동 포인트</th><th>체크 포인트</th></tr></thead><tbody>
+            <tr><td>덴트웹 화면에 해당 환자 차트만 띄운다</td><td class="check">다른 환자 정보 보이지 않게</td></tr>
+            <tr><td>기구·장비·검사 도구 미리 준비</td><td class="check">기구·장비 준비 완료</td></tr>
+          </tbody></table>
+          <div class="script-box">"OOO 고객님, 안녕하세요. 진료실로 안내해 드리겠습니다."<br>"오늘은 장치 점검과 조절을 진행할 예정입니다."</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">체어 안내 · 진료 전 문진</div>
+          <div class="script-box">"이 의자에 앉아주시면 됩니다. 가방은 이쪽 바구니에, 외투는 제가 걸어드리겠습니다."<br>"지난번 오신 이후로 불편하신 점이나 달라진 것은 없으셨나요? 편하게 말씀해 주세요."</div>
+          <div class="good-box">✓ 시선은 환자 → 차트 → 환자 순서. 개방형 질문 사용. 답변 요약 후 원장님께 인계.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">진료 시작 전 안내 · 장치 조절</div>
+          <table class="mot-table"><thead><tr><th>상황</th><th>응대 멘트</th></tr></thead><tbody>
+            <tr><td>체어 눕히기 전</td><td>"이제 진료를 위해 의자를 뒤로 젖히겠습니다."</td></tr>
+            <tr><td>예상 자극 안내</td><td>"진료 중 물이 나오거나 기계 소리가 날 수 있습니다."</td></tr>
+            <tr><td>멈춤 신호</td><td>"불편하시면 왼손을 살짝 들어주세요. 바로 멈추고 확인하겠습니다."</td></tr>
+            <tr><td>장치 조절 전</td><td>"오늘은 장치 높이를 조금 조절해서 더 편하게 착용하실 수 있도록 맞춰드리겠습니다."</td></tr>
+            <tr><td>장치 조절 후</td><td>"한번 물어보시고, 아프거나 걸리는 부분이 있는지 확인해보겠습니다."</td></tr>
+          </tbody></table>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">진료 마무리 · 데스크 인계 · 퇴실</div>
+          <div class="script-box">"오늘은 장치 상태 확인과 높이 조절을 진행했습니다."<br>"다음 방문 때는 교합 상태와 장치 착용 후 변화를 다시 확인할 예정입니다."<br>"오늘 진료 받으시느라 수고 많으셨습니다."</div>
+          <div class="script-box">"소지품 모두 챙기셨을까요? 이쪽으로 나오시면 됩니다. 수납과 다음 예약은 저쪽 데스크에서 도와드릴 거예요."</div>
+          <div class="good-box">✓ 진료 후 차트에 반드시 기록: 환자 반응, 불편사항, 조절 내용, 주의사항 안내 여부</div>
+        </div>
+      </div>
+
+      <!-- ===== 치료 종결 ===== -->
+      <div class="section" id="sec-closing">
+        <div class="section-hero">
+          <div class="section-hero-icon">🎓</div>
+          <div class="section-hero-title">치료 종결 응대</div>
+          <div class="section-hero-desc">6개월 치료 종결은 치료의 끝이 아니라, 환자가 자기 턱관절을 스스로 관리할 수 있게 되는 졸업식입니다.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">종결 설명 7단계</div>
+          <div class="steps">
+            <div class="step"><div class="step-num">1</div><div class="step-content"><strong>축하와 인정</strong>"6개월 동안 정말 잘 따라와 주셨습니다."</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>전후 비교</strong>"처음보다 통증과 입 벌림이 안정됐습니다."</div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-content"><strong>의미 부여</strong>"장치와 습관 조절이 턱을 쉬게 해줬습니다."</div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-content"><strong>남은 증상 설명</strong>"소리는 남을 수 있지만 통증과 기능이 더 중요합니다."</div></div>
+            <div class="step"><div class="step-num">5</div><div class="step-content"><strong>유지관리 전환</strong>"이제는 집중 치료보다 유지관리 단계입니다."</div></div>
+            <div class="step"><div class="step-num">6</div><div class="step-content"><strong>재발 기준 안내</strong>"입이 안 벌어지거나 통증이 반복되면 연락 주세요."</div></div>
+            <div class="step"><div class="step-num">7</div><div class="step-content"><strong>수고 인정</strong>"6개월 동안 정말 수고 많으셨습니다."</div></div>
+          </div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">📢 표준 종결 멘트</div>
+          <div class="script-box">"OO님, 오늘로 6개월간의 턱관절 집중 치료 과정은 마무리 단계입니다."<br>"처음 오셨을 때는 턱 통증과 뻐근함, 입 벌림의 불편감이 반복되는 상태였는데, 지금은 통증 빈도와 강도가 줄고 턱 움직임도 훨씬 안정된 상태입니다."<br>"무엇보다 6개월 동안 장치 착용과 습관 조절을 꾸준히 해주신 점이 정말 중요했습니다."<br><br>"<strong>앞으로는 세 가지만 기억해 주세요.</strong><br>첫째, 낮에 이를 악물고 있지 않은지 자주 확인해 주세요.<br>둘째, 턱이 피곤한 날에는 딱딱하거나 질긴 음식은 피해주세요.<br>셋째, 통증이 다시 반복되거나 입이 잘 안 벌어지는 느낌이 생기면 참지 말고 바로 연락 주세요."<br><br>"6개월 동안 정말 수고 많으셨습니다."</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">❌ 피해야 할 표현 vs ✓ 올바른 표현</div>
+          <table class="mot-table"><thead><tr><th class="x">✗ 피해야 할 말</th><th class="o">✓ 바꿀 표현</th></tr></thead><tbody>
+            <tr><td>"이제 (다) 완치됐습니다."</td><td>"통증과 증상은 거의 완치 수준으로 좋아졌고, 이제는 유지관리 단계입니다."</td></tr>
+            <tr><td>"이제 안 오셔도 됩니다."</td><td>"정기적으로 상태 확인만 해주시면 됩니다."</td></tr>
+            <tr><td>"소리는 어쩔 수 없어요."</td><td>"소리는 남을 수 있지만, 통증과 기능 안정이 더 중요한 기준입니다."</td></tr>
+            <tr><td>"불편하면 오세요."</td><td>"통증이 반복되거나 입이 잘 안 벌어지면 바로 연락 주세요."</td></tr>
+            <tr><td>"장치 잘 끼세요."</td><td>"턱이 피곤한 날이나 안내받은 시간에 맞춰 착용해 주세요."</td></tr>
+          </tbody></table>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">재내원 기준</div>
+          <table class="mot-table"><thead><tr><th>상황</th><th>안내 멘트</th></tr></thead><tbody>
+            <tr><td>입 벌림 제한</td><td>"입이 갑자기 잘 안 벌어지면 바로 연락 주세요."</td></tr>
+            <tr><td>통증 재발</td><td>"통증이 며칠 이상 반복되거나 강해지면 체크가 필요합니다."</td></tr>
+            <tr><td>장치 불편</td><td>"장치가 한 부위를 계속 누르거나 아프면 조절이 필요합니다."</td></tr>
+            <tr><td>소리 변화</td><td>"소리와 함께 통증이나 걸림이 생기면 확인해야 합니다."</td></tr>
+            <tr><td>두통·근육통 증가</td><td>"아침에 턱이 심하게 뻐근하거나 두통이 반복되면 다시 점검하겠습니다."</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <!-- ===== 킥매뉴얼 ===== -->
+      <div class="section" id="sec-kick">
+        <div class="section-hero">
+          <div class="section-hero-icon">📋</div>
+          <div class="section-hero-title">킥매뉴얼 활용 가이드</div>
+          <div class="section-hero-desc">킥매뉴얼은 업무를 처음 맡은 직원이 시행착오 없이 바로 실행할 수 있도록 만든 핵심 실행 가이드입니다.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">킥매뉴얼 구성 원칙</div>
+          <table class="mot-table"><thead><tr><th>구성 요소</th><th>내용</th></tr></thead><tbody>
+            <tr><td>업무 목적</td><td>이 업무를 왜 해야 하는지</td></tr>
+            <tr><td>실행 순서</td><td>무엇을 먼저 하고, 다음에 무엇을 할지</td></tr>
+            <tr><td>핵심 기준</td><td>반드시 지켜야 할 병원 기준</td></tr>
+            <tr><td>예시 멘트</td><td>직원이 바로 사용할 수 있는 문장</td></tr>
+            <tr><td>체크리스트</td><td>실행 여부를 확인할 항목</td></tr>
+            <tr><td>보고 기준</td><td>완료 후 누구에게, 무엇을 보고할지</td></tr>
+          </tbody></table>
+          <div class="good-box">★ 한 줄 핵심: 킥매뉴얼은 "업무를 설명하는 문서"가 아니라, <strong>직원이 바로 움직이게 만드는 실행 기준표</strong>입니다.</div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">킥매뉴얼 교육 순서</div>
+          <div class="steps">
+            <div class="step"><div class="step-num">1</div><div class="step-content"><strong>목적 설명</strong>이 업무 기준이 왜 필요한지 먼저 이해시킵니다.</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-content"><strong>매뉴얼 설명</strong>전체 내용을 읽기보다 실행 순서 중심으로 설명합니다.</div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-content"><strong>시범</strong>교육자가 먼저 실제 상황을 가정해 보여줍니다.</div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-content"><strong>실습</strong>직원이 매뉴얼을 보면서 그대로 따라 해봅니다.</div></div>
+            <div class="step"><div class="step-num">5</div><div class="step-content"><strong>피드백</strong>잘함/못함이 아니라 기준 충족 여부로 체크리스트를 확인합니다.</div></div>
+            <div class="step"><div class="step-num">6</div><div class="step-content"><strong>현장 적용</strong>교육 당일 또는 다음 근무일부터 바로 실행합니다.</div></div>
+          </div>
+        </div>
+
+        <div class="content-block">
+          <div class="block-title">교육 시나리오 멘트</div>
+          <table class="mot-table"><thead><tr><th>상황</th><th>멘트</th></tr></thead><tbody>
+            <tr><td>시작일 도입</td><td>"네~ 오늘은 우리 부서 킥매뉴얼로 함께 시작해볼게요. 이미 실무에서 잘하고 있는 부분이 리마인드되기도 하고, 앞으로 더 활용해보면 좋을 내용이라는 생각이 들 거예요."</td></tr>
+            <tr><td>필요성 설명</td><td>"킥매뉴얼의 취지는 응대 기준을 세워서 '개인의 응대 피로도'를 줄이고, 환자에게는 누구를 만나도 '역시 서울센텀턱구강내과답다'는 신뢰감을 드리기 위함입니다."</td></tr>
+            <tr><td>D+2~ 도입</td><td>"오늘 킥매뉴얼에서 인상적이었던 멘트 옆에 선생님과 잠깐 나눠볼까요~?"</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+    </div><!-- .main -->
+  </div><!-- .layout -->
+</div><!-- #app -->
+
+<script>
+// ===== 비밀번호 =====
+function checkPw() {
+  const val = document.getElementById('pw-input').value;
+  if (val === 'centum1030') {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+// ===== 섹션 전환 =====
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  const sec = document.getElementById('sec-' + id);
+  if (sec) sec.classList.add('visible');
+  const nav = document.getElementById('nav-' + id);
+  if (nav) nav.classList.add('active');
+  document.getElementById('search-results').style.display = 'none';
+  document.getElementById('search-input').value = '';
+  window.scrollTo(0, 0);
+}
+
+// ===== 검색 =====
+const SEARCH_DATA = [
+  { sec:'vision', title:'서비스 비전 — 핵심 5가지', keywords:'비전 서비스 친절 신뢰 인사 공감 말투 안내' },
+  { sec:'dontdo', title:'DON\'T DO — 직장마인드 부족', keywords:'금지 간식 핸드폰 잡담 베드 대화소리' },
+  { sec:'dontdo', title:'DON\'T DO — 고객 무시', keywords:'금지 말자르기 확정 싸움 통증 포' },
+  { sec:'dontdo', title:'DON\'T DO — 직원 간 배려 / 태도', keywords:'금지 반말 꾸중 험담 신발 뛰기' },
+  { sec:'phone', title:'전화 응대 — 수신', keywords:'전화 수신 3콜 인사 병원명 목소리' },
+  { sec:'phone', title:'전화 응대 — 중 응대 / 예약 / 종료', keywords:'전화 대기 메모 요조체 예약 일정 종료 기록' },
+  { sec:'phone', title:'전화 응대 — 문의 / 불만', keywords:'전화 문의 불만 콜백 진료비 경청' },
+  { sec:'reception', title:'접수 데스크 — 맞이 / 초진 / 재진', keywords:'접수 맞이 인사 초진 재진 요조체' },
+  { sec:'reception', title:'접수 데스크 — 대기 안내 / 수납 / 배웅', keywords:'접수 대기 수납 배웅 서류 주차' },
+  { sec:'waiting', title:'대기실 — 일찍 온 환자', keywords:'대기 일찍 기대조절 외출 중간확인' },
+  { sec:'waiting', title:'대기실 — 늦은 환자', keywords:'대기 지각 늦은환자 재예약 진료축소' },
+  { sec:'exam', title:'검사실 — 촬영 안내 / 촬영 중', keywords:'검사실 엑스레이 촬영 비용 소지품 임신 미동의' },
+  { sec:'diagnosis', title:'진단실 — 문진 순서 / 원장님 소개', keywords:'진단실 문진 자기소개 니즈 초음파 협진 원장님' },
+  { sec:'consult', title:'상담실 — 핵심 8단계', keywords:'상담 마중물 공감 문제 위험 기준 비용 클로징' },
+  { sec:'consult', title:'상담실 — 보류 환자 / 소개 추천', keywords:'상담 보류 체크예약 소개 추천 명함' },
+  { sec:'treatment', title:'진료실 — 준비 / 호명 / 체어 / 문진', keywords:'진료실 준비 호명 체어 소지품 문진' },
+  { sec:'treatment', title:'진료실 — 진료 시작 / 장치 조절 / 마무리', keywords:'진료실 체어조작 장치조절 멈춤신호 인계 퇴실 기록' },
+  { sec:'closing', title:'치료 종결 — 7단계 / 표준 멘트', keywords:'종결 완치 유지관리 재발 축하 전후비교 수고' },
+  { sec:'closing', title:'치료 종결 — 피해야 할 표현 / 재내원 기준', keywords:'종결 피해야할표현 재내원 입벌림 소리 두통' },
+  { sec:'kick', title:'킥매뉴얼 — 구성 / 교육 순서 / 시나리오', keywords:'킥매뉴얼 실행가이드 교육 시범 실습 피드백' },
+];
+
+function handleSearch(q) {
+  const allSecs = document.querySelectorAll('.section');
+  const searchDiv = document.getElementById('search-results');
+  if (!q.trim()) {
+    searchDiv.style.display = 'none';
+    allSecs.forEach(s => { if (s.id === 'sec-vision') s.classList.add('visible'); else s.classList.remove('visible'); });
+    document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+    document.getElementById('nav-vision').classList.add('active');
+    return;
+  }
+  allSecs.forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  const lq = q.toLowerCase();
+  const results = SEARCH_DATA.filter(d => d.title.toLowerCase().includes(lq) || d.keywords.toLowerCase().includes(lq));
+  if (!results.length) {
+    searchDiv.style.display = 'block';
+    searchDiv.innerHTML = `<div style="color:#999;font-size:14px;padding:2rem;">검색 결과가 없어요.</div>`;
+    return;
+  }
+  searchDiv.style.display = 'block';
+  searchDiv.innerHTML = `<div style="font-size:13px;color:#999;margin-bottom:12px;">${results.length}개 항목</div>` +
+    results.map(r => `<div class="search-result-item" onclick="showSection('${r.sec}')">
+      <div class="search-result-cat">${r.sec.toUpperCase()}</div>
+      <div class="search-result-title">${r.title.replace(new RegExp(q,'gi'), m => `<mark>${m}</mark>`)}</div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
