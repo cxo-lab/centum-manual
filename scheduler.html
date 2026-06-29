@@ -299,7 +299,7 @@
           <div class="hint">한 줄에 <b>날짜 전일오프 ; 오전반차</b> — 예: <code>7/1 엄지애, 김하은 ; 안유진, 신지수, 김청하</code>. 전월 날짜(6/29 등)는 공평성 시작점으로 쓰입니다.</div></div>
       </div>
       <h4>이번 달 고정휴무</h4>
-      <div class="hint">요일을 한글로 (예: <b>화</b> / <b>금,토</b>). 월마다 바뀌면 여기서 수정.</div>
+      <div class="hint">직원별로 고정 휴무 요일을 입력 (예: <b>수</b> / <b>금,토</b>). 비우면 고정휴무 없음. 입력 후 <b>휴무표 생성</b>을 눌러야 반영되고, 그 달 작업본에 저장됩니다. (예: 8월부터 수요일 고정 휴무자 → 8월로 바꾼 뒤 해당 직원에 <b>수</b> 입력하고 생성)</div>
       <div class="fixedbox" id="fixedBox"></div>
       <h4>원장님 휴진 안내 (인쇄물 하단에 표시)</h4>
       <textarea id="drBox" rows="4"></textarea>
@@ -684,9 +684,11 @@ function readFixedFromUI(){const f={};document.querySelectorAll('#fixedBox .row'
   const name=row.dataset.name;const v=row.querySelector('input').value.trim();
   const days=v.split(/[,\s]+/).map(x=>DOWMAP[x]).filter(x=>x!==undefined&&x>=1);
   if(days.length)f[name]=[...new Set(days)].sort();});FIXED=f;}
-function renderFixedBox(){const show=['윤소윤','전주경','배주련','신지수'];
-  $('fixedBox').innerHTML=show.map(n=>{const days=(FIXED[n]||[]).map(d=>DOW[d]).join(',');
-    return `<div class="row" data-name="${n}"><b>${n}</b><input value="${days}" placeholder="예: 화 / 금,토"></div>`;}).join('');}
+function renderFixedBox(){const box=$('fixedBox');if(!box)return;let html='';
+  for(const t of TEAMS){const ms=PEOPLE.filter(p=>p.team===t&&p.allow.length>0).slice().sort((a,b)=>{const ra=(a.sil||a.jang||a.lead)?0:1,rb=(b.sil||b.jang||b.lead)?0:1;return ra!==rb?ra-rb:a.name.localeCompare(b.name,'ko');});
+    ms.forEach(p=>{const days=(FIXED[p.name]||[]).map(d=>DOW[d]).join(',');
+      html+=`<div class="row" data-name="${p.name}"><b>${p.name}</b><input value="${days}" placeholder="고정휴무 없음"></div>`;});}
+  box.innerHTML=html;}
 
 let importedFair=null,CURRENT=null,seedCounter=0;
 let PUBLISHED={};const PUB_KEY='centum_pub_v1';const MONTHSRC={};
