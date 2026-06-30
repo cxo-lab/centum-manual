@@ -765,7 +765,8 @@ function ensureDraftFromPublished(){let added=false;
 function loadDraftIntoForm(month){const st=DRAFTS[month];if(!st)return false;
   $('year').value=st.year;$('month').value=st.month;
   $('holidays').value=st.holidays||'';$('annualBox').value=st.annual||'';$('carryBox').value=st.carry||'';
-  if(st.fixed){const DEFAULT_FIXED={'엄지애':[2],'윤소윤':[6],'전주경':[6],'배주련':[5],'신지수':[5]};const merged={};const allNames=new Set([...Object.keys(DEFAULT_FIXED),...Object.keys(st.fixed)]);allNames.forEach(n=>{const saved=st.fixed[n];const def=DEFAULT_FIXED[n];merged[n]=(saved&&saved.length)?saved:(def||[]);});FIXED=merged;renderFixedBox();}
+  if(st.fixed)FIXED={...st.fixed};
+  renderFixedBox();
   if(st.priorUsed)PEOPLE.forEach(p=>PRIORUSED[p.name]=st.priorUsed[p.name]||0);
   ALLOT_OVERRIDE=st.allotOverride?Object.assign({},st.allotOverride):{};
   importedFair=st.baseFair||null;forceSeed=st.seed;
