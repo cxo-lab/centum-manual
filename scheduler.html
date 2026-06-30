@@ -755,9 +755,13 @@ function saveState(){if(!CURRENT)return;
   lsSet(DRAFT_KEY,JSON.stringify(DRAFTS));}
 function loadDrafts(){try{DRAFTS=JSON.parse(lsGet(DRAFT_KEY)||'{}');}catch(e){DRAFTS={};}
   if(!Object.keys(DRAFTS).length){const old=lsGet(LS_KEY);if(old){try{const st=JSON.parse(old);DRAFTS[`${st.year}-${String(st.month).padStart(2,'0')}`]=st;lsSet(DRAFT_KEY,JSON.stringify(DRAFTS));}catch(e){}}}}
-function offFromSnapshot(snap){const off={};if(!snap||!snap.weeks)return off;
-  for(const wk of snap.weeks)for(const d of wk){if(!d||!d.e||!d.e.length)continue;off[d.d]=d.e.map(x=>({n:x.n,t:x.t}));}
+function offFromSnapshot(snap){const off={};if(!snap||!snap.weeks)return off;  for(const wk of snap.weeks)for(const d of wk){if(!d||!d.e||!d.e.length)continue;off[d.d]=d.e.map(x=>({n:x.n,t:x.t}));}
   return off;}
+function ensureDraftFromPublished(){let added=false;
+  for(const month in PUBLISHED){if(DRAFTS[month])continue;const snap=PUBLISHED[month];if(!snap||!snap.weeks)continue;
+    const[y,m]=month.split('-').map(Number);const meta=snap.meta||{};
+    DRAFTS[month]={v:1,year:y,month:m,holidays:meta.holidays||'',annual:meta.annual||'',carry:meta.carry||'',fixed:meta.fixed||{},seed:(meta.seed!=null?meta.seed:0),baseFair:meta.baseFair||null,priorUsed:meta.priorUsed||{},allotOverride:meta.allotOverride||{},off:offFromSnapshot(snap),edited:false};added=true;}
+  if(added)lsSet(DRAFT_KEY,JSON.stringify(DRAFTS));}
 function loadDraftIntoForm(month){const st=DRAFTS[month];if(!st)return false;
   $('year').value=st.year;$('month').value=st.month;
   $('holidays').value=st.holidays||'';$('annualBox').value=st.annual||'';$('carryBox').value=st.carry||'';
@@ -800,7 +804,7 @@ function snapshotFromCurrent(){
     const ovr=ALLOT_OVERRIDE[p.name];const allot=(ovr!=null&&ovr!=='')?+ovr:ti.allot;
     const mon=cur[p.name]||0;const rem=allot-(PRIORUSED[p.name]||0)-mon;
     annual.push({n:p.name,hire:HIRE[p.name],mon,rem});}
-  return {weeks,annual,events:EVENTS};}
+  return {weeks,annual,events:EVENTS,meta:{annual:($('annualBox')?$('annualBox').value:''),carry:($('carryBox')?$('carryBox').value:''),holidays:($('holidays')?$('holidays').value:''),fixed:FIXED,seed:CURRENT.seed,baseFair:importedFair,priorUsed:PRIORUSED,allotOverride:ALLOT_OVERRIDE}};}
 function renderSnapshotAnnual(snap){const card=$('annualCard');if(!card)return;const h=$('annualHint');
   if(!snap||!snap.annual||!snap.annual.length){card.style.display='none';return;}
   card.style.display='';if(h)h.style.display='none';
@@ -976,13 +980,17 @@ const DEFAULT_CARRY=`6/29 장다인, 김수영, 이신비, 남정원
   try{PUBLISHED=JSON.parse(lsGet(PUB_KEY)||'{}');}catch(e){PUBLISHED={};}
   setAdmin(false);
   loadDrafts();
+  ensureDraftFromPublished();
   const dkeys=Object.keys(DRAFTS).sort();
   if(dkeys.length)loadDraftIntoForm(dkeys[dkeys.length-1]);
   else generate(true);
   if(BOARD_URL)loadPublished().then(p=>{
     const raw=p||{};const normalized={};
     for(const k in raw){if(/^\d{4}-\d{2}$/.test(k))normalized[k]=raw[k];}
-    PUBLISHED=normalized;try{lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}catch(e){}refreshViewSel();updatePubStatus();});
+    PUBLISHED=normalized;try{lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}catch(e){}
+    ensureDraftFromPublished();
+    const ck=curKey();if(ck&&PUBLISHED[ck]&&DRAFTS[ck])loadDraftIntoForm(ck);
+    refreshViewSel();updatePubStatus();});
 })();
 </script>
 </body>
