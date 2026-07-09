@@ -562,24 +562,33 @@ function renderDrSchedule(){const el=$('drSchedule');if(!el)return;const txt=($(
   el.style.display='';el.innerHTML='<h4>원장님 휴진 안내</h4>'+lines.map(l=>`<div class="dr-line">${escapeHtml(l)}</div>`).join('');}
 let BIRTHDAYS={};const BDAY_KEY='centum_bday_v1';
 const DEFAULT_BDAY=`1/16 한혜련
+2/1 국승연
 2/3 김하은
 2/17 김청하
 2/27 김기홍
 3/8 남윤
+3/23 정은영
+3/25 남정원
 4/23 배주련
 4/29 안유진
 5/13 한우리
 5/17 신지수
-6/3 윤소윤
+6/5 송슬기
 6/11 전주경
 6/20 신하늘
 7/4 조민아
+7/24 이신비
 8/17 박유진
 8/28 남현
+9/13 이현경
+9/28 윤소윤
+10/3 전소영
+10/20 김민재
 11/6 유수진
 11/8 장다인
 11/25 엄지애
-12/21 김수영`;
+12/21 김수영
+12/28 신미애`;
 function parseBirthdays(txt){const o={};(txt||'').split('\n').forEach(line=>{const m=line.match(/(\d{1,2})\s*[\/.\-]\s*(\d{1,2})/);if(!m)return;const name=line.replace(m[0],'').replace(/생일/g,'').trim();if(!name)return;const key=(+m[1])+'-'+(+m[2]);(o[key]=o[key]||[]).push(name);});return o;}
 function bdayMark(iso){if(!iso)return'';const p=iso.split('-');const key=(+p[1])+'-'+(+p[2]);const ns=BIRTHDAYS[key];
   if(!ns||!ns.length)return'';const disp=ns.map(n=>DOCTORS.has(n)?n+' 원장님':n);
