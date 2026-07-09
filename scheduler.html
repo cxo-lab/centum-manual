@@ -81,6 +81,7 @@
   .daynum .tag.lock{background:#eceff3;color:#64748b}
   .chip{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;padding:2px 7px;margin:2px 3px 2px 0;border-radius:999px;color:#fff;white-space:nowrap}
   .chip.am{background:#fff!important;border:1px dashed currentColor}
+  .chip.half{background:#fbe9e7!important;border:1px solid #c0392b;color:#a5281c!important;font-weight:800}
   .chip.annual{border:1.5px solid #fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55)}
   .chip.annual::after{content:'연';font-size:8px;margin-left:3px;background:rgba(255,255,255,.4);border-radius:4px;padding:0 3px}
   .off-list{display:flex;flex-wrap:wrap}
@@ -130,6 +131,7 @@
   .po-days{display:flex;flex-wrap:wrap;gap:6px}
   .po-day{background:#eef1f5;border-radius:7px;padding:2px 9px;font-weight:600;white-space:nowrap;font-size:12px}
   .po-day.an{background:#fce9f1;color:#b0366c}
+  .po-day.half{background:#fbe9e7;color:#a5281c;border:1px solid #e0a89f}
   .po-day.am{background:#e9f4ec;color:#36844f}
   .po-none{color:#b6bdc7;font-size:12px}
   body.admin:not(.viewing-archive) .cal td[data-iso]{cursor:pointer}
@@ -193,6 +195,7 @@
     .off-list{gap:0}
     .chip{font-size:7.5pt;font-weight:700;padding:1px 6px;margin:1px 2px 1px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .chip.am{border:1px dashed currentColor}
+    .chip.half{background:#fbe9e7!important;border:1px solid #c0392b;color:#a5281c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .chip.annual::after{font-size:6pt}
     .dr-sched{border:1px solid #999;border-radius:0;margin:8px 0 0;padding:7px 11px;font-size:8.5pt;background:#fff;page-break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .dr-sched h4{font-size:9pt;margin:0 0 4px;color:#1E3A5F}
@@ -230,6 +233,7 @@
     <div class="btnrow">
       <button class="btn primary admin-only" id="genBtn">휴무표 생성</button>
       <button class="btn ghost admin-only" id="reGenBtn">다시 돌리기</button>
+      <button class="btn admin-only" id="saveDraftBtn" style="background:#e8eefc;color:#274b9e;border-color:#b9cbf0">임시저장</button>
       <button class="btn ghost admin-only" id="xlsxBtn" disabled>엑셀 내려받기</button>
       <button class="btn admin-only" id="pubBtn" style="background:#1f9d57;color:#fff;border-color:#1f9d57">직원에게 배포</button>
       <button class="btn ghost admin-only" id="unpubBtn" style="display:none">배포 취소</button>
@@ -333,7 +337,7 @@
       <div class="de-list" id="deList"></div>
       <div class="de-add">
         <select id="deName"></select>
-        <select id="deType"><option value="off">휴무</option><option value="am">오전반차</option><option value="annual">연차</option></select>
+        <select id="deType"><option value="off">휴무</option><option value="half">반차</option><option value="am">오전반차</option><option value="annual">연차</option></select>
         <button class="btn primary sm" id="deAdd">추가</button>
       </div>
       <div class="de-hint">관리자 수동 수정 — 규칙과 무관하게 적용되며, 저장·인쇄에 반영됩니다.</div>
@@ -547,7 +551,7 @@ function spannedDates(res){const out=[];for(const w of res.weeks)for(const x of 
 // ───────── 렌더링 ─────────
 const $=id=>document.getElementById(id);
 function renderLegend(){$('legend').innerHTML=TEAMS.map(t=>`<span><i class="t-${t}"></i>${t}</span>`).join('')
-  +`<span><i style="border:1px dashed #888;background:#fff"></i>수 오전오프</span><span><i style="border:1.5px solid #fff;box-shadow:inset 0 0 0 2px #c0392b;background:#c0392b"></i>연차</span>`;}
+  +`<span><i style="border:1px dashed #888;background:#fff"></i>수 오전오프</span><span><i style="border:1.5px solid #fff;box-shadow:inset 0 0 0 2px #c0392b;background:#c0392b"></i>연차</span><span><i style="background:repeating-linear-gradient(45deg,#c0392b,#c0392b 3px,#fff 3px,#fff 6px)"></i>반차</span>`;}
 const DR_KEY='centum_dr_v1';
 const DEFAULT_DR=`구강내과 1팀 Dr.남윤  수 오전, 목 오후 휴진
 구강내과 2팀 Dr.박유진  화·수 야간(19:00–21:00), 목 휴진
@@ -603,6 +607,7 @@ function renderCalendar(res,dm){
       let chips='';
       if(!sun&&!hol){const offs=(dm.dateOff[x.iso]||[]).slice().sort((a,b)=>TEAMS.indexOf(a.team)-TEAMS.indexOf(b.team)||((a.type==='am'?1:0)-(b.type==='am'?1:0)));
         chips=offs.map(o=>o.type==='am'?`<span class="chip am c-${o.team}">${o.name}·오전</span>`
+          :o.type==='half'?`<span class="chip half t-${o.team}">${o.name}·반차</span>`
           :o.type==='annual'?`<span class="chip annual t-${o.team}">${o.name}</span>`
           :`<span class="chip t-${o.team}">${o.name}</span>`).join('');}
       html+=`<td class="${cls.join(' ')}"${(!sun&&!hol)?` data-iso="${x.iso}"`:''}><div class="daynum"><span>${x.d}</span>${bdayMark(x.iso)}${tag}</div>${eventMark(x.iso)}<div class="off-list">${chips}</div></td>`;}
@@ -618,6 +623,7 @@ function buildSnapshotByPerson(data){const o={};if(!data)return o;for(const wk o
 function buildArchiveByPerson(key){return buildSnapshotByPerson(ARCHIVE[key]);}
 function poChip(e){const[Y,M,D]=e.iso.split('-').map(Number);const w=DOWK[new Date(Y,M-1,D).getDay()];
   if(e.type==='annual')return `<span class="po-day an">${D}(${w})·연</span>`;
+  if(e.type==='half')return `<span class="po-day half">${D}(${w})·반차</span>`;
   if(e.type==='am')return `<span class="po-day am">${D}(${w})·오전</span>`;
   return `<span class="po-day">${D}(${w})</span>`;}
 function renderPersonSummary(byPerson,ym){
@@ -707,12 +713,21 @@ function tenureInfo(hireISO,year,month){
   if(yc>=1)allot=Math.min(15+Math.floor((yc-1)/2),25);else{let m=(year-hy)*12+(month-hm);allot=Math.max(0,Math.min(12,m));}
   return {allot,startISO:`${ay}-${String(hm).padStart(2,'0')}-${String(hd).padStart(2,'0')}`,renewISO:`${ay+1}-${String(hm).padStart(2,'0')}-${String(hd).padStart(2,'0')}`,renewsThisMonth:(hm===month),yc};
 }
+function usedFromDM(dm,month,annual){const u={};PEOPLE.forEach(p=>u[p.name]=0);const seen={};
+  if(dm&&dm.dateOff)for(const iso in dm.dateOff){if(+iso.split('-')[1]!==month)continue;
+    for(const o of dm.dateOff[iso]){if(u[o.name]===undefined)continue;
+      if(o.type==='annual'){u[o.name]+=1;seen[iso+'|'+o.name]=1;}
+      else if(o.type==='half')u[o.name]+=0.5;}}
+  if(annual)for(const iso in annual){if(+iso.split('-')[1]!==month)continue;
+    for(const nm of annual[iso]){if(u[nm]===undefined)continue;if(!seen[iso+'|'+nm])u[nm]+=1;}}
+  return u;}
+function fmtDay(n){n=Math.round(n*10)/10;return Number.isInteger(n)?String(n):n.toFixed(1);}
 function currentUsedMap(annual,month){const u={};PEOPLE.forEach(p=>u[p.name]=0);
   for(const iso in annual){if(+iso.split('-')[1]!==month)continue;for(const nm of annual[iso])if(u[nm]!==undefined)u[nm]++;}return u;}
 function priorPlusCurrent(){const cur=CURRENT?currentUsedMap(CURRENT.annual,CURRENT.month):{};const o={};
   PEOPLE.forEach(p=>o[p.name]=(PRIORUSED[p.name]||0)+(cur[p.name]||0));return o;}
 function renderAnnualStatus(annual,year,month){
-  const cur=currentUsedMap(annual,month);let rows='';let last=null;const ab=t=>t.replace('고객지원실','CS').replace('물리치료','물치').replace('통합치과','통합');
+  const cur=(CURRENT&&CURRENT.dm&&CURRENT.month===month)?usedFromDM(CURRENT.dm,month,CURRENT.annual):currentUsedMap(annual,month);let rows='';let last=null;const ab=t=>t.replace('고객지원실','CS').replace('물리치료','물치').replace('통합치과','통합');
   for(const t of TEAMS){const ms=PEOPLE.filter(p=>p.team===t);
     ms.forEach((p,i)=>{const ti=tenureInfo(HIRE[p.name],year,month);const prior=PRIORUSED[p.name]||0;
       const ovr=ALLOT_OVERRIDE[p.name];const hasOvr=(ovr!=null&&ovr!=='');const allot=hasOvr?+ovr:ti.allot;
@@ -724,8 +739,8 @@ function renderAnnualStatus(annual,year,month){
         +`<td><input type="number" min="0" class="allotInp" data-name="${p.name}" value="${hasOvr?ovr:''}" placeholder="${ti.allot}" title="비우면 자동(법정) ${ti.allot}일" style="width:46px;text-align:center;font:inherit;font-weight:700;border:1px solid ${hasOvr?'var(--accent)':'var(--line)'};border-radius:6px;padding:3px;color:${hasOvr?'var(--accent)':'inherit'}"></td>`
         +`<td style="font-size:11px;color:#777">${ti.startISO.slice(2)}~${rtag}</td>`
         +`<td><input type="number" min="0" class="priorInp" data-name="${p.name}" value="${prior}" style="width:42px;text-align:center;font:inherit;border:1px solid var(--line);border-radius:6px;padding:3px"></td>`
-        +`<td>${cur[p.name]?`<span style="color:var(--accent)">${cur[p.name]}</span>`:0}</td>`
-        +`<td class="${rc}"><b>${rem}</b></td></tr>`;});last=t;}
+        +`<td>${cur[p.name]?`<span style="color:var(--accent)">${fmtDay(cur[p.name])}</span>`:0}</td>`
+        +`<td class="${rc}"><b>${fmtDay(rem)}</b></td></tr>`;});last=t;}
   $('annualTable').innerHTML=`<table class="ctable"><thead><tr><th></th><th>이름</th><th>입사일</th><th>배정</th><th>연차연도 시작</th><th>이전사용</th><th>이달</th><th>잔여</th></tr></thead><tbody>${rows}</tbody></table>`;
   document.querySelectorAll('.priorInp').forEach(inp=>{inp.disabled=!ADMIN;inp.onchange=()=>{PRIORUSED[inp.dataset.name]=+inp.value||0;renderAnnualStatus(annual,year,month);if(ADMIN)saveState();};});
   document.querySelectorAll('.allotInp').forEach(inp=>{inp.disabled=!ADMIN;inp.onchange=()=>{const v=inp.value.trim();if(v==='')delete ALLOT_OVERRIDE[inp.dataset.name];else ALLOT_OVERRIDE[inp.dataset.name]=+v||0;renderAnnualStatus(annual,year,month);if(ADMIN)saveState();};});
@@ -789,7 +804,7 @@ function renderSnapshot(data){if(!data)return;let html='';
       let tag='';if(x.note)tag=`<span class="tag hol">${x.note}</span>`;else if(sun)tag='<span class="tag">휴진</span>';else if(dow===3)tag='<span class="tag night">야간</span>';
       let chips='';if(!sun){const offs=x.e.slice().sort((a,b)=>TEAMS.indexOf(teamOf(a.n))-TEAMS.indexOf(teamOf(b.n)));
         chips=offs.map(o=>{const tm=teamOf(o.n),tc=tm?'t-'+tm:'',cc=tm?'c-'+tm:'';
-          return o.t==='am'?`<span class="chip am ${cc}">${o.n}·오전</span>`:o.t==='annual'?`<span class="chip annual ${tc}">${o.n}</span>`:`<span class="chip ${tc}">${o.n}</span>`;}).join('');}
+          return o.t==='am'?`<span class="chip am ${cc}">${o.n}·오전</span>`:o.t==='half'?`<span class="chip half ${tc}">${o.n}·반차</span>`:o.t==='annual'?`<span class="chip annual ${tc}">${o.n}</span>`:`<span class="chip ${tc}">${o.n}</span>`;}).join('');}
       html+=`<td class="${cls.join(' ')}"><div class="daynum"><span>${D}</span>${bdayMark(x.d)}${tag}</div>${eventMark(x.d)}<div class="off-list">${chips}</div></td>`;}
     html+='</tr>';}
   $('calBody').innerHTML=html;}
@@ -800,7 +815,7 @@ function snapshotFromCurrent(){
       const offs=(CURRENT.dm.dateOff[d.iso]||[]).map(o=>({n:o.name,t:o.type}));
       arr.push({d:d.iso,in:d.inMonth,note:d.holiday?'휴진':null,e:offs});}
     return arr;});
-  const cur=currentUsedMap(CURRENT.annual,CURRENT.month);const annual=[];
+  const cur=usedFromDM(CURRENT.dm,CURRENT.month,CURRENT.annual);const annual=[];
   for(const p of PEOPLE){const ti=tenureInfo(HIRE[p.name],CURRENT.year,CURRENT.month);
     const ovr=ALLOT_OVERRIDE[p.name];const allot=(ovr!=null&&ovr!=='')?+ovr:ti.allot;
     const mon=cur[p.name]||0;const rem=allot-(PRIORUSED[p.name]||0)-mon;
@@ -812,7 +827,7 @@ function renderSnapshotAnnual(snap){const card=$('annualCard');if(!card)return;c
   const by={};snap.annual.forEach(r=>by[r.n]=r);let rows='';let last=null;
   for(const t of TEAMS){const ms=PEOPLE.filter(p=>p.team===t).slice().sort((a,b)=>{const ra=(a.sil||a.jang||a.lead)?0:1,rb=(b.sil||b.jang||b.lead)?0:1;return ra!==rb?ra-rb:a.name.localeCompare(b.name,'ko');});
     ms.forEach((p,i)=>{const r=by[p.name];if(!r)return;const rc=r.rem<0?'devB':(r.rem<=2?'dev1':'dev0');
-      rows+=`<tr class="${i===0&&last!==null?'teamsep':''}"><td class="team c-${t}">${i===0?TEAMAB(t):''}</td><td class="nm">${p.name}</td><td style="font-size:11px;color:#777">${(r.hire||'').slice(2)}</td><td>${r.mon?`<span style="color:var(--accent)">${r.mon}</span>`:0}</td><td class="${rc}"><b>${r.rem}</b></td></tr>`;});last=t;}
+      rows+=`<tr class="${i===0&&last!==null?'teamsep':''}"><td class="team c-${t}">${i===0?TEAMAB(t):''}</td><td class="nm">${p.name}</td><td style="font-size:11px;color:#777">${(r.hire||'').slice(2)}</td><td>${r.mon?`<span style="color:var(--accent)">${fmtDay(r.mon)}</span>`:0}</td><td class="${rc}"><b>${fmtDay(r.rem)}</b></td></tr>`;});last=t;}
   $('annualTable').innerHTML=`<table class="ctable"><thead><tr><th></th><th>이름</th><th>입사일</th><th>이달</th><th>잔여</th></tr></thead><tbody>${rows}</tbody></table>`;}
 function normalizePublishedKeys(raw){
   const out={};
@@ -834,6 +849,10 @@ async function savePublish(month,data){PUBLISHED[month]=data;
 async function removePublish(month){delete PUBLISHED[month];
   if(BOARD_URL){try{await fetch(BOARD_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'unpublish',month})});}catch(e){}}
   lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}
+async function saveDraftRemote(month){if(!BOARD_URL||!DRAFTS[month])return;
+  try{await fetch(BOARD_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'publish',month:'draft-'+month,data:{draft:DRAFTS[month]}})});}catch(e){}}
+async function removeDraftRemote(month){if(!BOARD_URL)return;
+  try{await fetch(BOARD_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'unpublish',month:'draft-'+month})});}catch(e){}}
 function curKey(){return CURRENT?`${CURRENT.year}-${String(CURRENT.month).padStart(2,'0')}`:null;}
 function publishIssues(){
   if(!CURRENT)return [];const dm=CURRENT.dm,weeks=CURRENT.res.weeks,out=[];
@@ -860,7 +879,7 @@ async function publishCurrent(){if(!CURRENT)return;
   const issues=publishIssues();
   if(issues.length){const show=issues.slice(0,15).map(s=>'· '+s).join('\n')+(issues.length>15?`\n…외 ${issues.length-15}건`:'');
     if(!confirm(`⚠️ 다음 오류가 있습니다 (${issues.length}건):\n\n${show}\n\n그래도 배포하시겠습니까?`))return;}
-  const k=curKey();await savePublish(k,snapshotFromCurrent());MONTHSRC[k]='pub';refreshViewSel();updatePubStatus();alert(`${CURRENT.year}년 ${CURRENT.month}월 휴무표를 배포했습니다.\n이제 직원이 볼 수 있어요.`);}
+  const k=curKey();await savePublish(k,snapshotFromCurrent());removeDraftRemote(k);MONTHSRC[k]='pub';refreshViewSel();updatePubStatus();alert(`${CURRENT.year}년 ${CURRENT.month}월 휴무표를 배포했습니다.\n이제 직원이 볼 수 있어요.`);}
 async function unpublishCurrent(){if(!CURRENT)return;const k=curKey();if(!confirm('배포를 취소하면 직원 화면에서 사라집니다. 진행할까요?'))return;await removePublish(k);refreshViewSel();updatePubStatus();}
 function updatePubStatus(){const el=$('pubStatus');const pb=$('pubBtn');if(!CURRENT)return;const pub=!!PUBLISHED[curKey()];
   if(pb)pb.textContent=pub?'변경사항 재배포':'직원에게 배포';
@@ -882,7 +901,7 @@ function setStamp(y,m){const suf=(CURRENT&&CURRENT.edited)?' (수정본)':'';$('
 let editIso=null;
 function openDayEditor(iso){if(!CURRENT||document.body.classList.contains('viewing-archive')||!ADMIN)return;editIso=iso;$('deTitle').textContent=`${iso} 휴무 수정`;deRender();$('dayEditor').style.display='flex';}
 function deRender(){const arr=CURRENT.dm.dateOff[editIso]||[];
-  $('deList').innerHTML=arr.length?arr.map((o,i)=>`<div class="de-item"><span class="de-nm">${o.name}</span><select class="de-ty" data-i="${i}"><option value="off"${o.type==='off'?' selected':''}>휴무</option><option value="am"${o.type==='am'?' selected':''}>오전반차</option><option value="annual"${o.type==='annual'?' selected':''}>연차</option></select><button class="de-rm" data-i="${i}">삭제</button></div>`).join(''):'<div class="de-empty">이 날 휴무자가 없습니다.</div>';
+  $('deList').innerHTML=arr.length?arr.map((o,i)=>`<div class="de-item"><span class="de-nm">${o.name}</span><select class="de-ty" data-i="${i}"><option value="off"${o.type==='off'?' selected':''}>휴무</option><option value="half"${o.type==='half'?' selected':''}>반차</option><option value="am"${o.type==='am'?' selected':''}>오전반차</option><option value="annual"${o.type==='annual'?' selected':''}>연차</option></select><button class="de-rm" data-i="${i}">삭제</button></div>`).join(''):'<div class="de-empty">이 날 휴무자가 없습니다.</div>';
   $('deList').querySelectorAll('.de-rm').forEach(b=>b.onclick=()=>deRemove(+b.dataset.i));
   $('deList').querySelectorAll('.de-ty').forEach(s=>s.onchange=()=>deType(+s.dataset.i,s.value));
   const used=new Set(arr.map(o=>o.name));
@@ -952,8 +971,12 @@ const DEFAULT_CARRY=`6/29 장다인, 김수영, 이신비, 남정원
   $('eventBox').value=lsGet(EVENT_KEY)||DEFAULT_EVENT;EVENTS=parseEvents($('eventBox').value);
   $('eventBox').oninput=()=>{lsSet(EVENT_KEY,$('eventBox').value);EVENTS=parseEvents($('eventBox').value);if($('viewSel').value)showMonth($('viewSel').value);};
   $('bdayBox').oninput=()=>{lsSet(BDAY_KEY,$('bdayBox').value);BIRTHDAYS=parseBirthdays($('bdayBox').value);if($('viewSel').value)showMonth($('viewSel').value);};
-  $('genBtn').onclick=()=>{generate(true);saveState();};
-  $('reGenBtn').onclick=()=>{generate(true);saveState();};
+  $('genBtn').onclick=()=>{generate(true);saveState();};  $('reGenBtn').onclick=()=>{generate(true);saveState();};
+  $('saveDraftBtn').onclick=async()=>{if(!CURRENT){alert('먼저 휴무표를 생성하세요.');return;}saveState();const mk=curKey();
+    const b=$('saveDraftBtn');b.disabled=true;const t0=b.textContent;b.textContent='저장 중…';
+    await saveDraftRemote(mk);
+    b.disabled=false;b.textContent=t0;
+    alert(`${CURRENT.year}년 ${CURRENT.month}월 작업본을 저장했습니다.\n\n· 직원에겐 아직 안 보입니다(배포 전).\n· 다른 관리자도 다른 PC에서 이 작업본을 열어 이어서 편집할 수 있어요.`);};
   $('xlsxBtn').onclick=()=>{if(CURRENT)exportXlsx(CURRENT.res,CURRENT.dm);};
   $('printBtn').onclick=()=>window.print();
   $('cumSaveBtn').onclick=()=>{if(!CURRENT)return;const payload={fair:CURRENT.fair,priorUsed:priorPlusCurrent()};
@@ -986,11 +1009,17 @@ const DEFAULT_CARRY=`6/29 장다인, 김수영, 이신비, 남정원
   if(dkeys.length)loadDraftIntoForm(dkeys[dkeys.length-1]);
   else generate(true);
   if(BOARD_URL)loadPublished().then(p=>{
-    const raw=p||{};const normalized={};
-    for(const k in raw){if(/^\d{4}-\d{2}$/.test(k))normalized[k]=raw[k];}
+    const raw=p||{};const normalized={};const remoteDrafts={};
+    for(const k in raw){
+      if(/^\d{4}-\d{2}$/.test(k))normalized[k]=raw[k];
+      else if(/^draft-\d{4}-\d{2}$/.test(k)){const mk=k.slice(6);const d=raw[k]&&raw[k].draft;if(d)remoteDrafts[mk]=d;}
+    }
     PUBLISHED=normalized;try{lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}catch(e){}
+    // 원격 작업본 병합(배포 안 된 달만 — 배포된 달은 배포본이 우선)
+    let merged=false;for(const mk in remoteDrafts){if(normalized[mk])continue;DRAFTS[mk]=remoteDrafts[mk];merged=true;}
+    if(merged)try{lsSet(DRAFT_KEY,JSON.stringify(DRAFTS));}catch(e){}
     ensureDraftFromPublished();
-    const ck=curKey();if(ck&&PUBLISHED[ck]&&DRAFTS[ck])loadDraftIntoForm(ck);
+    const ck=curKey();if(ck&&(PUBLISHED[ck]||DRAFTS[ck]))loadDraftIntoForm(ck);
     refreshViewSel();updatePubStatus();});
 })();
 </script>
