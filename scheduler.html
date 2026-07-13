@@ -170,6 +170,14 @@
   .fixedbox .row{display:flex;align-items:center;gap:8px;background:#faf8f3;border:1px solid var(--line-2);border-radius:9px;padding:7px 9px}
   .fixedbox .row b{flex:none;min-width:46px;font-size:12.5px}
   .fixedbox .row input{flex:1;font:inherit;font-size:12px;border:1px solid var(--line);border-radius:7px;padding:5px 7px}
+  .staffadd{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}
+  .staffadd input,.staffadd select{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:7px 9px}
+  .staffadd .ckbx{display:flex;align-items:center;gap:4px;font-size:13px}
+  .wdays{display:inline-flex;gap:3px}
+  .wdays label{display:inline-flex;flex-direction:column;align-items:center;font-size:10px;color:#777;cursor:pointer}
+  .wdays label input{margin:0}
+  .stafflist-item{display:flex;align-items:center;gap:10px;background:#eef4ef;border:1px solid #cfe0d4;border-radius:9px;padding:6px 10px;margin-bottom:5px;font-size:13px}
+  .stafflist-item .rm{margin-left:auto;background:#fff;border:1px solid #e0b4b4;color:#c0392b;border-radius:7px;padding:3px 9px;cursor:pointer;font-size:12px}
   .hint{font-size:12px;color:var(--muted);margin-top:6px}
   .note{background:#fff7ed;border:1px solid #fde4c8;border-radius:11px;padding:12px 15px;font-size:13px;color:#7a5320;margin-bottom:18px}
   .note b{color:#9a4d12}
@@ -292,8 +300,28 @@
     <div class="body"><ul class="vlist" id="validList"></ul></div>
   </div>
 
-  <details class="adv admin-only"><summary>고급 설정 — 연차 · 이월 · 고정휴무</summary>
+  <details class="adv admin-only"><summary>고급 설정 — 연차 · 이월 · 고정휴무 · 직원관리</summary>
     <div class="body">
+      <h4>직원 추가 / 관리</h4>
+      <div class="staffadd">
+        <input id="stName" placeholder="이름" style="width:90px">
+        <select id="stTeam"><option>내과1팀</option><option>내과2팀</option><option>통합치과</option><option>물리치료</option><option>고객지원실</option></select>
+        <input id="stHire" type="date" title="입사일" style="width:150px">
+        <select id="stRank"><option value="">일반</option><option value="jang">팀장</option><option value="sil">실장</option></select>
+        <label class="ckbx"><input type="checkbox" id="stClin">상담자</label>
+        <span class="wdays" id="stDays"></span>
+        <input id="stBday" placeholder="생일 월/일(선택)" style="width:110px">
+        <button class="btn primary" id="stAddBtn" type="button">추가</button>
+      </div>
+      <div class="hint">이름·팀·입사일을 넣고 추가하세요. <b>상담자</b>는 내과 상담 인원(규칙에 반영)일 때 체크. 근무요일은 기본 월~토, 특정 요일만이면 체크 해제하세요. 추가하면 <b>모든 관리자/PC에 공유</b>됩니다. 추가 후 그 달을 <b>다시 생성</b>하면 휴무 배정에 포함됩니다(기존 배포월은 날짜 클릭으로 직접 넣기).</div>
+      <div id="staffList" style="margin-top:8px"></div>
+      <div class="staffadd" style="margin-top:10px">
+        <b style="font-size:13px">퇴사 처리:</b>
+        <select id="stRetireSel"></select>
+        <button class="btn ghost" id="stRetireBtn" type="button">퇴사 처리</button>
+      </div>
+      <div class="hint">정직원·추가직원 누구든 퇴사 처리하면 명단·휴무표·연차에서 빠집니다. 잘못했으면 아래 목록에서 <b>복귀</b>로 되돌릴 수 있어요. (모든 PC 공유)</div>
+      <div id="retiredList"></div>
       <div class="twocol">
         <div><h4>연차 / 지정 휴무 (그 날 고정 + 내과 상한 포함)</h4>
           <textarea id="annualBox" rows="6"></textarea>
@@ -355,6 +383,7 @@ const PEOPLE=[
  {name:'김수영',team:'내과1팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'이현경',team:'내과1팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'정은영',team:'내과1팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
+ {name:'권세연',team:'내과1팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'신미애',team:'내과2팀',sil:false,jang:false,clin:false,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'송슬기',team:'내과2팀',sil:false,jang:false,clin:true,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
  {name:'안유진',team:'내과2팀',sil:false,jang:true,clin:true,naegwa:true,cs:false,allow:[1,2,3,4,5,6]},
@@ -704,6 +733,44 @@ function renderFixedBox(){const box=$('fixedBox');if(!box)return;let html='';
     ms.forEach(p=>{const days=(FIXED[p.name]||[]).map(d=>DOW[d]).join(',');
       html+=`<div class="row" data-name="${p.name}"><b>${p.name}</b><input value="${days}" placeholder="고정휴무 없음"></div>`;});}
   box.innerHTML=html;}
+function renderStaffDays(){const el=$('stDays');if(!el||el.dataset.done)return;
+  el.innerHTML=[1,2,3,4,5,6].map(d=>`<label>${DOW[d]}<input type="checkbox" class="stDay" value="${d}" checked></label>`).join('');el.dataset.done='1';}
+function renderStaffList(){const el=$('staffList');if(!el)return;
+  if(!CUSTOM_STAFF.length){el.innerHTML='<div class="hint">추가된 직원이 없습니다.</div>';return;}
+  el.innerHTML=CUSTOM_STAFF.map((s,i)=>{const days=(s.allow&&s.allow.length&&s.allow.length<6)?' · '+s.allow.map(d=>DOW[d]).join('')+'만':'';const rank=s.sil?' · 실장':s.jang?' · 팀장':'';const clin=s.clin?' · 상담자':'';
+    return `<div class="stafflist-item"><b>${s.name}</b> <span style="color:#567">${s.team}${rank}${clin} · 입사 ${(s.hire||'').slice(2)}${days}</span><button class="rm" data-i="${i}" type="button">삭제</button></div>`;}).join('');
+  el.querySelectorAll('.rm').forEach(b=>b.onclick=()=>removeStaff(+b.dataset.i));}
+function addStaffFromForm(){const name=($('stName').value||'').trim();if(!name){alert('이름을 입력하세요.');return;}
+  if(PEOPLE.some(p=>p.name===name)){alert('이미 있는 이름입니다: '+name);return;}
+  const hire=$('stHire').value;if(!hire){alert('입사일을 선택하세요.');return;}
+  const team=$('stTeam').value;const rank=$('stRank').value;const clin=$('stClin').checked;
+  const allow=[...document.querySelectorAll('#stDays .stDay:checked')].map(c=>+c.value);
+  if(!allow.length){alert('근무요일을 하나 이상 선택하세요.');return;}
+  const s={name,team,hire,clin,jang:rank==='jang',sil:rank==='sil',allow};
+  CUSTOM_STAFF.push(s);applyCustomStaff();saveStaffLocal();saveStaffRemote();
+  const bday=($('stBday').value||'').trim();
+  if(bday&&$('bdayBox')){const add=`${bday} ${name}`;$('bdayBox').value=($('bdayBox').value?$('bdayBox').value+'\n':'')+add;lsSet(BDAY_KEY,$('bdayBox').value);BIRTHDAYS=parseBirthdays($('bdayBox').value);}
+  $('stName').value='';$('stHire').value='';$('stBday').value='';$('stClin').checked=false;$('stRank').value='';
+  document.querySelectorAll('#stDays .stDay').forEach(c=>c.checked=true);
+  renderStaffList();renderRetireSel();renderRetiredList();renderFixedBox();if(CURRENT)renderAnnualStatus(CURRENT.annual,CURRENT.year,CURRENT.month);
+  alert(`${name} 님을 추가했습니다 (${team}).\n\n· 모든 관리자/PC에 공유됩니다.\n· 그 달을 [휴무표 생성]으로 다시 만들면 휴무 배정에 포함됩니다.\n· 이미 배포된 달에 넣으려면 날짜를 클릭해 직접 추가 후 재배포하세요.`);}
+function removeStaff(i){const s=CUSTOM_STAFF[i];if(!s)return;if(!confirm(`${s.name} 님을 명단에서 완전히 삭제할까요? (추가 취소)`))return;
+  CUSTOM_STAFF.splice(i,1);rebuildPeople();saveStaffLocal();saveStaffRemote();refreshStaffUI();}
+function activeNames(){return PEOPLE.map(p=>p.name);}
+function retireStaff(name){if(!name)return;if(RETIRED.indexOf(name)>=0)return;
+  if(!confirm(`${name} 님을 퇴사 처리할까요?\n명단·휴무표·연차에서 제외됩니다(복귀 가능).`))return;
+  RETIRED.push(name);rebuildPeople();saveStaffLocal();saveStaffRemote();refreshStaffUI();
+  if(CURRENT){renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),curKey());renderAnnualStatus(CURRENT.annual,CURRENT.year,CURRENT.month);}}
+function restoreStaff(name){const i=RETIRED.indexOf(name);if(i<0)return;RETIRED.splice(i,1);rebuildPeople();saveStaffLocal();saveStaffRemote();refreshStaffUI();
+  if(CURRENT){renderCalendar(CURRENT.res,CURRENT.dm);renderPersonSummary(buildLiveByPerson(CURRENT.dm),curKey());renderAnnualStatus(CURRENT.annual,CURRENT.year,CURRENT.month);}}
+function renderRetireSel(){const sel=$('stRetireSel');if(!sel)return;
+  const opts=[];for(const t of TEAMS)PEOPLE.filter(p=>p.team===t).forEach(p=>opts.push(`<option value="${p.name}">${p.name} (${t.replace('고객지원실','CS').replace('물리치료','물치').replace('통합치과','통합')})</option>`));
+  sel.innerHTML='<option value="">-- 직원 선택 --</option>'+opts.join('');}
+function renderRetiredList(){const el=$('retiredList');if(!el)return;
+  if(!RETIRED.length){el.innerHTML='';return;}
+  el.innerHTML='<div style="font-size:12px;color:#888;margin:6px 0 3px">퇴사 처리됨:</div>'+RETIRED.map(n=>`<div class="stafflist-item" style="background:#f3eeee;border-color:#e0cccc"><b>${n}</b><span style="color:#a06">퇴사</span><button class="rm" data-n="${n}" type="button" style="border-color:#b4c9e0;color:#274b9e">복귀</button></div>`).join('');
+  el.querySelectorAll('.rm').forEach(b=>b.onclick=()=>restoreStaff(b.dataset.n));}
+function refreshStaffUI(){renderStaffList();renderRetireSel();renderRetiredList();renderFixedBox();}
 
 let importedFair=null,CURRENT=null,seedCounter=0;
 let PUBLISHED={};const PUB_KEY='centum_pub_v1';const MONTHSRC={};
@@ -712,9 +779,20 @@ const LS_KEY='centum_sched_v1';
 let DRAFTS={};const DRAFT_KEY='centum_drafts_v1';
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-const HIRE={'엄지애':'2022-03-03','한혜련':'2023-11-17','장다인':'2024-02-13','윤소윤':'2024-06-03','유수진':'2024-06-10','배주련':'2024-09-09','신지수':'2025-05-07','신하늘':'2025-06-17','안유진':'2025-07-07','김수영':'2025-07-07','이현경':'2025-09-29','이신비':'2025-09-29','김민재':'2025-12-08','송슬기':'2025-12-11','정은영':'2026-01-08','신미애':'2026-03-23','전주경':'2024-06-17','김하은':'2024-08-01','조민아':'2024-10-04','남정원':'2026-04-21','김청하':'2024-04-22','국승연':'2026-06-01'};
+const HIRE={'엄지애':'2022-03-03','한혜련':'2023-11-17','장다인':'2024-02-13','윤소윤':'2024-06-03','유수진':'2024-06-10','배주련':'2024-09-09','신지수':'2025-05-07','신하늘':'2025-06-17','안유진':'2025-07-07','김수영':'2025-07-07','이현경':'2025-09-29','이신비':'2025-09-29','김민재':'2025-12-08','송슬기':'2025-12-11','정은영':'2026-01-08','신미애':'2026-03-23','전주경':'2024-06-17','김하은':'2024-08-01','조민아':'2024-10-04','남정원':'2026-04-21','김청하':'2024-04-22','국승연':'2026-06-01','권세연':'2026-07-13'};
 let PRIORUSED={'엄지애':5,'한혜련':11,'장다인':3,'김청하':7,'윤소윤':0,'유수진':4,'전주경':0,'김하은':14,'배주련':10,'조민아':14,'신지수':1,'신하늘':8,'안유진':7,'김수영':11,'이현경':3,'이신비':6,'김민재':2,'송슬기':9,'정은영':1,'신미애':0,'남정원':1,'국승연':0};PEOPLE.forEach(p=>{if(!(p.name in PRIORUSED))PRIORUSED[p.name]=0;});
 let ALLOT_OVERRIDE={'전주경':11};
+let CUSTOM_STAFF=[];const STAFF_KEY='centum_staff_v1';
+let RETIRED=[];const RETIRED_KEY='centum_retired_v1';
+const ORIG_PEOPLE=PEOPLE.slice();
+function rebuildPeople(){PEOPLE.length=0;for(const p of ORIG_PEOPLE)PEOPLE.push(p);
+  for(const s of CUSTOM_STAFF){if(!s||!s.name||PEOPLE.some(p=>p.name===s.name))continue;const team=s.team||'내과1팀';
+    PEOPLE.push({name:s.name,team,sil:!!s.sil,jang:!!s.jang,clin:!!s.clin,naegwa:team.indexOf('내과')===0,cs:team==='고객지원실',allow:(Array.isArray(s.allow)&&s.allow.length?s.allow.slice():[1,2,3,4,5,6]),custom:true});
+    if(s.hire)HIRE[s.name]=s.hire;if(!(s.name in PRIORUSED))PRIORUSED[s.name]=0;}
+  for(let i=PEOPLE.length-1;i>=0;i--){if(RETIRED.indexOf(PEOPLE[i].name)>=0)PEOPLE.splice(i,1);}}
+function applyCustomStaff(){rebuildPeople();}
+function saveStaffLocal(){lsSet(STAFF_KEY,JSON.stringify(CUSTOM_STAFF));lsSet(RETIRED_KEY,JSON.stringify(RETIRED));}
+async function saveStaffRemote(){if(!BOARD_URL)return;try{await fetch(BOARD_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'publish',month:'roster',data:{staff:CUSTOM_STAFF,retired:RETIRED}})});}catch(e){}}
 function tenureInfo(hireISO,year,month){
   const [hy,hm,hd]=hireISO.split('-').map(Number);const asOf=new Date(year,month-1,1);
   let ay=year,anniv=new Date(ay,hm-1,hd);if(anniv>asOf){ay--;anniv=new Date(ay,hm-1,hd);}
@@ -980,6 +1058,8 @@ const DEFAULT_CARRY=`6/29 장다인, 김수영, 이신비, 남정원
   $('eventBox').value=lsGet(EVENT_KEY)||DEFAULT_EVENT;EVENTS=parseEvents($('eventBox').value);
   $('eventBox').oninput=()=>{lsSet(EVENT_KEY,$('eventBox').value);EVENTS=parseEvents($('eventBox').value);if($('viewSel').value)showMonth($('viewSel').value);};
   $('bdayBox').oninput=()=>{lsSet(BDAY_KEY,$('bdayBox').value);BIRTHDAYS=parseBirthdays($('bdayBox').value);if($('viewSel').value)showMonth($('viewSel').value);};
+  $('stAddBtn').onclick=addStaffFromForm;renderStaffDays();renderStaffList();renderRetireSel();renderRetiredList();
+  $('stRetireBtn').onclick=()=>{const n=$('stRetireSel').value;if(!n){alert('퇴사 처리할 직원을 선택하세요.');return;}retireStaff(n);};
   $('genBtn').onclick=()=>{generate(true);saveState();};  $('reGenBtn').onclick=()=>{generate(true);saveState();};
   $('saveDraftBtn').onclick=async()=>{if(!CURRENT){alert('먼저 휴무표를 생성하세요.');return;}saveState();const mk=curKey();
     const b=$('saveDraftBtn');b.disabled=true;const t0=b.textContent;b.textContent='저장 중…';
@@ -1010,6 +1090,9 @@ const DEFAULT_CARRY=`6/29 장다인, 김수영, 이신비, 남정원
   $('dayEditor').onclick=e=>{if(e.target.id==='dayEditor')$('dayEditor').style.display='none';};
   $('calBody').addEventListener('click',e=>{const td=e.target.closest('td[data-iso]');if(td)openDayEditor(td.dataset.iso);});
   if(BOARD_URL)setInterval(renderMemos,30000);
+  try{CUSTOM_STAFF=JSON.parse(lsGet(STAFF_KEY)||'[]');}catch(e){CUSTOM_STAFF=[];}
+  try{RETIRED=JSON.parse(lsGet(RETIRED_KEY)||'[]');}catch(e){RETIRED=[];}
+  rebuildPeople();
   try{PUBLISHED=JSON.parse(lsGet(PUB_KEY)||'{}');}catch(e){PUBLISHED={};}
   setAdmin(false);
   loadDrafts();
@@ -1022,6 +1105,7 @@ const DEFAULT_CARRY=`6/29 장다인, 김수영, 이신비, 남정원
     for(const k in raw){
       if(/^\d{4}-\d{2}$/.test(k))normalized[k]=raw[k];
       else if(/^draft-\d{4}-\d{2}$/.test(k)){const mk=k.slice(6);const d=raw[k]&&raw[k].draft;if(d)remoteDrafts[mk]=d;}
+      else if(k==='roster'&&raw[k]){if(Array.isArray(raw[k].staff))CUSTOM_STAFF=raw[k].staff;if(Array.isArray(raw[k].retired))RETIRED=raw[k].retired;saveStaffLocal();rebuildPeople();refreshStaffUI();}
     }
     PUBLISHED=normalized;try{lsSet(PUB_KEY,JSON.stringify(PUBLISHED));}catch(e){}
     // 원격 작업본 병합(배포 안 된 달만 — 배포된 달은 배포본이 우선)
