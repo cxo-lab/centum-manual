@@ -102,10 +102,17 @@ function NH(day,t){
 function PJ(day,t){
  if(day==='화'||day==='목')return null;
  var min=t%60,even=(min===0||min===30);
- if(day==='월')return inW(t,600,1140)?{cap:1,sin:(t>=930&&min===0)}:null;
+ if(day==='월'){
+   if(!inW(t,600,1140))return null;
+   // 월요일: 구환 1명, 신환은 :30분에만 (10:30,11:30,12:30,15:30,16:30,17:30)
+   var sinMon=(min===30)&&(t!==810&&t!==870); // 점심시간(810~930) 제외
+   return {cap:1,sin:sinMon};
+ }
  if(day==='수'){
    if(inW(t,600,810))return {cap:even?2:3,sin:even,soft:(min===15)};
    if(inW(t,930,1080))return {cap:1,sin:(min===0)};
+   // 18:00(1080), 18:15(1095) → 구환 1명
+   if(t===1080||t===1095)return {cap:1,sin:false};
    return null;
  }
  if(day==='금'){
