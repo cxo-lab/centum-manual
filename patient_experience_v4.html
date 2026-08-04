@@ -152,7 +152,8 @@
 <div class="nav-bar">
   <div class="nav-bar-inner">
     <div class="section-tabs-row">
-      <button class="sec-tab on" onclick="selSection(this,'ops')">운영 품질</button>
+      <button class="sec-tab on" onclick="selSection(this,'ops')">고객지원실</button>
+      <button class="sec-tab" onclick="selSection(this,'clinic')">진료실</button>
       <button class="sec-tab" onclick="selSection(this,'exp')">환자경험</button>
     </div>
     <div class="month-tabs-row">
@@ -295,6 +296,74 @@
         </div>
       </div>
 
+      <div class="section" id="sec-clinic">
+        <div class="hero">
+          <div class="hero-left">
+            <h2 id="clinic-hero-month">5월 진료실 환자경험 점수</h2>
+            <div class="hero-score" id="clinic-hero-score">—<sup>점</sup></div>
+            <div class="hero-badge eq" id="clinic-hero-badge">수치를 입력해주세요</div>
+          </div>
+          <svg width="96" height="96" viewBox="0 0 100 100" style="flex-shrink:0;">
+            <circle class="ring-track" cx="50" cy="50" r="40"/>
+            <circle class="ring-fill" id="clinic-ring" cx="50" cy="50" r="40"/>
+            <text class="ring-val" x="50" y="54" text-anchor="middle" id="clinic-ring-val">—</text>
+            <text class="ring-sub" x="50" y="65" text-anchor="middle">/100</text>
+          </svg>
+        </div>
+
+        <div style="background:#f7f8fb;border-radius:12px;padding:14px 16px;margin-bottom:12px;">
+          <div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;">팀별 세부 (참고용)</div>
+          <div class="cards" style="grid-template-columns:repeat(2,1fr);gap:8px;">
+            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">1시간 이상 대기 · 1팀</div><div class="card-val y" id="cv-wait60-t1" style="font-size:20px;">—</div></div>
+            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">1시간 이상 대기 · 2팀</div><div class="card-val y" id="cv-wait60-t2" style="font-size:20px;">—</div></div>
+            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">협진 동의율 · 1팀</div><div class="card-val g" id="cv-coop-t1" style="font-size:20px;">—</div></div>
+            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">협진 동의율 · 2팀</div><div class="card-val g" id="cv-coop-t2" style="font-size:20px;">—</div></div>
+          </div>
+        </div>
+
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;padding-left:2px;">진료실 전체 (점수 계산 기준)</div>
+        <div class="cards" style="grid-template-columns:repeat(3,1fr);">
+          <div class="card"><div class="card-icon">⏰</div><div class="card-label">1시간 이상<br>대기 환자</div><div class="card-val y" id="cv-wait60">—</div><div class="card-prev">목표: 일평균 2명 이하</div><div class="card-daily" id="cd-wait60" style="font-size:11px;color:var(--yellow);margin-top:3px;"></div><div class="bar-bg"><div class="bar" id="cb-wait60" style="width:0%"></div></div></div>
+          <div class="card"><div class="card-icon">🦷</div><div class="card-label">구강내장치<br>재인상률</div><div class="card-val navy" id="cv-reimp">—</div><div class="card-prev">목표: 10% 이하</div><div class="bar-bg"><div class="bar" id="cb-reimp" style="width:0%"></div></div></div>
+          <div class="card"><div class="card-icon">🤝</div><div class="card-label">협진<br>동의율</div><div class="card-val g" id="cv-coop">—</div><div class="card-prev">목표: 70% 이상</div><div class="bar-bg"><div class="bar" id="cb-coop" style="width:0%"></div></div></div>
+        </div>
+
+        <div class="weights">
+          <div class="sec-title">종합점수 가중치 — 100점</div>
+          <div class="w-rows">
+            <div class="w-chip"><div class="w-dot" style="background:var(--yellow)"></div><span class="w-name">1시간 이상 대기 환자</span><span class="w-pt">40점</span></div>
+            <div class="w-chip"><div class="w-dot" style="background:var(--navy)"></div><span class="w-name">재인상률</span><span class="w-pt">30점</span></div>
+            <div class="w-chip"><div class="w-dot" style="background:var(--green)"></div><span class="w-name">협진 동의율</span><span class="w-pt">30점</span></div>
+          </div>
+        </div>
+
+        <div class="graph-section">
+          <div class="sec-title">월별 추이</div>
+          <div style="background:#f7f8fb;border-radius:12px;padding:14px;margin-bottom:10px;">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:500;">진료실 종합점수</div>
+            <div style="position:relative;height:130px;"><canvas id="chart-clinic-score" role="img" aria-label="진료실 종합점수"></canvas></div>
+          </div>
+          <div class="graph-grid">
+            <div class="graph-card"><div class="graph-card-label">1시간 이상 대기 환자 (명)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-wait60" role="img" aria-label="1시간 이상 대기 환자"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">재인상률 (%)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-reimp" role="img" aria-label="재인상률"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">협진 동의율 (%)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-coop" role="img" aria-label="협진 동의율"></canvas></div></div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="sec-title">이번 달 수치 입력</div>
+          <div class="form-grid form-grid-3">
+            <div class="fg"><label>1시간 이상 대기 (1팀, 명)</label><input type="number" id="in-wait60-t1" placeholder="예: 15" min="0"><div class="hint">한 달 총 합계</div></div>
+            <div class="fg"><label>1시간 이상 대기 (2팀, 명)</label><input type="number" id="in-wait60-t2" placeholder="예: 15" min="0"><div class="hint">한 달 총 합계</div></div>
+            <div class="fg"><label>재인상률 (%)</label><input type="number" id="in-reimp" placeholder="예: 8" min="0" max="100" step="0.1"><div class="hint">진료실 전체 · 재인상/전체 인상</div></div>
+            <div class="fg"><label>협진 동의율 (1팀, %)</label><input type="number" id="in-coop-t1" placeholder="예: 72" min="0" max="100" step="0.1"><div class="hint">1팀 협진 동의/안내</div></div>
+            <div class="fg"><label>협진 동의율 (2팀, %)</label><input type="number" id="in-coop-t2" placeholder="예: 68" min="0" max="100" step="0.1"><div class="hint">2팀 협진 동의/안내</div></div>
+          </div>
+          <button class="btn" onclick="clinicCalc()">종합점수 계산하기</button>
+          <div id="clinic-interp" class="interp"></div>
+        </div>
+      </div>
+
       <div class="footer">서울센텀턱구강내과치과 · 고객지원실 (관리자 유수진)</div>
     </div>
   </div>
@@ -318,6 +387,19 @@ const OPS = {
 const EXP = {
   intro:  {'1월':53,'2월':42,'3월':58,'4월':57,'5월':48,'6월':54,'7월':67},
   review: {'1월':21,'2월':15,'3월':12,'4월':19,'5월':15,'6월':17,'7월':16},
+};
+
+const CLINIC = {
+  // 팀별 (참고용)
+  wait60_t1: {},  // 1시간 이상 대기 (1팀)
+  wait60_t2: {},  // 1시간 이상 대기 (2팀)
+  coop_t1:   {},  // 협진 동의율 (1팀)
+  coop_t2:   {},  // 협진 동의율 (2팀)
+  // 진료실 전체 (점수 계산 기준)
+  wait60: {},  // 1시간 이상 대기 환자 수 (월별 합계, 1팀+2팀)
+  reimp:  {},  // 재인상률 %
+  coop:   {},  // 협진 동의율 % (1팀+2팀 평균)
+  score:  {},  // 종합점수
 };
 
 const KEYWORDS = {
@@ -434,7 +516,7 @@ function selSection(el, s) {
   el.classList.add('on');
   document.getElementById('sec-' + s).classList.add('on');
   curSection = s;
-  const titles = {ops:'운영 품질 대시보드', exp:'환자경험 대시보드'};
+  const titles = {ops:'고객지원실 대시보드', clinic:'진료실 대시보드', exp:'환자경험 대시보드'};
   document.getElementById('hd-title').textContent = titles[s];
 }
 
@@ -443,6 +525,7 @@ function selMonth(el, m) {
   el.classList.add('on');
   curMonth = m;
   loadOps(m);
+  loadClinic(m);
   loadExp(m);
 }
 
@@ -539,6 +622,127 @@ function opsCalc() {
   else if(score>=60){cls='mid';msg='⚠️ 양호하지만 개선 여지가 있어요. '; if(wait>10)msg+='수납 소요시간('+wait+'분)이 길어요. '; if(keep<80)msg+='예약 이행률('+keep+'%)을 높이는 게 우선이에요. '; if(comp>10)msg+='대기 컴플레인('+comp+'명) 안내 개선이 필요해요. '; if(drop>25)msg+='전화 포기율('+drop+'%)이 높아요. ';}
   else {cls='low'; const issues=[]; if(wait>12)issues.push('수납 소요시간'); if(keep<70)issues.push('예약 이행률'); if(comp>15)issues.push('대기 컴플레인'); if(cs>5)issues.push('수납·접수 불만'); if(drop>35)issues.push('전화 포기율'); msg='🔴 집중 개선 항목: '+(issues.length?issues.join(', '):'전반적 운영 점검 필요');}
   ip.className='interp '+cls; ip.textContent=msg;
+}
+
+function loadClinic(m) {
+  document.getElementById('clinic-hero-month').textContent = m + ' 진료실 환자경험 점수';
+  const w1 = CLINIC.wait60_t1[m], w2 = CLINIC.wait60_t2[m];
+  const c1 = CLINIC.coop_t1[m], c2 = CLINIC.coop_t2[m];
+  const reimp = CLINIC.reimp[m];
+  document.getElementById('in-wait60-t1').value = w1 !== undefined ? w1 : '';
+  document.getElementById('in-wait60-t2').value = w2 !== undefined ? w2 : '';
+  document.getElementById('in-reimp').value = reimp !== undefined ? reimp : '';
+  document.getElementById('in-coop-t1').value = c1 !== undefined ? c1 : '';
+  document.getElementById('in-coop-t2').value = c2 !== undefined ? c2 : '';
+  const hasAll = [w1, w2, reimp, c1, c2].every(v => v !== undefined);
+  if (hasAll) setTimeout(clinicCalc, 50);
+  else resetClinicDisplay();
+}
+
+function resetClinicDisplay() {
+  document.getElementById('clinic-hero-score').innerHTML = '—<sup>점</sup>';
+  document.getElementById('clinic-ring-val').textContent = '—';
+  document.getElementById('clinic-ring').style.strokeDashoffset = 251;
+  document.getElementById('clinic-hero-badge').className = 'hero-badge eq';
+  document.getElementById('clinic-hero-badge').textContent = '수치를 입력해주세요';
+  ['cv-wait60','cv-reimp','cv-coop','cv-wait60-t1','cv-wait60-t2','cv-coop-t1','cv-coop-t2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+  ['cb-wait60','cb-reimp','cb-coop'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.width='0%';});
+  const cd = document.getElementById('cd-wait60'); if(cd) cd.textContent='';
+  document.getElementById('clinic-interp').style.display='none';
+}
+
+function clinicCalcScore(wait60_avg, reimp, coop) {
+  // wait60_avg: 일평균 1시간 대기 환자 수 (목표 2명 이하 → 40점)
+  // reimp: 재인상률 % (목표 10% 이하 → 30점)
+  // coop: 협진 동의율 % (목표 70% 이상 → 30점)
+  return Math.round(
+    Math.max(0, Math.min(1, (4 - wait60_avg) / 2)) * 40 +
+    Math.max(0, Math.min(1, (20 - reimp) / 10)) * 30 +
+    Math.max(0, Math.min(1, (coop - 50) / 20)) * 30
+  );
+}
+
+function clinicCalc() {
+  const w1 = parseFloat(document.getElementById('in-wait60-t1').value);
+  const w2 = parseFloat(document.getElementById('in-wait60-t2').value);
+  const c1 = parseFloat(document.getElementById('in-coop-t1').value);
+  const c2 = parseFloat(document.getElementById('in-coop-t2').value);
+  const reimp = parseFloat(document.getElementById('in-reimp').value);
+  if ([w1, w2, c1, c2, reimp].some(isNaN)) { alert('모든 항목을 입력해주세요!'); return; }
+
+  // 전체 합산
+  const wait60 = w1 + w2;
+  const coop = Math.round((c1 + c2) / 2 * 10) / 10;
+
+  const workdays = OPS.workdays[curMonth] || 22;
+  const wait60_avg = wait60 / workdays;
+  const score = clinicCalcScore(wait60_avg, reimp, coop);
+
+  document.getElementById('clinic-hero-score').innerHTML = score + '<sup>점</sup>';
+  document.getElementById('clinic-ring-val').textContent = score;
+  setTimeout(() => { document.getElementById('clinic-ring').style.strokeDashoffset = 251 - (score/100)*251; }, 80);
+  const badge = document.getElementById('clinic-hero-badge');
+  badge.className = 'hero-badge ' + (score>=80?'up':score>=60?'eq':'dn');
+  badge.textContent = score>=80?'우수':score>=60?'양호':'개선 필요';
+
+  // 팀별 카드
+  document.getElementById('cv-wait60-t1').textContent = w1 + '명';
+  document.getElementById('cv-wait60-t2').textContent = w2 + '명';
+  document.getElementById('cv-coop-t1').textContent = c1 + '%';
+  document.getElementById('cv-coop-t2').textContent = c2 + '%';
+
+  // 전체 카드
+  const wc = wait60_avg<=2?'g':wait60_avg<=4?'y':'r';
+  const wColor = wait60_avg<=2?'var(--green)':wait60_avg<=4?'var(--yellow)':'var(--red)';
+  document.getElementById('cv-wait60').className='card-val '+wc;
+  document.getElementById('cv-wait60').textContent = wait60 + '명';
+  document.getElementById('cd-wait60').textContent = '일평균 ' + wait60_avg.toFixed(2) + '명';
+  document.getElementById('cb-wait60').style.width = Math.max(0,Math.min(100,(4-wait60_avg)/2*100)) + '%';
+  document.getElementById('cb-wait60').style.background = wColor;
+
+  const rc = reimp<=10?'g':reimp<=20?'y':'r';
+  const rColor = reimp<=10?'var(--green)':reimp<=20?'var(--yellow)':'var(--red)';
+  document.getElementById('cv-reimp').className='card-val '+rc;
+  document.getElementById('cv-reimp').textContent = reimp + '%';
+  document.getElementById('cb-reimp').style.width = Math.max(0,Math.min(100,(20-reimp)/10*100)) + '%';
+  document.getElementById('cb-reimp').style.background = rColor;
+
+  const cc = coop>=70?'g':coop>=50?'y':'r';
+  const cColor = coop>=70?'var(--green)':coop>=50?'var(--yellow)':'var(--red)';
+  document.getElementById('cv-coop').className='card-val '+cc;
+  document.getElementById('cv-coop').textContent = coop + '%';
+  document.getElementById('cb-coop').style.width = Math.max(0,Math.min(100,(coop-50)/20*100)) + '%';
+  document.getElementById('cb-coop').style.background = cColor;
+
+  // 데이터 저장
+  CLINIC.wait60_t1[curMonth] = w1;
+  CLINIC.wait60_t2[curMonth] = w2;
+  CLINIC.coop_t1[curMonth] = c1;
+  CLINIC.coop_t2[curMonth] = c2;
+  CLINIC.wait60[curMonth] = wait60;
+  CLINIC.reimp[curMonth] = reimp;
+  CLINIC.coop[curMonth] = coop;
+  CLINIC.score[curMonth] = score;
+
+  // 인터프리테이션
+  const ip = document.getElementById('clinic-interp');
+  ip.style.display = 'block';
+  let msg='', cls='';
+  if(score>=80){cls='good'; msg='✅ 진료실 환자경험이 우수해요.';}
+  else if(score>=60){
+    cls='mid'; msg='⚠️ 양호하지만 개선 여지가 있어요. ';
+    if(wait60_avg>2) msg+='1시간 이상 대기 환자(일평균 '+wait60_avg.toFixed(1)+'명)가 목표(2명)를 초과했어요. ';
+    if(reimp>10) msg+='재인상률('+reimp+'%)이 목표(10%)를 초과했어요. ';
+    if(coop<70) msg+='협진 동의율('+coop+'%)이 목표(70%)에 미달했어요. ';
+  }
+  else {
+    cls='low'; const issues=[];
+    if(wait60_avg>4) issues.push('1시간 이상 대기 환자');
+    if(reimp>20) issues.push('재인상률');
+    if(coop<50) issues.push('협진 동의율');
+    msg='🔴 집중 개선 항목: ' + (issues.length?issues.join(', '):'전반적 점검 필요');
+  }
+  ip.className = 'interp ' + cls; ip.textContent = msg;
 }
 
 function loadExp(m) {
@@ -648,7 +852,20 @@ window.addEventListener('load',function() {
   const reviewVals=reviewMonths.map(m=>EXP.review[m]);
   makeExpChart('chart-intro',introMonths,introVals,'#0ea5a0');
   makeExpChart('chart-exp-review',reviewMonths,reviewVals,'#e8748a');
+  // 진료실 차트 - 데이터 있을 때만 렌더링
+  renderClinicCharts();
 });
+
+function renderClinicCharts() {
+  const wait60Months=Object.keys(CLINIC.wait60).filter(m=>CLINIC.wait60[m]!==null&&CLINIC.wait60[m]!==undefined);
+  const reimpMonths=Object.keys(CLINIC.reimp).filter(m=>CLINIC.reimp[m]!==null&&CLINIC.reimp[m]!==undefined);
+  const coopMonths=Object.keys(CLINIC.coop).filter(m=>CLINIC.coop[m]!==null&&CLINIC.coop[m]!==undefined);
+  const scoreMonths=Object.keys(CLINIC.score).filter(m=>CLINIC.score[m]!==null&&CLINIC.score[m]!==undefined);
+  if(scoreMonths.length>0) makeExpChart('chart-clinic-score',scoreMonths,scoreMonths.map(m=>CLINIC.score[m]),'#1a2744');
+  if(wait60Months.length>0) makeExpChart('chart-wait60',wait60Months,wait60Months.map(m=>CLINIC.wait60[m]),'#e09000');
+  if(reimpMonths.length>0) makeExpChart('chart-reimp',reimpMonths,reimpMonths.map(m=>CLINIC.reimp[m]),'#1a2744');
+  if(coopMonths.length>0) makeExpChart('chart-coop',coopMonths,coopMonths.map(m=>CLINIC.coop[m]),'#2a9d6a');
+}
 </script>
 <div class="lock-modal" id="lock-modal">
   <div class="lock-box">
