@@ -370,8 +370,60 @@
 
 <script>
 const MONTHS = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-let curMonth = '5월';
+let curMonth = '7월';
 let curSection = 'ops';
+let curYear = 2026;
+
+// 구글 시트 API URL (Apps Script 웹앱)
+const API_URL = 'https://script.google.com/macros/s/AKfycbwMGcZm5e-DjkjAZadNYGQYC6w2PBIVOdqrBkn0JSKKY5-Sykv81e8eRbgFe4-miKF_Ig/exec';
+
+// 시트 데이터 자동 로드
+async function loadFromSheet() {
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error('시트 로드 실패');
+    const data = await res.json();
+
+    // "2026-1월" → "1월" 변환 (curYear 기준)
+    const stripYear = (obj) => {
+      const result = {};
+      Object.keys(obj).forEach(key => {
+        const match = String(key).match(/^(\d+)-(.+)$/);
+        if (match && Number(match[1]) === curYear) {
+          result[match[2]] = obj[key];
+        }
+      });
+      return result;
+    };
+
+    // OPS 데이터 업데이트
+    if (data.ops) {
+      Object.keys(data.ops).forEach(k => {
+        if (OPS[k]) OPS[k] = { ...OPS[k], ...stripYear(data.ops[k]) };
+      });
+    }
+    // EXP 데이터 업데이트
+    if (data.exp) {
+      Object.keys(data.exp).forEach(k => {
+        if (EXP[k]) EXP[k] = { ...EXP[k], ...stripYear(data.exp[k]) };
+      });
+    }
+    // CLINIC 데이터 업데이트
+    if (data.clinic) {
+      Object.keys(data.clinic).forEach(k => {
+        if (CLINIC[k]) CLINIC[k] = { ...CLINIC[k], ...stripYear(data.clinic[k]) };
+      });
+    }
+
+    console.log('✅ 시트 데이터 로드 완료');
+    // 현재 월 다시 로드해서 최신 데이터 반영
+    if (typeof loadOps === 'function') loadOps(curMonth);
+    if (typeof loadClinic === 'function') loadClinic(curMonth);
+    if (typeof loadExp === 'function') loadExp(curMonth);
+  } catch (e) {
+    console.warn('시트 로드 실패, 로컬 데이터 사용:', e.message);
+  }
+}
 
 const OPS = {
   workdays:{'1월':26,'2월':21,'3월':25,'4월':26,'5월':22,'6월':16,'7월':27},
@@ -820,8 +872,10 @@ function expCalc() {
 }
 
 window.addEventListener('load', () => {
-  const btn=Array.from(document.querySelectorAll('.month-tab')).find(b=>b.textContent==='5월');
-  if(btn) selMonth(btn,'5월');
+  const btn=Array.from(document.querySelectorAll('.month-tab')).find(b=>b.textContent==='7월');
+  if(btn) selMonth(btn,'7월');
+  // 시트에서 최신 데이터 자동 로드
+  loadFromSheet();
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
