@@ -314,8 +314,8 @@
         <div style="background:#f7f8fb;border-radius:12px;padding:14px 16px;margin-bottom:12px;">
           <div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;">팀별 세부 (참고용)</div>
           <div class="cards" style="grid-template-columns:repeat(2,1fr);gap:8px;">
-            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">1시간 이상 대기 · 1팀</div><div class="card-val y" id="cv-wait60-t1" style="font-size:20px;">—</div></div>
-            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">1시간 이상 대기 · 2팀</div><div class="card-val y" id="cv-wait60-t2" style="font-size:20px;">—</div></div>
+            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">1시간 이상 대기 · 1팀 (일평균)</div><div class="card-val y" id="cv-wait60-t1" style="font-size:20px;">—</div></div>
+            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">1시간 이상 대기 · 2팀 (일평균)</div><div class="card-val y" id="cv-wait60-t2" style="font-size:20px;">—</div></div>
             <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">협진 동의율 · 1팀</div><div class="card-val g" id="cv-coop-t1" style="font-size:20px;">—</div></div>
             <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">협진 동의율 · 2팀</div><div class="card-val g" id="cv-coop-t2" style="font-size:20px;">—</div></div>
           </div>
@@ -323,7 +323,7 @@
 
         <div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;padding-left:2px;">진료실 전체 (점수 계산 기준)</div>
         <div class="cards" style="grid-template-columns:repeat(3,1fr);">
-          <div class="card"><div class="card-icon">⏰</div><div class="card-label">1시간 이상<br>대기 환자</div><div class="card-val y" id="cv-wait60">—</div><div class="card-prev">목표: 일평균 2명 이하</div><div class="card-daily" id="cd-wait60" style="font-size:11px;color:var(--yellow);margin-top:3px;"></div><div class="bar-bg"><div class="bar" id="cb-wait60" style="width:0%"></div></div></div>
+          <div class="card"><div class="card-icon">⏰</div><div class="card-label">1시간 이상 대기<br>(일평균)</div><div class="card-val y" id="cv-wait60">—</div><div class="card-prev">목표: 일평균 2명 이하</div><div class="card-daily" id="cd-wait60" style="font-size:11px;color:var(--yellow);margin-top:3px;"></div><div class="bar-bg"><div class="bar" id="cb-wait60" style="width:0%"></div></div></div>
           <div class="card"><div class="card-icon">🦷</div><div class="card-label">구강내장치<br>재인상률</div><div class="card-val navy" id="cv-reimp">—</div><div class="card-prev">목표: 10% 이하</div><div class="bar-bg"><div class="bar" id="cb-reimp" style="width:0%"></div></div></div>
           <div class="card"><div class="card-icon">🤝</div><div class="card-label">협진<br>동의율</div><div class="card-val g" id="cv-coop">—</div><div class="card-prev">목표: 70% 이상</div><div class="bar-bg"><div class="bar" id="cb-coop" style="width:0%"></div></div></div>
         </div>
@@ -353,8 +353,8 @@
         <div class="form-section">
           <div class="sec-title">이번 달 수치 입력</div>
           <div class="form-grid form-grid-3">
-            <div class="fg"><label>1시간 이상 대기 (1팀, 명)</label><input type="number" id="in-wait60-t1" placeholder="예: 15" min="0"><div class="hint">한 달 총 합계</div></div>
-            <div class="fg"><label>1시간 이상 대기 (2팀, 명)</label><input type="number" id="in-wait60-t2" placeholder="예: 15" min="0"><div class="hint">한 달 총 합계</div></div>
+            <div class="fg"><label>1시간 이상 대기 · 일평균 (1팀, 명)</label><input type="number" id="in-wait60-t1" placeholder="예: 1.5" min="0" step="0.01"><div class="hint">1팀 일평균</div></div>
+            <div class="fg"><label>1시간 이상 대기 · 일평균 (2팀, 명)</label><input type="number" id="in-wait60-t2" placeholder="예: 0.8" min="0" step="0.01"><div class="hint">2팀 일평균</div></div>
             <div class="fg"><label>재인상률 (%)</label><input type="number" id="in-reimp" placeholder="예: 8" min="0" max="100" step="0.1"><div class="hint">진료실 전체 · 재인상/전체 인상</div></div>
             <div class="fg"><label>협진 동의율 (1팀, %)</label><input type="number" id="in-coop-t1" placeholder="예: 72" min="0" max="100" step="0.1"><div class="hint">1팀 협진 동의/안내</div></div>
             <div class="fg"><label>협진 동의율 (2팀, %)</label><input type="number" id="in-coop-t2" placeholder="예: 68" min="0" max="100" step="0.1"><div class="hint">2팀 협진 동의/안내</div></div>
@@ -722,12 +722,12 @@ function clinicCalc() {
   const reimp = parseFloat(document.getElementById('in-reimp').value);
   if ([w1, w2, c1, c2, reimp].some(isNaN)) { alert('모든 항목을 입력해주세요!'); return; }
 
-  // 전체 합산
-  const wait60 = w1 + w2;
+  // 시트에 입력된 w1, w2가 이미 일평균 값
+  const wait60_avg = w1 + w2;  // 진료실 전체 일평균
+  const wait60 = wait60_avg;    // 표시용
   const coop = Math.round((c1 + c2) / 2 * 10) / 10;
 
   const workdays = OPS.workdays[curMonth] || 22;
-  const wait60_avg = wait60 / workdays;
   const score = clinicCalcScore(wait60_avg, reimp, coop);
 
   document.getElementById('clinic-hero-score').innerHTML = score + '<sup>점</sup>';
@@ -747,8 +747,8 @@ function clinicCalc() {
   const wc = wait60_avg<=2?'g':wait60_avg<=4?'y':'r';
   const wColor = wait60_avg<=2?'var(--green)':wait60_avg<=4?'var(--yellow)':'var(--red)';
   document.getElementById('cv-wait60').className='card-val '+wc;
-  document.getElementById('cv-wait60').textContent = wait60 + '명';
-  document.getElementById('cd-wait60').textContent = '일평균 ' + wait60_avg.toFixed(2) + '명';
+  document.getElementById('cv-wait60').textContent = wait60.toFixed(2) + '명';
+  document.getElementById('cd-wait60').textContent = '월 총 ' + Math.round(wait60_avg * workdays) + '명 추정';
   document.getElementById('cb-wait60').style.width = Math.max(0,Math.min(100,(4-wait60_avg)/2*100)) + '%';
   document.getElementById('cb-wait60').style.background = wColor;
 
