@@ -153,7 +153,8 @@
   <div class="nav-bar-inner">
     <div class="section-tabs-row">
       <button class="sec-tab on" onclick="selSection(this,'ops')">고객지원실</button>
-      <button class="sec-tab" onclick="selSection(this,'clinic')">진료실</button>
+      <button class="sec-tab" onclick="selSection(this,'clinic')">내과진료실</button>
+      <button class="sec-tab" onclick="selSection(this,'uni')">통합과진료실</button>
       <button class="sec-tab" onclick="selSection(this,'exp')">환자경험</button>
     </div>
     <div class="month-tabs-row">
@@ -299,7 +300,7 @@
       <div class="section" id="sec-clinic">
         <div class="hero">
           <div class="hero-left">
-            <h2 id="clinic-hero-month">5월 진료실 환자경험 점수</h2>
+            <h2 id="clinic-hero-month">5월 내과진료실 환자경험 점수</h2>
             <div class="hero-score" id="clinic-hero-score">—<sup>점</sup></div>
             <div class="hero-badge eq" id="clinic-hero-badge">수치를 입력해주세요</div>
           </div>
@@ -321,7 +322,7 @@
           </div>
         </div>
 
-        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;padding-left:2px;">진료실 전체 (점수 계산 기준)</div>
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;padding-left:2px;">내과 전체 (점수 계산 기준)</div>
         <div class="cards" style="grid-template-columns:repeat(3,1fr);">
           <div class="card"><div class="card-icon">⏰</div><div class="card-label">1시간 이상 대기<br>(일평균)</div><div class="card-val y" id="cv-wait60">—</div><div class="card-prev">목표: 일평균 2명 이하</div><div class="card-daily" id="cd-wait60" style="font-size:11px;color:var(--yellow);margin-top:3px;"></div><div class="bar-bg"><div class="bar" id="cb-wait60" style="width:0%"></div></div></div>
           <div class="card"><div class="card-icon">🦷</div><div class="card-label">구강내장치<br>재인상 건수</div><div class="card-val navy" id="cv-reimp">—</div><div class="card-prev">목표: 월 2건 이하</div><div class="bar-bg"><div class="bar" id="cb-reimp" style="width:0%"></div></div></div>
@@ -361,6 +362,66 @@
           </div>
           <button class="btn" onclick="clinicCalc()">종합점수 계산하기</button>
           <div id="clinic-interp" class="interp"></div>
+        </div>
+      </div>
+
+      <div class="section" id="sec-uni">
+        <div class="hero">
+          <div class="hero-left">
+            <h2 id="uni-hero-month">5월 통합과진료실 점수</h2>
+            <div class="hero-score" id="uni-hero-score">—<sup>점</sup></div>
+            <div class="hero-badge eq" id="uni-hero-badge">수치를 입력해주세요</div>
+          </div>
+          <svg width="96" height="96" viewBox="0 0 100 100" style="flex-shrink:0;">
+            <circle class="ring-track" cx="50" cy="50" r="40"/>
+            <circle class="ring-fill" id="uni-ring" cx="50" cy="50" r="40"/>
+            <text class="ring-val" x="50" y="54" text-anchor="middle" id="uni-ring-val">—</text>
+            <text class="ring-sub" x="50" y="65" text-anchor="middle">/100</text>
+          </svg>
+        </div>
+
+        <div class="cards" style="grid-template-columns:repeat(4,1fr);">
+          <div class="card"><div class="card-icon">🦷</div><div class="card-label">교합재건<br>케이스</div><div class="card-val navy" id="cv-jaebun">—</div><div class="card-prev">목표: 월 2건 이상</div><div class="card-daily" id="cd-jaebun" style="font-size:11px;color:var(--muted);margin-top:3px;"></div><div class="bar-bg"><div class="bar" id="cb-jaebun" style="width:0%"></div></div></div>
+          <div class="card"><div class="card-icon">💰</div><div class="card-label">매출<br>달성률</div><div class="card-val g" id="cv-sales">—</div><div class="card-prev">목표: 7,000만원</div><div class="card-daily" id="cd-sales" style="font-size:11px;color:var(--muted);margin-top:3px;"></div><div class="bar-bg"><div class="bar" id="cb-sales" style="width:0%"></div></div></div>
+          <div class="card"><div class="card-icon">👥</div><div class="card-label">소개<br>환자율</div><div class="card-val y" id="cv-intro-uni">—</div><div class="card-prev">목표: 30% 이상</div><div class="card-daily" id="cd-intro-uni" style="font-size:11px;color:var(--muted);margin-top:3px;"></div><div class="bar-bg"><div class="bar" id="cb-intro-uni" style="width:0%"></div></div></div>
+          <div class="card"><div class="card-icon">🔧</div><div class="card-label">리메이크율</div><div class="card-val g" id="cv-remake">—</div><div class="card-prev">목표: 10% 이하</div><div class="bar-bg"><div class="bar" id="cb-remake" style="width:0%"></div></div></div>
+        </div>
+
+        <div class="weights">
+          <div class="sec-title">종합점수 가중치 — 100점</div>
+          <div class="w-rows">
+            <div class="w-chip"><div class="w-dot" style="background:var(--navy)"></div><span class="w-name">교합재건 케이스</span><span class="w-pt">35점</span></div>
+            <div class="w-chip"><div class="w-dot" style="background:var(--green)"></div><span class="w-name">매출달성률</span><span class="w-pt">30점</span></div>
+            <div class="w-chip"><div class="w-dot" style="background:var(--yellow)"></div><span class="w-name">소개환자율</span><span class="w-pt">20점</span></div>
+            <div class="w-chip"><div class="w-dot" style="background:var(--blue)"></div><span class="w-name">리메이크율</span><span class="w-pt">15점</span></div>
+          </div>
+        </div>
+
+        <div class="graph-section">
+          <div class="sec-title">월별 추이</div>
+          <div style="background:#f7f8fb;border-radius:12px;padding:14px;margin-bottom:10px;">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:500;">통합과 종합점수</div>
+            <div style="position:relative;height:130px;"><canvas id="chart-uni-score" role="img" aria-label="통합과 종합점수"></canvas></div>
+          </div>
+          <div class="graph-grid">
+            <div class="graph-card"><div class="graph-card-label">교합재건 케이스 (건)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-jaebun" role="img"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">매출 (만원)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-sales" role="img"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">소개환자율 (%)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-intro-uni" role="img"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">리메이크율 (%)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-remake" role="img"></canvas></div></div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="sec-title">이번 달 수치 입력</div>
+          <div class="form-grid form-grid-3">
+            <div class="fg"><label>교합재건 건수 (건)</label><input type="number" id="in-jaebun" placeholder="예: 2" min="0" step="1"><div class="hint">한 달 총 케이스</div></div>
+            <div class="fg"><label>매출 (만원)</label><input type="number" id="in-sales" placeholder="예: 6000" min="0" step="1"><div class="hint">한 달 총 매출</div></div>
+            <div class="fg"><label>소개환자 수 (명)</label><input type="number" id="in-intro-uni" placeholder="예: 5" min="0" step="1"><div class="hint">소개로 온 신규환자</div></div>
+            <div class="fg"><label>전체 신규환자 수 (명)</label><input type="number" id="in-newpt" placeholder="예: 42" min="0" step="1"><div class="hint">이번 달 전체 신규</div></div>
+            <div class="fg"><label>리메이크율 (%)</label><input type="number" id="in-remake" placeholder="예: 2.8" min="0" max="100" step="0.1"><div class="hint">리메이크 / 전체 제작</div></div>
+          </div>
+          <button class="btn" onclick="uniCalc()">종합점수 계산하기</button>
+          <div id="uni-interp" class="interp"></div>
         </div>
       </div>
 
@@ -414,12 +475,24 @@ async function loadFromSheet() {
         if (CLINIC[k]) CLINIC[k] = { ...CLINIC[k], ...stripYear(data.clinic[k]) };
       });
     }
+    // UNI 데이터 업데이트
+    if (data.uni) {
+      Object.keys(data.uni).forEach(k => {
+        if (UNI[k]) UNI[k] = { ...UNI[k], ...stripYear(data.uni[k]) };
+      });
+    }
 
     console.log('✅ 시트 데이터 로드 완료');
     // 현재 월 다시 로드해서 최신 데이터 반영
     if (typeof loadOps === 'function') loadOps(curMonth);
     if (typeof loadClinic === 'function') loadClinic(curMonth);
+    if (typeof loadUni === 'function') loadUni(curMonth);
     if (typeof loadExp === 'function') loadExp(curMonth);
+    // 차트 재렌더링
+    setTimeout(() => {
+      if (typeof renderClinicCharts === 'function') renderClinicCharts();
+      if (typeof renderUniCharts === 'function') renderUniCharts();
+    }, 300);
   } catch (e) {
     console.warn('시트 로드 실패, 로컬 데이터 사용:', e.message);
   }
@@ -451,6 +524,16 @@ const CLINIC = {
   wait60: {},  // 1시간 이상 대기 환자 수 (월별 합계, 1팀+2팀)
   reimp:  {},  // 재인상 건수
   coop:   {},  // 협진 동의율 % (1팀+2팀 평균)
+  score:  {},  // 종합점수
+};
+
+const UNI = {
+  jaebun: {},  // 교합재건 건수
+  sales:  {},  // 매출 (만원)
+  intro:  {},  // 소개환자 수
+  newpt:  {},  // 전체 신규환자 수
+  remake: {},  // 리메이크율 (%)
+  introrate: {},  // 소개환자율 계산값
   score:  {},  // 종합점수
 };
 
@@ -568,7 +651,7 @@ function selSection(el, s) {
   el.classList.add('on');
   document.getElementById('sec-' + s).classList.add('on');
   curSection = s;
-  const titles = {ops:'고객지원실 대시보드', clinic:'진료실 대시보드', exp:'환자경험 대시보드'};
+  const titles = {ops:'고객지원실 대시보드', clinic:'내과진료실 대시보드', uni:'통합과진료실 대시보드', exp:'환자경험 대시보드'};
   document.getElementById('hd-title').textContent = titles[s];
 }
 
@@ -578,6 +661,7 @@ function selMonth(el, m) {
   curMonth = m;
   loadOps(m);
   loadClinic(m);
+  loadUni(m);
   loadExp(m);
 }
 
@@ -677,7 +761,7 @@ function opsCalc() {
 }
 
 function loadClinic(m) {
-  document.getElementById('clinic-hero-month').textContent = m + ' 진료실 환자경험 점수';
+  document.getElementById('clinic-hero-month').textContent = m + ' 내과진료실 환자경험 점수';
   const w1 = CLINIC.wait60_t1[m], w2 = CLINIC.wait60_t2[m];
   const c1 = CLINIC.coop_t1[m], c2 = CLINIC.coop_t2[m];
   const reimp = CLINIC.reimp[m];
@@ -797,6 +881,130 @@ function clinicCalc() {
   ip.className = 'interp ' + cls; ip.textContent = msg;
 }
 
+function loadUni(m) {
+  document.getElementById('uni-hero-month').textContent = m + ' 통합과진료실 점수';
+  const j = UNI.jaebun[m], s = UNI.sales[m], i = UNI.intro[m], n = UNI.newpt[m], r = UNI.remake[m];
+  document.getElementById('in-jaebun').value = j !== undefined ? j : '';
+  document.getElementById('in-sales').value = s !== undefined ? s : '';
+  document.getElementById('in-intro-uni').value = i !== undefined ? i : '';
+  document.getElementById('in-newpt').value = n !== undefined ? n : '';
+  document.getElementById('in-remake').value = r !== undefined ? r : '';
+  const hasAll = [j, s, i, n, r].every(v => v !== undefined);
+  if (hasAll) setTimeout(uniCalc, 50);
+  else resetUniDisplay();
+}
+
+function resetUniDisplay() {
+  document.getElementById('uni-hero-score').innerHTML = '—<sup>점</sup>';
+  document.getElementById('uni-ring-val').textContent = '—';
+  document.getElementById('uni-ring').style.strokeDashoffset = 251;
+  document.getElementById('uni-hero-badge').className = 'hero-badge eq';
+  document.getElementById('uni-hero-badge').textContent = '수치를 입력해주세요';
+  ['cv-jaebun','cv-sales','cv-intro-uni','cv-remake'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='—';});
+  ['cb-jaebun','cb-sales','cb-intro-uni','cb-remake'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.width='0%';});
+  ['cd-jaebun','cd-sales','cd-intro-uni'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='';});
+  document.getElementById('uni-interp').style.display='none';
+}
+
+function uniCalcScore(jaebun_norm, sales_rate, intro_rate, remake) {
+  // jaebun_norm: 영업일 22일 기준 정규화된 교합재건 (목표 2건 → 35점, 0건 → 0점)
+  // sales_rate: 매출달성률 % (목표 100% → 30점, 60% 이하 → 0점)
+  // intro_rate: 소개환자율 % (목표 30% → 20점, 10% 이하 → 0점)
+  // remake: 리메이크율 % (목표 10% 이하 → 15점, 20% 이상 → 0점)
+  return Math.round(
+    Math.max(0, Math.min(1, jaebun_norm / 2)) * 35 +
+    Math.max(0, Math.min(1, (sales_rate - 60) / 40)) * 30 +
+    Math.max(0, Math.min(1, (intro_rate - 10) / 20)) * 20 +
+    Math.max(0, Math.min(1, (20 - remake) / 10)) * 15
+  );
+}
+
+function uniCalc() {
+  const j = parseFloat(document.getElementById('in-jaebun').value);
+  const s = parseFloat(document.getElementById('in-sales').value);
+  const i = parseFloat(document.getElementById('in-intro-uni').value);
+  const n = parseFloat(document.getElementById('in-newpt').value);
+  const r = parseFloat(document.getElementById('in-remake').value);
+  if ([j, s, i, n, r].some(isNaN)) { alert('모든 항목을 입력해주세요!'); return; }
+
+  const workdays = OPS.workdays[curMonth] || 22;
+  const jaebun_norm = j * 22 / workdays;  // 영업일 22일 기준 정규화
+  const sales_rate = s / 7000 * 100;
+  const intro_rate = n > 0 ? (i / n * 100) : 0;
+
+  const score = uniCalcScore(jaebun_norm, sales_rate, intro_rate, r);
+
+  document.getElementById('uni-hero-score').innerHTML = score + '<sup>점</sup>';
+  document.getElementById('uni-ring-val').textContent = score;
+  setTimeout(() => { document.getElementById('uni-ring').style.strokeDashoffset = 251 - (score/100)*251; }, 80);
+  const badge = document.getElementById('uni-hero-badge');
+  badge.className = 'hero-badge ' + (score>=80?'up':score>=60?'eq':'dn');
+  badge.textContent = score>=80?'우수':score>=60?'양호':'개선 필요';
+
+  // 카드 업데이트
+  const jc = jaebun_norm>=2?'g':jaebun_norm>=1?'y':'r';
+  const jColor = jaebun_norm>=2?'var(--green)':jaebun_norm>=1?'var(--yellow)':'var(--red)';
+  document.getElementById('cv-jaebun').className='card-val '+jc;
+  document.getElementById('cv-jaebun').textContent = j + '건';
+  document.getElementById('cd-jaebun').textContent = '영업일 22일 환산 ' + jaebun_norm.toFixed(1) + '건';
+  document.getElementById('cb-jaebun').style.width = Math.max(0,Math.min(100,jaebun_norm/2*100)) + '%';
+  document.getElementById('cb-jaebun').style.background = jColor;
+
+  const sc = sales_rate>=100?'g':sales_rate>=80?'y':'r';
+  const sColor = sales_rate>=100?'var(--green)':sales_rate>=80?'var(--yellow)':'var(--red)';
+  document.getElementById('cv-sales').className='card-val '+sc;
+  document.getElementById('cv-sales').textContent = sales_rate.toFixed(1) + '%';
+  document.getElementById('cd-sales').textContent = s.toLocaleString() + '만원 / 7,000만원';
+  document.getElementById('cb-sales').style.width = Math.max(0,Math.min(100,sales_rate)) + '%';
+  document.getElementById('cb-sales').style.background = sColor;
+
+  const ic = intro_rate>=30?'g':intro_rate>=15?'y':'r';
+  const iColor = intro_rate>=30?'var(--green)':intro_rate>=15?'var(--yellow)':'var(--red)';
+  document.getElementById('cv-intro-uni').className='card-val '+ic;
+  document.getElementById('cv-intro-uni').textContent = intro_rate.toFixed(1) + '%';
+  document.getElementById('cd-intro-uni').textContent = '소개 ' + i + '명 / 신규 ' + n + '명';
+  document.getElementById('cb-intro-uni').style.width = Math.max(0,Math.min(100,intro_rate/30*100)) + '%';
+  document.getElementById('cb-intro-uni').style.background = iColor;
+
+  const rc = r<=10?'g':r<=20?'y':'r';
+  const rColor = r<=10?'var(--green)':r<=20?'var(--yellow)':'var(--red)';
+  document.getElementById('cv-remake').className='card-val '+rc;
+  document.getElementById('cv-remake').textContent = r + '%';
+  document.getElementById('cb-remake').style.width = Math.max(0,Math.min(100,(20-r)/10*100)) + '%';
+  document.getElementById('cb-remake').style.background = rColor;
+
+  // 데이터 저장
+  UNI.jaebun[curMonth] = j;
+  UNI.sales[curMonth] = s;
+  UNI.intro[curMonth] = i;
+  UNI.newpt[curMonth] = n;
+  UNI.remake[curMonth] = r;
+  UNI.introrate[curMonth] = intro_rate;
+  UNI.score[curMonth] = score;
+
+  // 인터프리테이션
+  const ip = document.getElementById('uni-interp');
+  ip.style.display = 'block';
+  let msg='', cls='';
+  if(score>=80){cls='good'; msg='✅ 통합과진료실 성과가 우수해요.';}
+  else if(score>=60){
+    cls='mid'; msg='⚠️ 양호하지만 개선 여지가 있어요. ';
+    if(jaebun_norm<2) msg+='교합재건('+jaebun_norm.toFixed(1)+'건)이 목표(2건)에 미달했어요. ';
+    if(sales_rate<100) msg+='매출달성률('+sales_rate.toFixed(1)+'%)이 목표(100%)에 미달했어요. ';
+    if(intro_rate<30) msg+='소개환자율('+intro_rate.toFixed(1)+'%)이 목표(30%)에 미달했어요. ';
+    if(r>10) msg+='리메이크율('+r+'%)이 목표(10%)를 초과했어요. ';
+  }
+  else {
+    cls='low'; const issues=[];
+    if(jaebun_norm<1) issues.push('교합재건');
+    if(sales_rate<60) issues.push('매출달성률');
+    if(intro_rate<10) issues.push('소개환자율');
+    if(r>20) issues.push('리메이크율');
+    msg='🔴 집중 개선 항목: ' + (issues.length?issues.join(', '):'전반적 점검 필요');
+  }
+  ip.className = 'interp ' + cls; ip.textContent = msg;
+}
+
 function loadExp(m) {
   const intro=EXP.intro[m]; const review=EXP.review[m];
   document.getElementById('in-intro').value=intro!==undefined?intro:'';
@@ -908,6 +1116,7 @@ window.addEventListener('load',function() {
   makeExpChart('chart-exp-review',reviewMonths,reviewVals,'#e8748a');
   // 진료실 차트 - 데이터 있을 때만 렌더링
   renderClinicCharts();
+  renderUniCharts();
 });
 
 function renderClinicCharts() {
@@ -919,6 +1128,19 @@ function renderClinicCharts() {
   if(wait60Months.length>0) makeExpChart('chart-wait60',wait60Months,wait60Months.map(m=>CLINIC.wait60[m]),'#e09000');
   if(reimpMonths.length>0) makeExpChart('chart-reimp',reimpMonths,reimpMonths.map(m=>CLINIC.reimp[m]),'#1a2744');
   if(coopMonths.length>0) makeExpChart('chart-coop',coopMonths,coopMonths.map(m=>CLINIC.coop[m]),'#2a9d6a');
+}
+
+function renderUniCharts() {
+  const jaebunMonths=Object.keys(UNI.jaebun).filter(m=>UNI.jaebun[m]!==null&&UNI.jaebun[m]!==undefined);
+  const salesMonths=Object.keys(UNI.sales).filter(m=>UNI.sales[m]!==null&&UNI.sales[m]!==undefined);
+  const introMonths=Object.keys(UNI.introrate).filter(m=>UNI.introrate[m]!==null&&UNI.introrate[m]!==undefined);
+  const remakeMonths=Object.keys(UNI.remake).filter(m=>UNI.remake[m]!==null&&UNI.remake[m]!==undefined);
+  const scoreMonths=Object.keys(UNI.score).filter(m=>UNI.score[m]!==null&&UNI.score[m]!==undefined);
+  if(scoreMonths.length>0) makeExpChart('chart-uni-score',scoreMonths,scoreMonths.map(m=>UNI.score[m]),'#1a2744');
+  if(jaebunMonths.length>0) makeExpChart('chart-jaebun',jaebunMonths,jaebunMonths.map(m=>UNI.jaebun[m]),'#1a2744');
+  if(salesMonths.length>0) makeExpChart('chart-sales',salesMonths,salesMonths.map(m=>UNI.sales[m]),'#2a9d6a');
+  if(introMonths.length>0) makeExpChart('chart-intro-uni',introMonths,introMonths.map(m=>UNI.introrate[m]),'#e09000');
+  if(remakeMonths.length>0) makeExpChart('chart-remake',remakeMonths,remakeMonths.map(m=>UNI.remake[m]),'#4a7fd4');
 }
 </script>
 <div class="lock-modal" id="lock-modal">
