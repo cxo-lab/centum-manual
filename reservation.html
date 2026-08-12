@@ -119,7 +119,7 @@ function PJ(day,t){
    if(!inW(t,600,1140))return null;
    var capf=even?2:3,exf=EXC_NY['금|'+t];
    if(exf!==undefined)capf=exf;
-   return {cap:capf,sin:even,soft:(min===45),exc:exf!==undefined};
+   return {cap:capf,sin:even,exc:exf!==undefined};
  }
  if(day==='토'){
    if(!inW(t,600,840))return null;
