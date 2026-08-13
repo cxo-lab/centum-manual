@@ -1094,10 +1094,14 @@ const GRAPH_MONTHS=['1월','2월','3월','4월','5월','6월','7월'];
 const GRAPH_DATA={score:[76,82,66,68,63,68,69],wait:[2.6,2.3,2.5,2.4,2.2,2.4,2.4],keep:[80.5,79.9,81.1,82.4,81.0,83.0,81.4],review:[74,51,126,95,71,83,76],comp:[1,2,15,11,16,12,9],cs:[7,2,4,10,16,13,6],drop:[14.38,21.83,26.02,17.66,18.27,14.75,18.09]};
 function makeLineChart(id,data,color,min,max) {
   const ctx=document.getElementById(id); if(!ctx)return;
+  const existing = Chart.getChart(ctx);
+  if (existing) existing.destroy();
   new Chart(ctx,{type:'line',data:{labels:GRAPH_MONTHS,datasets:[{data:data,borderColor:color,backgroundColor:color+'22',borderWidth:2,pointRadius:4,pointBackgroundColor:color,fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:18,right:32,left:14,bottom:4}},plugins:{legend:{display:false},datalabels:{display:true,color:color,font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif",weight:'600'},anchor:'end',align:(ctx)=>{const i=ctx.dataIndex,n=ctx.dataset.data.length;return i===n-1?'left':(i===0?'right':'top');},offset:4,clip:false,formatter:v=>v}},scales:{x:{ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499'},grid:{display:false},border:{display:false}},y:{min:min,max:max,ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499',maxTicksLimit:3},grid:{color:'rgba(0,0,0,.06)'},border:{display:false}}}}});
 }
 function makeExpChart(id,labels,data,color) {
   const ctx=document.getElementById(id); if(!ctx)return;
+  const existing = Chart.getChart(ctx);
+  if (existing) existing.destroy();
   new Chart(ctx,{type:'line',data:{labels:labels,datasets:[{data:data,borderColor:color,backgroundColor:color+'22',borderWidth:2,pointRadius:4,pointBackgroundColor:color,fill:true,tension:0.3}]},options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:18,right:32,left:14,bottom:4}},plugins:{legend:{display:false},datalabels:{display:true,color:color,font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif",weight:'600'},anchor:'end',align:(ctx)=>{const i=ctx.dataIndex,n=ctx.dataset.data.length;return i===n-1?'left':(i===0?'right':'top');},offset:4,clip:false,formatter:v=>v}},scales:{x:{ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499'},grid:{display:false},border:{display:false}},y:{ticks:{font:{size:10,family:"'Pretendard','Apple SD Gothic Neo',sans-serif"},color:'#7a8499',maxTicksLimit:3},grid:{color:'rgba(0,0,0,.06)'},border:{display:false}}}}});
 }
 window.addEventListener('load',function() {
