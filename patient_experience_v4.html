@@ -438,6 +438,50 @@ let curYear = 2026;
 // 구글 시트 API URL (Apps Script 웹앱)
 const API_URL = 'https://script.google.com/macros/s/AKfycbwMGcZm5e-DjkjAZadNYGQYC6w2PBIVOdqrBkn0JSKKY5-Sykv81e8eRbgFe4-miKF_Ig/exec';
 
+// 모든 월의 파생값 계산 (안전장치)
+function calculateAllDerivedValues() {
+  // CLINIC 파생값 (wait60, coop, score)
+  const clinicMonths = new Set([
+    ...Object.keys(CLINIC.wait60_t1),
+    ...Object.keys(CLINIC.wait60_t2),
+    ...Object.keys(CLINIC.reimp),
+    ...Object.keys(CLINIC.coop_t1),
+    ...Object.keys(CLINIC.coop_t2),
+  ]);
+  clinicMonths.forEach(m => {
+    const w1 = CLINIC.wait60_t1[m], w2 = CLINIC.wait60_t2[m];
+    const c1 = CLINIC.coop_t1[m], c2 = CLINIC.coop_t2[m];
+    const reimp = CLINIC.reimp[m];
+    if ([w1, w2, c1, c2, reimp].every(v => v !== undefined) && typeof clinicCalcScore === 'function') {
+      const wait60_avg = w1 + w2;
+      const coop = Math.round((c1 + c2) / 2 * 10) / 10;
+      CLINIC.wait60[m] = wait60_avg;
+      CLINIC.coop[m] = coop;
+      CLINIC.score[m] = clinicCalcScore(wait60_avg, reimp, coop);
+    }
+  });
+
+  // UNI 파생값 (introrate, score)
+  const uniMonths = new Set([
+    ...Object.keys(UNI.jaebun),
+    ...Object.keys(UNI.sales),
+    ...Object.keys(UNI.intro),
+    ...Object.keys(UNI.newpt),
+    ...Object.keys(UNI.remake),
+  ]);
+  uniMonths.forEach(m => {
+    const j = UNI.jaebun[m], s = UNI.sales[m], i = UNI.intro[m], n = UNI.newpt[m], r = UNI.remake[m];
+    if ([j, s, i, n, r].every(v => v !== undefined) && typeof uniCalcScore === 'function') {
+      const workdays = OPS.workdays[m] || 22;
+      const jaebun_norm = j * 22 / workdays;
+      const sales_rate = s / 7000 * 100;
+      const intro_rate = n > 0 ? (i / n * 100) : 0;
+      UNI.introrate[m] = intro_rate;
+      UNI.score[m] = uniCalcScore(jaebun_norm, sales_rate, intro_rate, r);
+    }
+  });
+}
+
 // 시트 데이터 자동 로드
 async function loadFromSheet() {
   try {
@@ -482,17 +526,26 @@ async function loadFromSheet() {
       });
     }
 
+    // 모든 월에 대해 파생값 계산
+    calculateAllDerivedValues();
+
     console.log('✅ 시트 데이터 로드 완료');
     // 현재 월 다시 로드해서 최신 데이터 반영
     if (typeof loadOps === 'function') loadOps(curMonth);
     if (typeof loadClinic === 'function') loadClinic(curMonth);
     if (typeof loadUni === 'function') loadUni(curMonth);
     if (typeof loadExp === 'function') loadExp(curMonth);
-    // 차트 재렌더링
+    // 차트 재렌더링 (여러 번 시도)
     setTimeout(() => {
+      calculateAllDerivedValues();
       if (typeof renderClinicCharts === 'function') renderClinicCharts();
       if (typeof renderUniCharts === 'function') renderUniCharts();
     }, 300);
+    setTimeout(() => {
+      calculateAllDerivedValues();
+      if (typeof renderClinicCharts === 'function') renderClinicCharts();
+      if (typeof renderUniCharts === 'function') renderUniCharts();
+    }, 1500);
   } catch (e) {
     console.warn('시트 로드 실패, 로컬 데이터 사용:', e.message);
   }
