@@ -317,8 +317,8 @@
           <div class="cards" style="grid-template-columns:repeat(2,1fr);gap:8px;">
             <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">1시간 이상 대기 · 1팀 (일평균)</div><div class="card-val y" id="cv-wait60-t1" style="font-size:20px;">—</div></div>
             <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">1시간 이상 대기 · 2팀 (일평균)</div><div class="card-val y" id="cv-wait60-t2" style="font-size:20px;">—</div></div>
-            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">협진 동의율 · 1팀</div><div class="card-val g" id="cv-coop-t1" style="font-size:20px;">—</div></div>
-            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">협진 동의율 · 2팀</div><div class="card-val g" id="cv-coop-t2" style="font-size:20px;">—</div></div>
+            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">리뷰권유율 · 1팀</div><div class="card-val g" id="cv-coop-t1" style="font-size:20px;">—</div></div>
+            <div class="card" style="padding:12px 11px;"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">리뷰권유율 · 2팀</div><div class="card-val g" id="cv-coop-t2" style="font-size:20px;">—</div></div>
           </div>
         </div>
 
@@ -326,7 +326,7 @@
         <div class="cards" style="grid-template-columns:repeat(3,1fr);">
           <div class="card"><div class="card-icon">⏰</div><div class="card-label">1시간 이상 대기<br>(일평균)</div><div class="card-val y" id="cv-wait60">—</div><div class="card-prev">목표: 일평균 2명 이하</div><div class="card-daily" id="cd-wait60" style="font-size:11px;color:var(--yellow);margin-top:3px;"></div><div class="bar-bg"><div class="bar" id="cb-wait60" style="width:0%"></div></div></div>
           <div class="card"><div class="card-icon">🦷</div><div class="card-label">구강내장치<br>재인상 건수</div><div class="card-val navy" id="cv-reimp">—</div><div class="card-prev">목표: 월 2건 이하</div><div class="bar-bg"><div class="bar" id="cb-reimp" style="width:0%"></div></div></div>
-          <div class="card"><div class="card-icon">🤝</div><div class="card-label">협진<br>동의율</div><div class="card-val g" id="cv-coop">—</div><div class="card-prev">목표: 20% 이상</div><div class="bar-bg"><div class="bar" id="cb-coop" style="width:0%"></div></div></div>
+          <div class="card"><div class="card-icon">🤝</div><div class="card-label">리뷰권유율</div><div class="card-val g" id="cv-coop">—</div><div class="card-prev">목표: 20% 이상</div><div class="bar-bg"><div class="bar" id="cb-coop" style="width:0%"></div></div></div>
         </div>
 
         <div class="weights">
@@ -334,7 +334,7 @@
           <div class="w-rows">
             <div class="w-chip"><div class="w-dot" style="background:var(--yellow)"></div><span class="w-name">1시간 이상 대기 환자</span><span class="w-pt">40점</span></div>
             <div class="w-chip"><div class="w-dot" style="background:var(--navy)"></div><span class="w-name">재인상 건수</span><span class="w-pt">30점</span></div>
-            <div class="w-chip"><div class="w-dot" style="background:var(--green)"></div><span class="w-name">협진 동의율</span><span class="w-pt">30점</span></div>
+            <div class="w-chip"><div class="w-dot" style="background:var(--green)"></div><span class="w-name">리뷰권유율</span><span class="w-pt">30점</span></div>
           </div>
         </div>
 
@@ -347,7 +347,7 @@
           <div class="graph-grid">
             <div class="graph-card"><div class="graph-card-label">1시간 이상 대기 환자 (명)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-wait60" role="img" aria-label="1시간 이상 대기 환자"></canvas></div></div>
             <div class="graph-card"><div class="graph-card-label">재인상 건수 (건)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-reimp" role="img" aria-label="재인상 건수"></canvas></div></div>
-            <div class="graph-card"><div class="graph-card-label">협진 동의율 (%)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-coop" role="img" aria-label="협진 동의율"></canvas></div></div>
+            <div class="graph-card"><div class="graph-card-label">리뷰권유율 (%)</div><div style="position:relative;height:110px;padding-right:8px;"><canvas id="chart-coop" role="img" aria-label="리뷰권유율"></canvas></div></div>
           </div>
         </div>
 
@@ -357,8 +357,8 @@
             <div class="fg"><label>1시간 이상 대기 · 일평균 (1팀, 명)</label><input type="number" id="in-wait60-t1" placeholder="예: 1.5" min="0" step="0.01"><div class="hint">1팀 일평균</div></div>
             <div class="fg"><label>1시간 이상 대기 · 일평균 (2팀, 명)</label><input type="number" id="in-wait60-t2" placeholder="예: 0.8" min="0" step="0.01"><div class="hint">2팀 일평균</div></div>
             <div class="fg"><label>재인상 건수 (건)</label><input type="number" id="in-reimp" placeholder="예: 2" min="0" step="1"><div class="hint">진료실 전체 · 월 총 건수</div></div>
-            <div class="fg"><label>협진 동의율 (1팀, %)</label><input type="number" id="in-coop-t1" placeholder="예: 72" min="0" max="100" step="0.1"><div class="hint">1팀 협진 동의/안내</div></div>
-            <div class="fg"><label>협진 동의율 (2팀, %)</label><input type="number" id="in-coop-t2" placeholder="예: 68" min="0" max="100" step="0.1"><div class="hint">2팀 협진 동의/안내</div></div>
+            <div class="fg"><label>리뷰권유율 (1팀, %)</label><input type="number" id="in-coop-t1" placeholder="예: 72" min="0" max="100" step="0.1"><div class="hint">1팀 리뷰권유/안내</div></div>
+            <div class="fg"><label>리뷰권유율 (2팀, %)</label><input type="number" id="in-coop-t2" placeholder="예: 68" min="0" max="100" step="0.1"><div class="hint">2팀 리뷰권유/안내</div></div>
           </div>
           <button class="btn" onclick="clinicCalc()">종합점수 계산하기</button>
           <div id="clinic-interp" class="interp"></div>
@@ -573,12 +573,12 @@ const CLINIC = {
   // 팀별 (참고용)
   wait60_t1: {},  // 1시간 이상 대기 (1팀)
   wait60_t2: {},  // 1시간 이상 대기 (2팀)
-  coop_t1:   {},  // 협진 동의율 (1팀)
-  coop_t2:   {},  // 협진 동의율 (2팀)
+  coop_t1:   {},  // 리뷰권유율 (1팀)
+  coop_t2:   {},  // 리뷰권유율 (2팀)
   // 진료실 전체 (점수 계산 기준)
   wait60: {},  // 1시간 이상 대기 환자 수 (월별 합계, 1팀+2팀)
   reimp:  {},  // 재인상 건수
-  coop:   {},  // 협진 동의율 % (1팀+2팀 평균)
+  coop:   {},  // 리뷰권유율 % (1팀+2팀 평균)
   score:  {},  // 종합점수
 };
 
@@ -624,6 +624,10 @@ const KEYWORDS = {
   '8월': {
     pos: [{label:'친절한 응대',count:44},{label:'친절한 설명',count:40},{label:'꼼꼼한 진료',count:31},{label:'정밀 진단',count:16},{label:'첨단 장비',count:7},{label:'치료 효과',count:6},{label:'생활습관 안내',count:5},{label:'과잉진료 없음',count:3},{label:'신뢰감',count:3},{label:'강요 없는 상담',count:2}],
     neg: [{label:'치료 효과 불만족',count:1}]
+  },
+  '9월': {
+    pos: [{label:'친절한 응대',count:56},{label:'친절한 설명',count:49},{label:'꼼꼼한 진료',count:16},{label:'전문성',count:15},{label:'치료 효과',count:14},{label:'체계적 진료',count:12},{label:'신뢰감',count:12},{label:'적극 추천',count:10},{label:'치료 종결·완치',count:7},{label:'첨단 장비',count:7}],
+    neg: [{label:'비용 부담',count:5},{label:'치료 권유 불편감',count:2},{label:'서비스 불만',count:1}]
   },
 };
 
@@ -738,7 +742,7 @@ function loadOps(m) {
   const pm = idx > 0 ? MONTHS[idx-1] : null;
   document.getElementById('in-prev').value = pm && OPS.score[pm] !== undefined ? OPS.score[pm] : '';
   const hasAll = ['wait','keep','review','comp','cs','drop'].every(k => OPS[k][m] !== undefined);
-  if (hasAll) setTimeout(opsCalc, 50);
+  if (hasAll) setTimeout(() => opsCalc(true), 50);
   else resetOpsDisplay();
 }
 
@@ -766,7 +770,7 @@ function opsCalcScore(w,k,r,c,s,d) {
   );
 }
 
-function opsCalc() {
+function opsCalc(silent) {
   const wait=parseFloat(document.getElementById('in-wait').value);
   const keep=parseFloat(document.getElementById('in-keep').value);
   const review=parseFloat(document.getElementById('in-review').value);
@@ -774,7 +778,7 @@ function opsCalc() {
   const cs=parseFloat(document.getElementById('in-cs').value);
   const drop=parseFloat(document.getElementById('in-drop').value);
   const prev=parseFloat(document.getElementById('in-prev').value);
-  if ([wait,keep,review,comp,cs,drop].some(isNaN)) { alert('모든 항목을 입력해주세요!'); return; }
+  if ([wait,keep,review,comp,cs,drop].some(isNaN)) { if(!silent) alert('모든 항목을 입력해주세요!'); return; }
   const score=opsCalcScore(wait,keep,review,comp,cs,drop);
   document.getElementById('ops-hero-score').innerHTML=score+'<sup>점</sup>';
   document.getElementById('ops-ring-val').textContent=score;
@@ -855,7 +859,7 @@ function resetClinicDisplay() {
 function clinicCalcScore(wait60_avg, reimp, coop) {
   // wait60_avg: 일평균 1시간 대기 환자 수 (목표 2명 이하 → 40점, 8명 이상 → 0점)
   // reimp: 재인상 건수 (목표 2건 이하 → 30점, 5건 이상 → 0점)
-  // coop: 협진 동의율 % (목표 20% 이상 → 30점, 10% 이하 → 0점)
+  // coop: 리뷰권유율 % (목표 20% 이상 → 30점, 10% 이하 → 0점)
   return Math.round(
     Math.max(0, Math.min(1, (8 - wait60_avg) / 6)) * 40 +
     Math.max(0, Math.min(1, (5 - reimp) / 3)) * 30 +
@@ -934,13 +938,13 @@ function clinicCalc() {
     cls='mid'; msg='⚠️ 양호하지만 개선 여지가 있어요. ';
     if(wait60_avg>2) msg+='1시간 이상 대기 환자(일평균 '+wait60_avg.toFixed(1)+'명)가 목표(2명)를 초과했어요. ';
     if(reimp>2) msg+='재인상 건수('+reimp+'건)가 목표(2건)를 초과했어요. ';
-    if(coop<20) msg+='협진 동의율('+coop+'%)이 목표(20%)에 미달했어요. ';
+    if(coop<20) msg+='리뷰권유율('+coop+'%)이 목표(20%)에 미달했어요. ';
   }
   else {
     cls='low'; const issues=[];
     if(wait60_avg>8) issues.push('1시간 이상 대기 환자');
     if(reimp>5) issues.push('재인상 건수');
-    if(coop<10) issues.push('협진 동의율');
+    if(coop<10) issues.push('리뷰권유율');
     msg='🔴 집중 개선 항목: ' + (issues.length?issues.join(', '):'전반적 점검 필요');
   }
   ip.className = 'interp ' + cls; ip.textContent = msg;
