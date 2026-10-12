@@ -539,12 +539,14 @@ async function loadFromSheet() {
     setTimeout(() => {
       calculateAllDerivedValues();
       if (typeof renderOpsCharts === 'function') renderOpsCharts();
+      if (typeof renderExpCharts === 'function') renderExpCharts();
       if (typeof renderClinicCharts === 'function') renderClinicCharts();
       if (typeof renderUniCharts === 'function') renderUniCharts();
     }, 300);
     setTimeout(() => {
       calculateAllDerivedValues();
       if (typeof renderOpsCharts === 'function') renderOpsCharts();
+      if (typeof renderExpCharts === 'function') renderExpCharts();
       if (typeof renderClinicCharts === 'function') renderClinicCharts();
       if (typeof renderUniCharts === 'function') renderUniCharts();
     }, 1500);
@@ -1138,6 +1140,7 @@ function expCalc() {
   if(isNaN(intro)||isNaN(review)){alert('두 항목 모두 입력해주세요!'); return;}
   EXP.intro[curMonth]=intro; EXP.review[curMonth]=review;
   updateExpCards(intro,review,curMonth);
+  if (typeof renderExpCharts === 'function') renderExpCharts();
   const ip=document.getElementById('exp-interp'); ip.style.display='block';
   const pi=getPrev(EXP.intro,curMonth), pr=getPrev(EXP.review,curMonth);
   const iu=pi!==null?intro>=pi:true, ru=pr!==null?review>=pr:true;
@@ -1214,6 +1217,16 @@ function renderUniCharts() {
   if(salesMonths.length>0) makeExpChart('chart-sales',salesMonths,salesMonths.map(m=>UNI.sales[m]),'#2a9d6a');
   if(introMonths.length>0) makeExpChart('chart-intro-uni',introMonths,introMonths.map(m=>UNI.introrate[m]),'#e09000');
   if(remakeMonths.length>0) makeExpChart('chart-remake',remakeMonths,remakeMonths.map(m=>UNI.remake[m]),'#4a7fd4');
+}
+
+
+// 환자경험 그래프 - EXP 객체 기반 동적 렌더링
+function renderExpCharts() {
+  const ORDER=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  const im=ORDER.filter(m=>EXP.intro[m]!==undefined&&EXP.intro[m]!==null);
+  const rm=ORDER.filter(m=>EXP.review[m]!==undefined&&EXP.review[m]!==null);
+  if(im.length) makeExpChart('chart-intro',im,im.map(m=>EXP.intro[m]),'#0ea5a0');
+  if(rm.length) makeExpChart('chart-exp-review',rm,rm.map(m=>EXP.review[m]),'#e8748a');
 }
 
 // 고객지원실 그래프 - OPS 객체 기반 동적 렌더링
