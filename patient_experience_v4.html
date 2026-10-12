@@ -538,11 +538,13 @@ async function loadFromSheet() {
     // 차트 재렌더링 (여러 번 시도)
     setTimeout(() => {
       calculateAllDerivedValues();
+      if (typeof renderOpsCharts === 'function') renderOpsCharts();
       if (typeof renderClinicCharts === 'function') renderClinicCharts();
       if (typeof renderUniCharts === 'function') renderUniCharts();
     }, 300);
     setTimeout(() => {
       calculateAllDerivedValues();
+      if (typeof renderOpsCharts === 'function') renderOpsCharts();
       if (typeof renderClinicCharts === 'function') renderClinicCharts();
       if (typeof renderUniCharts === 'function') renderUniCharts();
     }, 1500);
@@ -815,6 +817,12 @@ function opsCalc() {
   else if(score>=60){cls='mid';msg='⚠️ 양호하지만 개선 여지가 있어요. '; if(wait>10)msg+='수납 소요시간('+wait+'분)이 길어요. '; if(keep<80)msg+='예약 이행률('+keep+'%)을 높이는 게 우선이에요. '; if(comp>10)msg+='대기 컴플레인('+comp+'명) 안내 개선이 필요해요. '; if(drop>25)msg+='전화 포기율('+drop+'%)이 높아요. ';}
   else {cls='low'; const issues=[]; if(wait>12)issues.push('수납 소요시간'); if(keep<70)issues.push('예약 이행률'); if(comp>15)issues.push('대기 컴플레인'); if(cs>5)issues.push('수납·접수 불만'); if(drop>35)issues.push('전화 포기율'); msg='🔴 집중 개선 항목: '+(issues.length?issues.join(', '):'전반적 운영 점검 필요');}
   ip.className='interp '+cls; ip.textContent=msg;
+
+  // OPS 객체에 저장 (그래프 반영용)
+  OPS.wait[curMonth]=wait; OPS.keep[curMonth]=keep; OPS.review[curMonth]=review;
+  OPS.comp[curMonth]=comp; OPS.cs[curMonth]=cs; OPS.drop[curMonth]=drop;
+  if(!OPS.score) OPS.score={}; OPS.score[curMonth]=score;
+  if (typeof renderOpsCharts === 'function') renderOpsCharts();
 }
 
 function loadClinic(m) {
@@ -1202,6 +1210,39 @@ function renderUniCharts() {
   if(salesMonths.length>0) makeExpChart('chart-sales',salesMonths,salesMonths.map(m=>UNI.sales[m]),'#2a9d6a');
   if(introMonths.length>0) makeExpChart('chart-intro-uni',introMonths,introMonths.map(m=>UNI.introrate[m]),'#e09000');
   if(remakeMonths.length>0) makeExpChart('chart-remake',remakeMonths,remakeMonths.map(m=>UNI.remake[m]),'#4a7fd4');
+}
+
+// 고객지원실 그래프 - OPS 객체 기반 동적 렌더링
+function renderOpsCharts() {
+  const MONTH_ORDER = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  const sorted = (obj) => MONTH_ORDER.filter(m => obj[m] !== null && obj[m] !== undefined);
+
+  // score는 opsCalc로 계산되므로 OPS에 score 필드가 없으면 계산해서 채움
+  const needScore = {};
+  MONTH_ORDER.forEach(m => {
+    const w=OPS.wait[m], k=OPS.keep[m], r=OPS.review[m], c=OPS.comp[m], s=OPS.cs[m], d=OPS.drop[m];
+    if ([w,k,r,c,s,d].every(v => v !== undefined && v !== null) && typeof opsCalcScore === 'function') {
+      needScore[m] = opsCalcScore(w,k,r,c,s,d);
+    }
+  });
+  if (!OPS.score) OPS.score = {};
+  Object.assign(OPS.score, needScore);
+
+  const scoreMonths = sorted(OPS.score);
+  const waitMonths = sorted(OPS.wait);
+  const keepMonths = sorted(OPS.keep);
+  const reviewMonths = sorted(OPS.review);
+  const compMonths = sorted(OPS.comp);
+  const csMonths = sorted(OPS.cs);
+  const dropMonths = sorted(OPS.drop);
+
+  if(scoreMonths.length>0) makeExpChart('chart-score',scoreMonths,scoreMonths.map(m=>OPS.score[m]),'#1a2744');
+  if(waitMonths.length>0) makeExpChart('chart-wait',waitMonths,waitMonths.map(m=>OPS.wait[m]),'#2a9d6a');
+  if(keepMonths.length>0) makeExpChart('chart-keep',keepMonths,keepMonths.map(m=>OPS.keep[m]),'#2a9d6a');
+  if(reviewMonths.length>0) makeExpChart('chart-review',reviewMonths,reviewMonths.map(m=>OPS.review[m]),'#4a7fd4');
+  if(compMonths.length>0) makeExpChart('chart-comp',compMonths,compMonths.map(m=>OPS.comp[m]),'#d94060');
+  if(csMonths.length>0) makeExpChart('chart-cs',csMonths,csMonths.map(m=>OPS.cs[m]),'#d94060');
+  if(dropMonths.length>0) makeExpChart('chart-drop',dropMonths,dropMonths.map(m=>OPS.drop[m]),'#e09000');
 }
 </script>
 <div class="lock-modal" id="lock-modal">
